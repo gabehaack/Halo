@@ -22,12 +22,17 @@
 		};
 	}
 	
-	var BestGame = $resource('/api/bestGames');
+    var BestGame = $resource('/api/bestGames');
+    BestGame.query(function(results) {
+        $scope.games = results;
+    });
 	
 	$scope.saveGame = function() {
 		var game = new BestGame();
 		game.k = 'blah';
-		game.$save();
+		game.$save(function(result) {
+		    $scope.games.push(result);
+		});
 	}
 	
 	var onHttpError = function (reason) {

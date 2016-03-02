@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="client\js\controllers\haloController.js" />
     <Compile Include="server.js" />
+    <Compile Include="server\controllers\gamesController.js" />
+    <Compile Include="server\models\game.js" />
     <Content Include="client\style\style.css" />
     <Content Include="client\views\index.html" />
     <Content Include="package.json" />
@@ -46,6 +48,9 @@
     <Folder Include="client\style\" />
     <Folder Include="client\views\" />
     <Folder Include="haloApi\" />
+    <Folder Include="server\" />
+    <Folder Include="server\controllers\" />
+    <Folder Include="server\models\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="haloApi\haloApi.ts" />
