@@ -1,0 +1,2 @@
+C:\Code\Gabe\Halo\HaloApi\HaloApi\obj\Debug\HaloApi.njsprojResolveAssemblyReference.cache
+C:\Code\Gabe\Halo\HaloApi\HaloApi\bin\Microsoft.NodejsTools.WebRole.dll

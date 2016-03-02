@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html ng-app="gabeHalo" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <script type="text/javascript" src="https://code.angularjs.org/1.4.8/angular.js"></script>
+    <link rel="stylesheet" href="/style/style.css" />
+    <script type="text/javascript" src="/js/controllers/haloController.js"></script>
+</head>
+<body>
+    <div ng-controller="haloController">
+        <!-- Match Result View -->
+        <h1>Player Match Result</h1>
+
+        <div>
+            {{error}}
+        </div>
+
+        <form name="searchGamertag">
+            <input type="search" placeholder="Enter gamertag" ng-model="gamertag" />
+            <input type="submit" value="Search" ng-click="getGames(gamertag)">
+        </form>
+
+        <h2>
+            {{gamertag}}
+        </h2>
+
+        <div>
+            <p>K: {{result.k}}</p>
+            <p>D: {{result.d}}</p>
+            <p>A: {{result.a}}</p>
+            <p>KD: {{result.kd}}</p>
+            <p>KDA: {{result.kda}}</p>
+            <!--<img ng-src="{{footerImageSource}}">-->
+        </div>
+    </div>
+</body>
+</html>

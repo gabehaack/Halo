@@ -1,0 +1,13 @@
+{
+  "name": "HaloApi",
+  "version": "0.0.0",
+  "description": "HaloApi",
+  "main": "server.js",
+  "author": {
+    "name": "ghaack",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
