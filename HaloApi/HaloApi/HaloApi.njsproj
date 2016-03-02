@@ -38,7 +38,6 @@
     <Content Include="client\style\style.css" />
     <Content Include="client\views\index.html" />
     <Content Include="package.json" />
-    <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
