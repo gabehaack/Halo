@@ -48,12 +48,13 @@
     <Folder Include="client\style\" />
     <Folder Include="client\views\" />
     <Folder Include="haloApi\" />
+    <Folder Include="haloApi\models\" />
     <Folder Include="server\" />
     <Folder Include="server\controllers\" />
     <Folder Include="server\models\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="haloApi\haloApi.ts" />
+    <TypeScriptCompile Include="haloApi\models\Game.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
