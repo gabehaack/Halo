@@ -41,15 +41,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\GameMode.cs" />
+    <Compile Include="Enums\FlexibleStatType.cs" />
+    <Compile Include="Enums\MedalClassification.cs" />
+    <Compile Include="Enums\WeaponType.cs" />
     <Compile Include="HaloDataManager.cs" />
-    <Compile Include="Models\Csr.cs" />
-    <Compile Include="Models\Map.cs" />
     <Compile Include="Models\MatchPlayer.cs" />
-    <Compile Include="Models\Season.cs" />
-    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\Metadata\CsrDesignation.cs" />
+    <Compile Include="Models\Metadata\FlexibleStat.cs" />
+    <Compile Include="Models\Metadata\GameBaseVariant.cs" />
+    <Compile Include="Models\Metadata\GameVariant.cs" />
+    <Compile Include="Models\Metadata\Impulse.cs" />
+    <Compile Include="Models\Metadata\Map.cs" />
+    <Compile Include="Models\Metadata\MapVariant.cs" />
+    <Compile Include="Models\Metadata\Medal.cs" />
+    <Compile Include="Models\Metadata\Playlist.cs" />
+    <Compile Include="Models\Metadata\Season.cs" />
+    <Compile Include="Models\Metadata\SpartanRank.cs" />
+    <Compile Include="Models\Metadata\TeamColor.cs" />
+    <Compile Include="Models\Metadata\Vehicle.cs" />
+    <Compile Include="Models\Metadata\Weapon.cs" />
     <Compile Include="Services\IHaloApi.cs" />
     <Compile Include="Models\Match.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IHaloRepository.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

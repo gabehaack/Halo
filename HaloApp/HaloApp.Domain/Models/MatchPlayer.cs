@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HaloApp.Domain.Models
+﻿namespace HaloApp.Domain.Models
 {
     public class MatchPlayer
     {
@@ -34,5 +28,14 @@ namespace HaloApp.Domain.Models
         public double TotalPowerWeaponDamage { get; set; }
         public int TotalPowerWeaponGrabs { get; set; }
         public int TotalGrenadeKills { get; set; }
+    }
+
+    public class Csr
+    {
+        public int CsrDesignationId { get; set; }
+        public int CsrDesignationTierId { get; set; }
+        public int PercentToNextTier { get; set; }
+        public int Rank { get; set; }
+        public int Value { get; set; }
     }
 }

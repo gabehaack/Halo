@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HaloApp.ApiClient.Models
 {
@@ -19,7 +16,7 @@ namespace HaloApp.ApiClient.Models
         public int MeasurementMatchesLeft { get; set; }
         public List<KilledOpponentDetail> KilledOpponentDetails { get; set; }
         public List<KilledByOpponentDetail> KilledByOpponentDetails { get; set; }
-        public FlexibleStats FlexibleStats { get; set; }
+        public MatchFlexibleStats FlexibleStats { get; set; }
         public CreditsEarned CreditsEarned { get; set; }
         public MatchPlayer Player { get; set; }
         public int TeamId { get; set; }
@@ -48,11 +45,11 @@ namespace HaloApp.ApiClient.Models
         public int TotalAssists { get; set; }
         public string TotalTimePlayed { get; set; }
         public int TotalGrenadeKills { get; set; }
-        public List<Medal> MedalAwards { get; set; }
+        public List<MatchMedal> MedalAwards { get; set; }
         public List<VehiclesDestroyed> DestroyedEnemyVehicles { get; set; }
         public List<EnemyKills> EnemyKills { get; set; }
         public List<MatchWeapon> WeaponStats { get; set; }
-        public List<Impulse> Impulses { get; set; }
+        public List<MatchImpulse> Impulses { get; set; }
         public List<TeamStat> TeamStats { get; set; }
         public bool IsMatchOver { get; set; }
         public string TotalDuration { get; set; }
@@ -63,14 +60,6 @@ namespace HaloApp.ApiClient.Models
         public Guid GameBaseVariantId { get; set; }
         public bool IsTeamGame { get; set; }
         public Guid SeasonId { get; set; }
-
-        public Domain.Models.MatchPlayer ToDomainModel()
-        {
-            return new Domain.Models.MatchPlayer
-            {
-                CurrentCsr = 
-            };
-        }
     }
 
     public class CreditsEarned
@@ -95,21 +84,21 @@ namespace HaloApp.ApiClient.Models
         public int TotalKills { get; set; }
     }
 
-    public class FlexibleStat
+    public class MatchFlexibleStat
     {
         public Guid Id { get; set; }
         public int Count { get; set; }
     }
 
-    public class FlexibleStats
+    public class MatchFlexibleStats
     {
-        public List<FlexibleStat> MedalStatCounts { get; set; }
-        public List<FlexibleStat> ImpulseStatCounts { get; set; }
-        public List<FlexibleStat> MedalTimelapses { get; set; }
-        public List<FlexibleStat> ImpulseTimelapses { get; set; }
+        public List<MatchFlexibleStat> MedalStatCounts { get; set; }
+        public List<MatchFlexibleStat> ImpulseStatCounts { get; set; }
+        public List<MatchFlexibleStat> MedalTimelapses { get; set; }
+        public List<MatchFlexibleStat> ImpulseTimelapses { get; set; }
     }
 
-    public class Impulse
+    public class MatchImpulse
     {
         public int Id { get; set; }
         public int Count { get; set; }
@@ -134,14 +123,6 @@ namespace HaloApp.ApiClient.Models
         public int Csr { get; set; }
         public int PercentToNextTier { get; set; }
         public int Rank { get; set; }
-
-        public Domain.Models.Csr ToDomainModel()
-        {
-            return new Domain.Models.Csr
-            {
-                Designation = 
-            };
-        }
     }
 
     public class MatchWeaponId
@@ -174,7 +155,7 @@ namespace HaloApp.ApiClient.Models
         public int BoostAmount { get; set; }
     }
 
-    public class Medal
+    public class MatchMedal
     {
         public int MedalId { get; set; }
         public int Count { get; set; }

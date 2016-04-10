@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GHaack.Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GHaack.Utilities.1.0.0.1\lib\net45\GHaack.Utilities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -46,9 +50,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HaloApi.cs" />
-    <Compile Include="Models\Map.cs" />
+    <Compile Include="Mapper.cs" />
+    <Compile Include="Models\Metadata\CsrDesignation.cs" />
+    <Compile Include="Models\Metadata\FlexibleStat.cs" />
+    <Compile Include="Models\Metadata\GameVariant.cs" />
+    <Compile Include="Models\Metadata\GameBaseVariant.cs" />
+    <Compile Include="Models\Metadata\Impulse.cs" />
+    <Compile Include="Models\Metadata\Map.cs" />
+    <Compile Include="Models\Metadata\MapVariant.cs" />
     <Compile Include="Models\MatchReport.cs" />
+    <Compile Include="Models\Metadata\Medal.cs" />
     <Compile Include="Models\PlayerMatches.cs" />
+    <Compile Include="Models\Metadata\Playlist.cs" />
+    <Compile Include="Models\Metadata\Season.cs" />
+    <Compile Include="Models\Metadata\SpartanRank.cs" />
+    <Compile Include="Models\Metadata\TeamColor.cs" />
+    <Compile Include="Models\Metadata\Vehicle.cs" />
+    <Compile Include="Models\Metadata\Weapon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
