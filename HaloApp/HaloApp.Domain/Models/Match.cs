@@ -8,6 +8,7 @@ namespace HaloApp.Domain.Models
     {
         public DateTime Completed { get; set; }
         public GameMode GameMode { get; set; }
+        public TimeSpan Duration { get; set; }
         public Guid Id { get; set; }
         public Guid MapId { get; set; }
         public Guid MapVariant { get; set; }

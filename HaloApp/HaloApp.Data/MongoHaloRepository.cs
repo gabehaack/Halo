@@ -3,8 +3,10 @@ using HaloApp.Domain.Models.Metadata;
 using HaloApp.Domain.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HaloApp.Data
@@ -24,12 +26,26 @@ namespace HaloApp.Data
             _haloDb = _mongoClient.GetDatabase("Halo");
         }
 
-        public async Task ReplaceMetadata<TMetadata>(IList<TMetadata> metadata)
+        public async Task ReplaceMetadataAsync<TMetadata>(IList<TMetadata> metadata)
         {
             string metadataCollectionName = typeof(TMetadata).Name + 's';
             await _haloDb.DropCollectionAsync(metadataCollectionName);
             var metadataCollection = _haloDb.GetCollection<TMetadata>(metadataCollectionName);
             await metadataCollection.InsertManyAsync(metadata);
+        }
+
+        public async Task AddMatchesAsync(IList<Match> matches)
+        {
+            var matchCollection = _haloDb.GetCollection<Match>("Matches");
+            await matchCollection.InsertManyAsync(matches);
+        }
+
+        public async Task<IEnumerable<Match>> GetMatchesAsync(string player)
+        {
+            var matchCollection = _haloDb.GetCollection<Match>("Matches");
+            return await matchCollection.AsQueryable()
+                .Where(m => m.Players.Any(p => p.Name == player))
+                .ToListAsync();
         }
 
         private void RegisterClasses()

@@ -6,8 +6,8 @@ namespace HaloApp.ApiClient.Models.Metadata
     {
         public string name { get; set; }
         public string description { get; set; }
-        public Guid gameBaseVariantId { get; set; }
+        public string gameBaseVariantId { get; set; }
         public string iconUrl { get; set; }
-        public Guid id { get; set; }
+        public string id { get; set; }
     }
 }

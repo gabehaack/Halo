@@ -61,19 +61,19 @@ namespace HaloApp.Domain
         public async Task ReplaceCsrDesignationMetadataAsync()
         {
             var csrDesignationMetadata = await _haloApi.GetCsrDesignationMetadataAsync();
-            await _haloRepository.ReplaceMetadata(csrDesignationMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(csrDesignationMetadata.ToList());
         }
 
         public async Task ReplaceFlexibleStatMetadataAsync()
         {
             var flexibleStatMetadata = await _haloApi.GetFlexibleStatMetadataAsync();
-            await _haloRepository.ReplaceMetadata(flexibleStatMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(flexibleStatMetadata.ToList());
         }
 
         public async Task ReplaceGameBaseVariantMetadataAsync()
         {
             var gameBaseVariantMetadata = await _haloApi.GetGameBaseVariantMetadataAsync();
-            await _haloRepository.ReplaceMetadata(gameBaseVariantMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(gameBaseVariantMetadata.ToList());
         }
 
         //public async Task ReplaceImpulseMetadataAsync()
@@ -85,50 +85,80 @@ namespace HaloApp.Domain
         public async Task ReplaceMapMetadataAsync()
         {
             var mapMetadata = await _haloApi.GetMapMetadataAsync();
-            await _haloRepository.ReplaceMetadata(mapMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(mapMetadata.ToList());
         }
 
         public async Task ReplaceMedalMetadataAsync()
         {
             var medalMetadata = await _haloApi.GetMedalMetadataAsync();
-            await _haloRepository.ReplaceMetadata(medalMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(medalMetadata.ToList());
         }
 
         public async Task ReplacePlaylistMetadataAsync()
         {
             var playlistMetadata = await _haloApi.GetPlaylistMetadataAsync();
-            await _haloRepository.ReplaceMetadata(playlistMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(playlistMetadata.ToList());
         }
 
         public async Task ReplaceSeasonMetadataAsync()
         {
             var seasonMetadata = await _haloApi.GetSeasonMetadataAsync();
-            await _haloRepository.ReplaceMetadata(seasonMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(seasonMetadata.ToList());
         }
 
         public async Task ReplaceSpartanRankMetadataAsync()
         {
             var spartanRankMetadata = await _haloApi.GetSpartanRankMetadataAsync();
-            await _haloRepository.ReplaceMetadata(spartanRankMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(spartanRankMetadata.ToList());
         }
 
         public async Task ReplaceTeamColorMetadataAsync()
         {
             var teamColorMetadata = await _haloApi.GetTeamColorMetadataAsync();
-            await _haloRepository.ReplaceMetadata(teamColorMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(teamColorMetadata.ToList());
         }
 
         public async Task ReplaceVehicleMetadataAsync()
         {
             var vehicleMetadata = await _haloApi.GetVehicleMetadataAsync();
-            await _haloRepository.ReplaceMetadata(vehicleMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(vehicleMetadata.ToList());
         }
 
         public async Task ReplaceWeaponMetadataAsync()
         {
             var weaponMetadata = await _haloApi.GetWeaponMetadataAsync();
-            await _haloRepository.ReplaceMetadata(weaponMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(weaponMetadata.ToList());
         }
+
+        #endregion
+
+        #region Match Data
+
+        public async Task StoreMatchesAsync(string player)
+        {
+            var matches = await _haloApi.GetMatchesAsync(player);
+            await _haloRepository.AddMatchesAsync(matches.ToList());
+        }
+
+        public async Task<IEnumerable<Match>> GetMatchesAsync(string player)
+        {
+            return await _haloRepository.GetMatchesAsync(player);
+        }
+
+        #endregion
+
+        #region Analysis - maybe should be separate class?
+
+        /*
+        TODO
+        Some calculations in MatchPlayer object?
+         - KDA
+         - Dmg/D
+         - K/D
+         - K/sec
+         - Dmg/sec
+
+        */
 
         #endregion
     }

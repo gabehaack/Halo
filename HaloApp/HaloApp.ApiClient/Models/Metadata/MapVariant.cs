@@ -7,7 +7,7 @@ namespace HaloApp.ApiClient.Models.Metadata
         public string name { get; set; }
         public string description { get; set; }
         public string mapImageUrl { get; set; }
-        public Guid mapId { get; set; }
-        public Guid id { get; set; }
+        public string mapId { get; set; }
+        public string id { get; set; }
     }
 }

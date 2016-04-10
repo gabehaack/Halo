@@ -1,11 +1,13 @@
-﻿namespace HaloApp.Domain.Models
+﻿using System;
+
+namespace HaloApp.Domain.Models
 {
     public class MatchPlayer
     {
+        public TimeSpan AverageLifeTime { get; set; }
         public string Name { get; set; }
         public int Team { get; set; }
         public int Rank { get; set; }
-        public int Result { get; set; }
         public int TotalKills { get; set; }
         public int TotalDeaths { get; set; }
         public int TotalAssists { get; set; }
@@ -35,7 +37,7 @@
         public int CsrDesignationId { get; set; }
         public int CsrDesignationTierId { get; set; }
         public int PercentToNextTier { get; set; }
-        public int Rank { get; set; }
+        public int? Rank { get; set; }
         public int Value { get; set; }
     }
 }

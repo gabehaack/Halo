@@ -3,6 +3,8 @@ using HaloApp.ApiClient.Models.Metadata;
 using System.Linq;
 using DomainMetadata = HaloApp.Domain.Models.Metadata;
 using GHaack.Utilities;
+using System;
+using System.Xml;
 
 namespace HaloApp.ApiClient
 {
@@ -34,7 +36,7 @@ namespace HaloApp.ApiClient
         {
             return new DomainMetadata.FlexibleStat
             {
-                Id = flexibleStat.id,
+                Id = Guid(flexibleStat.id),
                 Name = flexibleStat.name,
                 Type = EnumUtility.Parse<Domain.Enums.FlexibleStatType>(flexibleStat.type),
             };
@@ -45,7 +47,7 @@ namespace HaloApp.ApiClient
             return new DomainMetadata.GameBaseVariant
             {
                 IconUrl = Uri(gameBaseVariant.iconUrl),
-                Id = gameBaseVariant.id,
+                Id = Guid(gameBaseVariant.id),
                 Name = gameBaseVariant.name,
                 SupportedGameModes = gameBaseVariant.supportedGameModes.Select(m => EnumUtility.Parse<Domain.Enums.GameMode>(m)).ToList(),
             };
@@ -56,9 +58,9 @@ namespace HaloApp.ApiClient
             return new DomainMetadata.GameVariant
             {
                 Description = gameVariant.description,
-                GameBaseVariantId = gameVariant.gameBaseVariantId,
+                GameBaseVariantId = Guid(gameVariant.gameBaseVariantId),
                 IconUrl = Uri(gameVariant.iconUrl),
-                Id = gameVariant.id,
+                Id = Guid(gameVariant.id),
                 Name = gameVariant.name,
             };
         }
@@ -76,7 +78,7 @@ namespace HaloApp.ApiClient
             return new DomainMetadata.Map
             {
                 Description = map.description,
-                Id = map.id,
+                Id = Guid(map.id),
                 ImageUrl = Uri(map.imageUrl),
                 Name = map.name,
                 SupportedGameModes = map.supportedGameModes.Select(m => EnumUtility.Parse<Domain.Enums.GameMode>(m)).ToList(),
@@ -88,8 +90,8 @@ namespace HaloApp.ApiClient
             return new DomainMetadata.MapVariant
             {
                 Description = mapVariant.description,
-                Id = mapVariant.id,
-                MapId = mapVariant.mapId,
+                Id = Guid(mapVariant.id),
+                MapId = Guid(mapVariant.mapId),
                 MapImageUrl = Uri(mapVariant.mapImageUrl),
                 Name = mapVariant.name,
             };
@@ -129,7 +131,7 @@ namespace HaloApp.ApiClient
                 Active = playlist.isActive,
                 Description = playlist.description,
                 GameMode = EnumUtility.Parse<Domain.Enums.GameMode>(playlist.gameMode),
-                Id = playlist.id,
+                Id = Guid(playlist.id),
                 ImageUrl = Uri(playlist.imageUrl),
                 Name = playlist.name,
                 Ranked = playlist.isRanked,
@@ -143,9 +145,9 @@ namespace HaloApp.ApiClient
                 Active = season.isActive,
                 EndDate = season.endDate,
                 IconUrl = Uri(season.iconUrl),
-                Id = season.id,
+                Id = Guid(season.id),
                 Name = season.name,
-                PlaylistIds = season.playlists.Select(p => p.id).ToList(),
+                PlaylistIds = season.playlists.Select(p => Guid(p.id)).ToList(),
                 StartDate = season.startDate,
             };
         }
@@ -204,6 +206,7 @@ namespace HaloApp.ApiClient
 
         public static Domain.Models.Csr Csr(MatchCsr csr)
         {
+            if (csr == null) return null;
             return new Domain.Models.Csr
             {
                 CsrDesignationId = csr.DesignationId,
@@ -220,15 +223,16 @@ namespace HaloApp.ApiClient
             return new Domain.Models.Match
             {
                 Completed = playerMatch.MatchCompletedDate.ISO8601Date,
+                Duration = Duration(playerMatch.MatchDuration),
                 GameMode = EnumUtility.Parse<Domain.Enums.GameMode>(playerMatch.Id.GameMode),
-                Id = playerMatch.Id.MatchId,
-                MapId = playerStat.MapId,
-                MapVariant = playerMatch.MapVariant.ResourceId,
-                GameBaseVariantId = playerMatch.GameBaseVariantId,
-                GameVariantId = playerMatch.GameVariant.ResourceId,
-                PlaylistId = playerStat.PlaylistId,
-                Players = matchReport.PlayerStats.Select(p => Mapper.MatchPlayer(p)).ToList(),
-                SeasonId = playerStat.SeasonId,
+                Id = Guid(playerMatch.Id.MatchId),
+                MapId = Guid(playerStat.MapId),
+                MapVariant = Guid(playerMatch.MapVariant.ResourceId),
+                GameBaseVariantId = Guid(playerMatch.GameBaseVariantId),
+                GameVariantId = Guid(playerMatch.GameVariant.ResourceId),
+                PlaylistId = Guid(playerStat.PlaylistId),
+                Players = matchReport.PlayerStats.Select(p => MatchPlayer(p)).ToList(),
+                SeasonId = Guid(playerStat.SeasonId),
                 TeamGame = playerMatch.IsTeamGame,
             };
         }
@@ -237,13 +241,13 @@ namespace HaloApp.ApiClient
         {
             return new Domain.Models.MatchPlayer
             {
-                CurrentCsr = Mapper.Csr(matchPlayer.CurrentCsr),
+                AverageLifeTime = Duration(matchPlayer.AvgLifeTimeOfPlayer),
+                CurrentCsr = Csr(matchPlayer.CurrentCsr),
                 Dnf = matchPlayer.DNF,
-                Name = matchPlayer.Player.Player.Gamertag,
-                PreviousCsr = Mapper.Csr(matchPlayer.PreviousCsr),
+                Name = matchPlayer.Player.Gamertag,
+                PreviousCsr = Csr(matchPlayer.PreviousCsr),
                 Rank = matchPlayer.Rank,
-                Result = matchPlayer.Player.Result,
-                Team = matchPlayer.Player.TeamId,
+                Team = matchPlayer.TeamId,
                 TotalAssassinations = matchPlayer.TotalAssassinations,
                 TotalAssists = matchPlayer.TotalAssists,
                 TotalDeaths = matchPlayer.TotalDeaths,
@@ -270,12 +274,25 @@ namespace HaloApp.ApiClient
 
         #region Helpers
 
-        private static System.Uri Uri(string uriString)
+        private static Uri Uri(string uriString)
         {
-            System.Uri uri;
-            return System.Uri.TryCreate(uriString, System.UriKind.Absolute, out uri)
+            Uri uri;
+            return System.Uri.TryCreate(uriString, UriKind.Absolute, out uri)
                 ? uri
                 : null;
+        }
+
+        private static Guid Guid(string guidString)
+        {
+            Guid guid;
+            return System.Guid.TryParse(guidString, out guid)
+                ? guid
+                : System.Guid.Empty;
+        }
+
+        private static TimeSpan Duration(string duration)
+        {
+            return XmlConvert.ToTimeSpan(duration);
         }
 
         #endregion

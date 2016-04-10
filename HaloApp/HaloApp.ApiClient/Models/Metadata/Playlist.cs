@@ -10,6 +10,6 @@ namespace HaloApp.ApiClient.Models.Metadata
         public string imageUrl { get; set; }
         public string gameMode { get; set; }
         public bool isActive { get; set; }
-        public Guid id { get; set; }
+        public string id { get; set; }
     }
 }

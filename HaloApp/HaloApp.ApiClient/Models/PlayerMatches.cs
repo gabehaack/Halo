@@ -14,16 +14,16 @@ namespace HaloApp.ApiClient.Models
     public class PlayerMatch
     {
         public MatchIdClass Id { get; set; }
-        public Guid HopperId { get; set; }
-        public Guid MapId { get; set; }
+        public string HopperId { get; set; }
+        public string MapId { get; set; }
         public MapVariantId MapVariant { get; set; }
-        public Guid GameBaseVariantId { get; set; }
+        public string GameBaseVariantId { get; set; }
         public GameVariantId GameVariant { get; set; }
         public string MatchDuration { get; set; }
         public Iso8601Date MatchCompletedDate { get; set; }
         public List<MatchTeam> Teams { get; set; }
         public bool IsTeamGame { get; set; }
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 
     public class Iso8601Date
@@ -33,17 +33,17 @@ namespace HaloApp.ApiClient.Models
 
     public class GameVariantId
     {
-        public Guid ResourceId { get; set; }
+        public string ResourceId { get; set; }
     }
 
     public class MapVariantId
     {
-        public Guid ResourceId { get; set; }
+        public string ResourceId { get; set; }
     }
 
     public class MatchIdClass
     {
-        public Guid MatchId { get; set; }
+        public string MatchId { get; set; }
         public int GameMode { get; set; }
     }
 

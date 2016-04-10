@@ -11,6 +11,6 @@ namespace HaloApp.ApiClient.Models.Metadata
         public DateTime startDate { get; set; }
         public DateTime? endDate { get; set; }
         public bool isActive { get; set; }
-        public Guid id { get; set; }
+        public string id { get; set; }
     }
 }

@@ -30,6 +30,22 @@ namespace HaloApp.Tests
             await haloDataManager.ReplaceAllMetadataAsync();
         }
 
+        [Fact]
+        public async Task StoreMatches()
+        {
+            var haloDataManager = CreateHaloDataManager();
+
+            await haloDataManager.StoreMatchesAsync("shockRocket");
+        }
+
+        [Fact]
+        public async Task GetMatches()
+        {
+            var haloDataManager = CreateHaloDataManager();
+
+            await haloDataManager.GetMatchesAsync("shockRocket");
+        }
+
         private static HaloDataManager CreateHaloDataManager()
         {
             return new HaloDataManager(CreateHaloApiClient(), CreateHaloRepository());

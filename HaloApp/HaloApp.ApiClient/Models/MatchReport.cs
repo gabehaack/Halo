@@ -18,7 +18,7 @@ namespace HaloApp.ApiClient.Models
         public List<KilledByOpponentDetail> KilledByOpponentDetails { get; set; }
         public MatchFlexibleStats FlexibleStats { get; set; }
         public CreditsEarned CreditsEarned { get; set; }
-        public MatchPlayer Player { get; set; }
+        public MatchReportPlayer Player { get; set; }
         public int TeamId { get; set; }
         public int Rank { get; set; }
         public bool DNF { get; set; }
@@ -53,13 +53,13 @@ namespace HaloApp.ApiClient.Models
         public List<TeamStat> TeamStats { get; set; }
         public bool IsMatchOver { get; set; }
         public string TotalDuration { get; set; }
-        public Guid MapVariantId { get; set; }
-        public Guid GameVariantId { get; set; }
-        public Guid PlaylistId { get; set; }
-        public Guid MapId { get; set; }
-        public Guid GameBaseVariantId { get; set; }
+        public string MapVariantId { get; set; }
+        public string GameVariantId { get; set; }
+        public string PlaylistId { get; set; }
+        public string MapId { get; set; }
+        public string GameBaseVariantId { get; set; }
         public bool IsTeamGame { get; set; }
-        public Guid SeasonId { get; set; }
+        public string SeasonId { get; set; }
     }
 
     public class CreditsEarned
@@ -86,7 +86,7 @@ namespace HaloApp.ApiClient.Models
 
     public class MatchFlexibleStat
     {
-        public Guid Id { get; set; }
+        public string id { get; set; }
         public int Count { get; set; }
     }
 
@@ -100,7 +100,7 @@ namespace HaloApp.ApiClient.Models
 
     public class MatchImpulse
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public int Count { get; set; }
     }
 
@@ -122,12 +122,17 @@ namespace HaloApp.ApiClient.Models
         public int DesignationId { get; set; }
         public int Csr { get; set; }
         public int PercentToNextTier { get; set; }
-        public int Rank { get; set; }
+        public int? Rank { get; set; }
+    }
+
+    public class MatchReportPlayer
+    {
+        public string Gamertag { get; set; }
     }
 
     public class MatchWeaponId
     {
-        public int StockId { get; set; }
+        public long StockId { get; set; }
         public List<int> Attachments { get; set; }
     }
 
@@ -157,7 +162,7 @@ namespace HaloApp.ApiClient.Models
 
     public class MatchMedal
     {
-        public int MedalId { get; set; }
+        public long MedalId { get; set; }
         public int Count { get; set; }
     }
 

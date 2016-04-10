@@ -129,7 +129,7 @@ namespace HaloApp.ApiClient
         public async Task<IEnumerable<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int count = 25)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            queryString["modes"] = ((int)GameMode.Arena).ToString();
+            queryString["modes"] = (GameMode.Arena).ToString().ToLower();
             queryString["start"] = start.ToString();
             queryString["count"] = count.ToString();
             string endpoint = String.Format("/players/{0}/matches?{1}", player, queryString);
@@ -138,7 +138,7 @@ namespace HaloApp.ApiClient
             var matches = new HashSet<DomainModels.Match>();
             foreach (var playerMatch in playerMatches.Results)
             {
-                var matchReport = await GetMatchReportAsync(playerMatch.Id.MatchId);
+                var matchReport = await GetMatchReportAsync(Guid.Parse(playerMatch.Id.MatchId));
                 matches.Add(Mapper.Match(playerMatch, matchReport));
             }
             return matches;
@@ -166,9 +166,9 @@ namespace HaloApp.ApiClient
             return await DeserializeContentAsync<List<T>>(response);
         }
 
-        private async Task<T> GetMetadatumAsync<T>(string entity, Guid id)
+        private async Task<T> GetMetadatumAsync<T>(string entity, Guid metadatumId)
         {
-            var response = await GetAsync(String.Format("/metadata/h5/metadata/{0}/{1}", entity, id));
+            var response = await GetAsync(String.Format("/metadata/h5/metadata/{0}/{1}", entity, metadatumId));
             return await DeserializeContentAsync<T>(response);
         }
 
