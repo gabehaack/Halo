@@ -29,31 +29,33 @@ namespace HaloApp.Domain
 
         public async Task ReplaceAllMetadataAsync()
         {
-            var csrDesignationTask = ReplaceCsrDesignationMetadataAsync();
-            var flexibleStatTask = ReplaceFlexibleStatMetadataAsync();
-            var gameBaseVariantTask = ReplaceGameBaseVariantMetadataAsync();
-            var impulseTask = ReplaceImpulseMetadataAsync();
-            var mapTask = ReplaceMapMetadataAsync();
-            var medalTask = ReplaceMedalMetadataAsync();
-            var playlistTask = ReplacePlaylistMetadataAsync();
-            var seasonTask = ReplaceSeasonMetadataAsync();
-            var spartanRankTask = ReplaceSpartanRankMetadataAsync();
-            var teamColorTask = ReplaceTeamColorMetadataAsync();
-            var vehicleTask = ReplaceVehicleMetadataAsync();
-            var weaponTask = ReplaceWeaponMetadataAsync();
+            Task csrDesignationTask = ReplaceCsrDesignationMetadataAsync();
+            Task flexibleStatTask = ReplaceFlexibleStatMetadataAsync();
+            Task gameBaseVariantTask = ReplaceGameBaseVariantMetadataAsync();
+            //Task impulseTask = ReplaceImpulseMetadataAsync();
+            Task mapTask = ReplaceMapMetadataAsync();
+            Task medalTask = ReplaceMedalMetadataAsync();
+            Task playlistTask = ReplacePlaylistMetadataAsync();
+            Task seasonTask = ReplaceSeasonMetadataAsync();
+            Task spartanRankTask = ReplaceSpartanRankMetadataAsync();
+            Task teamColorTask = ReplaceTeamColorMetadataAsync();
+            Task vehicleTask = ReplaceVehicleMetadataAsync();
+            Task weaponTask = ReplaceWeaponMetadataAsync();
 
-            await csrDesignationTask;
-            await flexibleStatTask;
-            await gameBaseVariantTask;
-            await impulseTask;
-            await mapTask;
-            await medalTask;
-            await playlistTask;
-            await seasonTask;
-            await spartanRankTask;
-            await teamColorTask;
-            await vehicleTask;
-            await weaponTask;
+            await Task.WhenAll(new Task[] {
+                csrDesignationTask,
+                flexibleStatTask,
+                gameBaseVariantTask,
+                //impulseTask,
+                mapTask,
+                medalTask,
+                playlistTask,
+                seasonTask,
+                spartanRankTask,
+                teamColorTask,
+                vehicleTask,
+                weaponTask,
+            });
         }
 
         public async Task ReplaceCsrDesignationMetadataAsync()
@@ -74,11 +76,11 @@ namespace HaloApp.Domain
             await _haloRepository.ReplaceMetadata(gameBaseVariantMetadata.ToList());
         }
 
-        public async Task ReplaceImpulseMetadataAsync()
-        {
-            var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
-            await _haloRepository.ReplaceMetadata(impulseMetadata.ToList());
-        }
+        //public async Task ReplaceImpulseMetadataAsync()
+        //{
+        //    var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
+        //    await _haloRepository.ReplaceMetadata(impulseMetadata.ToList());
+        //}
 
         public async Task ReplaceMapMetadataAsync()
         {

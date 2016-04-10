@@ -11,10 +11,10 @@ namespace HaloApp.Domain.Services
         Task<IEnumerable<CsrDesignation>> GetCsrDesignationMetadataAsync();
         Task<IEnumerable<FlexibleStat>> GetFlexibleStatMetadataAsync();
         Task<IEnumerable<GameBaseVariant>> GetGameBaseVariantMetadataAsync();
-        Task<GameVariant> GetGameVariantMetadataAsync(Guid gameVariantId);
-        Task<IEnumerable<Impulse>> GetImpulseMetadataAsync();
+        Task<GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId);
+        //Task<IEnumerable<Impulse>> GetImpulseMetadataAsync();
         Task<IEnumerable<Map>> GetMapMetadataAsync();
-        Task<MapVariant> GetMapVariantMetadataAsync(Guid mapVariantId);
+        Task<MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId);
         Task<IEnumerable<Match>> GetMatchesAsync(string player, int start = 0, int count = 25);
         Task<IEnumerable<Medal>> GetMedalMetadataAsync();
         Task<IEnumerable<Playlist>> GetPlaylistMetadataAsync();

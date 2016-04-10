@@ -26,7 +26,7 @@ namespace HaloApp.Data
 
         public async Task ReplaceMetadata<TMetadata>(IList<TMetadata> metadata)
         {
-            string metadataCollectionName = nameof(TMetadata) + 's';
+            string metadataCollectionName = typeof(TMetadata).Name + 's';
             await _haloDb.DropCollectionAsync(metadataCollectionName);
             var metadataCollection = _haloDb.GetCollection<TMetadata>(metadataCollectionName);
             await metadataCollection.InsertManyAsync(metadata);
@@ -41,7 +41,7 @@ namespace HaloApp.Data
             BsonClassMap.RegisterClassMap<FlexibleStat>();
             BsonClassMap.RegisterClassMap<GameBaseVariant>();
             BsonClassMap.RegisterClassMap<GameVariant>();
-            BsonClassMap.RegisterClassMap<Impulse>();
+            //BsonClassMap.RegisterClassMap<Impulse>();
             BsonClassMap.RegisterClassMap<Map>();
             BsonClassMap.RegisterClassMap<MapVariant>();
             BsonClassMap.RegisterClassMap<Medal>();

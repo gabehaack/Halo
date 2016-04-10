@@ -1,6 +1,5 @@
 ﻿using HaloApp.ApiClient.Models;
 using HaloApp.ApiClient.Models.Metadata;
-using System;
 using System.Linq;
 using DomainMetadata = HaloApp.Domain.Models.Metadata;
 using GHaack.Utilities;
@@ -26,7 +25,7 @@ namespace HaloApp.ApiClient
         {
             return new DomainMetadata.CsrTier
             {
-                IconImageUrl = new Uri(csrTier.iconImageUrl),
+                IconImageUrl = Uri(csrTier.iconImageUrl),
                 Id = csrTier.id,
             };
         }
@@ -45,7 +44,7 @@ namespace HaloApp.ApiClient
         {
             return new DomainMetadata.GameBaseVariant
             {
-                IconUrl = new Uri(gameBaseVariant.iconUrl),
+                IconUrl = Uri(gameBaseVariant.iconUrl),
                 Id = gameBaseVariant.id,
                 Name = gameBaseVariant.name,
                 SupportedGameModes = gameBaseVariant.supportedGameModes.Select(m => EnumUtility.Parse<Domain.Enums.GameMode>(m)).ToList(),
@@ -58,19 +57,19 @@ namespace HaloApp.ApiClient
             {
                 Description = gameVariant.description,
                 GameBaseVariantId = gameVariant.gameBaseVariantId,
-                IconUrl = new Uri(gameVariant.iconUrl),
+                IconUrl = Uri(gameVariant.iconUrl),
                 Id = gameVariant.id,
                 Name = gameVariant.name,
             };
         }
 
-        public static DomainMetadata.Impulse Impulse(Impulse impulse)
-        {
-            return new DomainMetadata.Impulse
-            {
-                Id = impulse.id,
-            };
-        }
+        //public static DomainMetadata.Impulse Impulse(Impulse impulse)
+        //{
+        //    return new DomainMetadata.Impulse
+        //    {
+        //        Id = impulse.id,
+        //    };
+        //}
 
         public static DomainMetadata.Map Map(Map map)
         {
@@ -78,7 +77,7 @@ namespace HaloApp.ApiClient
             {
                 Description = map.description,
                 Id = map.id,
-                ImageUrl = new Uri(map.imageUrl),
+                ImageUrl = Uri(map.imageUrl),
                 Name = map.name,
                 SupportedGameModes = map.supportedGameModes.Select(m => EnumUtility.Parse<Domain.Enums.GameMode>(m)).ToList(),
             };
@@ -91,7 +90,7 @@ namespace HaloApp.ApiClient
                 Description = mapVariant.description,
                 Id = mapVariant.id,
                 MapId = mapVariant.mapId,
-                MapImageUrl = new Uri(mapVariant.mapImageUrl),
+                MapImageUrl = Uri(mapVariant.mapImageUrl),
                 Name = mapVariant.name,
             };
         }
@@ -116,7 +115,7 @@ namespace HaloApp.ApiClient
                 Height = medalSpriteLocation.height,
                 Left = medalSpriteLocation.left,
                 SpriteHeight = medalSpriteLocation.spriteHeight,
-                SpriteSheetUri = new Uri(medalSpriteLocation.spriteSheetUri),
+                SpriteSheetUri = Uri(medalSpriteLocation.spriteSheetUri),
                 SpriteWidth = medalSpriteLocation.spriteWidth,
                 Top = medalSpriteLocation.top,
                 Width = medalSpriteLocation.width,
@@ -131,7 +130,7 @@ namespace HaloApp.ApiClient
                 Description = playlist.description,
                 GameMode = EnumUtility.Parse<Domain.Enums.GameMode>(playlist.gameMode),
                 Id = playlist.id,
-                ImageUrl = new Uri(playlist.imageUrl),
+                ImageUrl = Uri(playlist.imageUrl),
                 Name = playlist.name,
                 Ranked = playlist.isRanked,
             };
@@ -142,12 +141,12 @@ namespace HaloApp.ApiClient
             return new DomainMetadata.Season
             {
                 Active = season.isActive,
-                EndDate = season.endDate.ISO8601Date,
-                IconUrl = new Uri(season.iconUrl),
+                EndDate = season.endDate,
+                IconUrl = Uri(season.iconUrl),
                 Id = season.id,
                 Name = season.name,
                 PlaylistIds = season.playlists.Select(p => p.id).ToList(),
-                StartDate = season.startDate.ISO8601Date,
+                StartDate = season.startDate,
             };
         }
 
@@ -166,7 +165,7 @@ namespace HaloApp.ApiClient
             {
                 Color = teamColor.color,
                 Description = teamColor.description,
-                IconUrl = new Uri(teamColor.iconUrl),
+                IconUrl = Uri(teamColor.iconUrl),
                 Id = teamColor.id,
                 Name = teamColor.name,
             };
@@ -178,9 +177,9 @@ namespace HaloApp.ApiClient
             {
                 Description = vehicle.description,
                 Id = vehicle.id,
-                LargeIconImageUrl = new Uri(vehicle.largeIconImageUrl),
+                LargeIconImageUrl = Uri(vehicle.largeIconImageUrl),
                 Name = vehicle.name,
-                SmallIconImageUrl = new Uri(vehicle.smallIconImageUrl),
+                SmallIconImageUrl = Uri(vehicle.smallIconImageUrl),
                 UsableByPlayer = vehicle.isUsableByPlayer,
             };
         }
@@ -191,9 +190,9 @@ namespace HaloApp.ApiClient
             {
                 Description = weapon.description,
                 Id = weapon.id,
-                LargeIconImageUrl = new Uri(weapon.largeIconImageUrl),
+                LargeIconImageUrl = Uri(weapon.largeIconImageUrl),
                 Name = weapon.name,
-                SmallIconImageUrl = new Uri(weapon.smallIconImageUrl),
+                SmallIconImageUrl = Uri(weapon.smallIconImageUrl),
                 Type = EnumUtility.Parse<Domain.Enums.WeaponType>(weapon.type),
                 UsableByPlayer = weapon.isUsableByPlayer,
             };
@@ -265,6 +264,18 @@ namespace HaloApp.ApiClient
                 TotalShoulderBashKills = matchPlayer.TotalShoulderBashKills,
                 TotalWeaponDamage = matchPlayer.TotalWeaponDamage,
             };
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private static System.Uri Uri(string uriString)
+        {
+            System.Uri uri;
+            return System.Uri.TryCreate(uriString, System.UriKind.Absolute, out uri)
+                ? uri
+                : null;
         }
 
         #endregion

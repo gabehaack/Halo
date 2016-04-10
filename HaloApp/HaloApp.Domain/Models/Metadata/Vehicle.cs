@@ -9,6 +9,6 @@ namespace HaloApp.Domain.Models.Metadata
         public Uri LargeIconImageUrl { get; set; }
         public Uri SmallIconImageUrl { get; set; }
         public bool UsableByPlayer { get; set; }
-        public int Id { get; set; }
+        public long Id { get; set; }
     }
 }

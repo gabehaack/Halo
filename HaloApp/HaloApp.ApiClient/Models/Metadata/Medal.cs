@@ -7,7 +7,7 @@
         public string classification { get; set; }
         public int difficulty { get; set; }
         public MedalSpriteLocation spriteLocation { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
 
     }
 

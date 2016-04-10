@@ -9,7 +9,7 @@ namespace HaloApp.Domain.Models.Metadata
         public Uri IconUrl { get; set; }
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public bool Active { get; set; }
         public Guid Id { get; set; }
     }

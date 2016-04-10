@@ -8,6 +8,6 @@
         public string largeIconImageUrl { get; set; }
         public string smallIconImageUrl { get; set; }
         public bool isUsableByPlayer { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
     }
 }

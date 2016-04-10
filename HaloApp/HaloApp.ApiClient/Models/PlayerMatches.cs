@@ -20,13 +20,13 @@ namespace HaloApp.ApiClient.Models
         public Guid GameBaseVariantId { get; set; }
         public GameVariantId GameVariant { get; set; }
         public string MatchDuration { get; set; }
-        public Date MatchCompletedDate { get; set; }
+        public Iso8601Date MatchCompletedDate { get; set; }
         public List<MatchTeam> Teams { get; set; }
         public bool IsTeamGame { get; set; }
         public Guid SeasonId { get; set; }
     }
 
-    public class Date
+    public class Iso8601Date
     {
         public DateTime ISO8601Date { get; set; }
     }

@@ -10,7 +10,7 @@ namespace HaloApp.Domain.Models.Metadata
         public MedalClassification Classification { get; set; }
         public int Difficulty { get; set; }
         public MedalSpriteLocation SpriteLocation { get; set; }
-        public int Id { get; set; }
+        public long Id { get; set; }
 
     }
 

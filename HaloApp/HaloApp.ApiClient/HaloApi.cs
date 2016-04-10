@@ -6,7 +6,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using DomainMetadata = HaloApp.Domain.Models.Metadata;
@@ -20,10 +22,16 @@ namespace HaloApp.ApiClient
 
         public HaloApi(Uri baseUri, string subscriptionKey)
         {
-            _httpClient = new HttpClient
+            var handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            _httpClient = new HttpClient(handler)
             {
                 BaseAddress = baseUri,
             };
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Add(
                 "Ocp-Apim-Subscription-Key", subscriptionKey);
         }
@@ -48,22 +56,22 @@ namespace HaloApp.ApiClient
             return gameBaseVariantMetadata.Select(m => Mapper.GameBaseVariant(m));
         }
 
-        public async Task<DomainMetadata.GameVariant> GetGameVariantAsync(Guid gameVariantId)
+        public async Task<DomainMetadata.GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId)
         {
-            var gameVariantMetadata = await GetMetadataAsync<GameVariant>("game-variants/" + gameVariantId);
-            return gameVariantMetadata.Select(m => Mapper.GameVariant(m));
+            var gameVariantMetadatum = await GetMetadatumAsync<GameVariant>("game-variants/", gameVariantId);
+            return Mapper.GameVariant(gameVariantMetadatum);
         }
 
-        public async Task<IEnumerable<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
-        {
-            var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
-            return impulseMetadata.Select(m => Mapper.Impulse(m));
-        }
+        //public async Task<IEnumerable<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
+        //{
+        //    var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
+        //    return impulseMetadata.Select(m => Mapper.Impulse(m));
+        //}
 
-        public async Task<DomainMetadata.MapVariant> GetMapVariantMetadataAsync(Guid mapVariantId)
+        public async Task<DomainMetadata.MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId)
         {
-            var mapVariantMetadata = await GetMetadataAsync<MapVariant>("map-variants/" + mapVariantId);
-            return mapVariantMetadata.Select(m => Mapper.MapVariant(m));
+            var mapVariantMetadatum = await GetMetadatumAsync<MapVariant>("map-variants/", mapVariantId);
+            return Mapper.MapVariant(mapVariantMetadatum);
         }
 
         public async Task<IEnumerable<DomainMetadata.Map>> GetMapMetadataAsync()
@@ -86,7 +94,7 @@ namespace HaloApp.ApiClient
 
         public async Task<IEnumerable<DomainMetadata.Season>> GetSeasonMetadataAsync()
         {
-            var seasonMetadata = await GetMetadataAsync<Season>("season");
+            var seasonMetadata = await GetMetadataAsync<Season>("seasons");
             return seasonMetadata.Select(m => Mapper.Season(m));
         }
 
@@ -121,12 +129,11 @@ namespace HaloApp.ApiClient
         public async Task<IEnumerable<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int count = 25)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            queryString["modes"] = ((int) GameMode.Arena).ToString();
+            queryString["modes"] = ((int)GameMode.Arena).ToString();
             queryString["start"] = start.ToString();
             queryString["count"] = count.ToString();
             string endpoint = String.Format("/players/{0}/matches?{1}", player, queryString);
-            var response = await GetStatsAsync(endpoint);
-            var playerMatches = await DeserializeContentAsync<PlayerMatches>(response);
+            var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
 
             var matches = new HashSet<DomainModels.Match>();
             foreach (var playerMatch in playerMatches.Results)
@@ -140,23 +147,46 @@ namespace HaloApp.ApiClient
         private async Task<MatchReport> GetMatchReportAsync(Guid matchId)
         {
             string endpoint = "/arena/matches/" + matchId;
-            var response = await GetStatsAsync(endpoint);
-            return await DeserializeContentAsync<MatchReport>(response);
+            return await GetStatsAsync<MatchReport>(endpoint);
         }
 
         #endregion
 
         #region Generic Helpers
 
-        private async Task<HttpResponseMessage> GetStatsAsync(string endpoint)
+        private async Task<T> GetStatsAsync<T>(string endpoint)
         {
-            return await _httpClient.GetAsync("/stats/h5" + endpoint);
+            var response = await GetAsync("/stats/h5" + endpoint);
+            return await DeserializeContentAsync<T>(response);
         }
 
         private async Task<List<T>> GetMetadataAsync<T>(string entity)
         {
-            var response = await _httpClient.GetAsync("/metadata/h5/metadata/" + entity);
+            var response = await GetAsync("/metadata/h5/metadata/" + entity);
             return await DeserializeContentAsync<List<T>>(response);
+        }
+
+        private async Task<T> GetMetadatumAsync<T>(string entity, Guid id)
+        {
+            var response = await GetAsync(String.Format("/metadata/h5/metadata/{0}/{1}", entity, id));
+            return await DeserializeContentAsync<T>(response);
+        }
+
+        private async Task<HttpResponseMessage> GetAsync(string endpoint)
+        {
+            var response = await _httpClient.GetAsync(endpoint);
+            for (int i = 0; i < 10; i++)
+            {
+                if (response.IsSuccessStatusCode)
+                    return response;
+                if ((int) response.StatusCode == 429)
+                {
+                    await Task.Delay(1000);
+                    response = await _httpClient.GetAsync(endpoint);
+                }
+            }
+            response.EnsureSuccessStatusCode();
+            return response;
         }
 
         private async Task<T> DeserializeContentAsync<T>(HttpResponseMessage response)

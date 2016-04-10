@@ -2,6 +2,6 @@
 {
     public class Impulse
     {
-        public int id { get; set; }
+        public long id { get; set; }
     }
 }

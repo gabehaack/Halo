@@ -23,7 +23,7 @@ namespace HaloApp.Tests
             ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
 
         [Fact]
-        public async Task ReplaceMetadata()
+        public async Task ReplaceAllMetadata()
         {
             var haloDataManager = CreateHaloDataManager();
 
