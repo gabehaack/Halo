@@ -4,10 +4,8 @@ using HaloApp.Domain;
 using HaloApp.Domain.Services;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,6 +20,8 @@ namespace HaloApp.Tests
         private static readonly string MongoDbConnection =
             ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
 
+        private const string Player = "shockRocket";
+
         [Fact]
         public async Task ReplaceAllMetadata()
         {
@@ -35,7 +35,7 @@ namespace HaloApp.Tests
         {
             var haloDataManager = CreateHaloDataManager();
 
-            await haloDataManager.StoreMatchesAsync("shockRocket");
+            await haloDataManager.StoreMatchesAsync(Player);
         }
 
         [Fact]
@@ -43,7 +43,8 @@ namespace HaloApp.Tests
         {
             var haloDataManager = CreateHaloDataManager();
 
-            await haloDataManager.GetMatchesAsync("shockRocket");
+            var matches = await haloDataManager.GetMatchesAsync(Player);
+            var playerStats = haloDataManager.GetPlayerStats(matches.ToList(), Player);
         }
 
         private static HaloDataManager CreateHaloDataManager()

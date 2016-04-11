@@ -267,6 +267,21 @@ namespace HaloApp.ApiClient
                 TotalShoulderBashDamage = matchPlayer.TotalShoulderBashDamage,
                 TotalShoulderBashKills = matchPlayer.TotalShoulderBashKills,
                 TotalWeaponDamage = matchPlayer.TotalWeaponDamage,
+                WeaponsStats = matchPlayer.WeaponStats.Select(w => WeaponStats(w)).ToList(),
+            };
+        }
+
+        public static Domain.Models.WeaponStats WeaponStats(MatchWeapon matchWeapon)
+        {
+            return new Domain.Models.WeaponStats
+            {
+                DamageDealt = matchWeapon.TotalDamageDealt,
+                Headshots = matchWeapon.TotalHeadshots,
+                Id = matchWeapon.WeaponId.StockId,
+                Kills = matchWeapon.TotalKills,
+                PossessionTime = Duration(matchWeapon.TotalPossessionTime),
+                ShotsFired = matchWeapon.TotalShotsFired,
+                ShotsLanded = matchWeapon.TotalShotsLanded,
             };
         }
 

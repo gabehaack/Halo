@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace HaloApp.Domain.Models
 {
@@ -30,14 +31,20 @@ namespace HaloApp.Domain.Models
         public double TotalPowerWeaponDamage { get; set; }
         public int TotalPowerWeaponGrabs { get; set; }
         public int TotalGrenadeKills { get; set; }
-    }
+        public IList<WeaponStats> WeaponsStats { get; set; }
 
-    public class Csr
-    {
-        public int CsrDesignationId { get; set; }
-        public int CsrDesignationTierId { get; set; }
-        public int PercentToNextTier { get; set; }
-        public int? Rank { get; set; }
-        public int Value { get; set; }
+        public double DamageDealt
+        {
+            get
+            {
+                return HaloDataManager.Round(
+                    TotalGrenadeDamage +
+                    TotalGroundPoundDamage +
+                    TotalMeleeDamage +
+                    TotalPowerWeaponDamage +
+                    TotalShoulderBashDamage +
+                    TotalWeaponDamage);
+            }
+        }
     }
 }

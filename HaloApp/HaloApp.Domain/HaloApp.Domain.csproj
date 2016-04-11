@@ -45,6 +45,7 @@
     <Compile Include="Enums\MedalClassification.cs" />
     <Compile Include="Enums\WeaponType.cs" />
     <Compile Include="HaloDataManager.cs" />
+    <Compile Include="Models\Csr.cs" />
     <Compile Include="Models\MatchPlayer.cs" />
     <Compile Include="Models\Metadata\CsrDesignation.cs" />
     <Compile Include="Models\Metadata\FlexibleStat.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="Models\Metadata\TeamColor.cs" />
     <Compile Include="Models\Metadata\Vehicle.cs" />
     <Compile Include="Models\Metadata\Weapon.cs" />
+    <Compile Include="Models\PlayerStats.cs" />
+    <Compile Include="Models\WeaponStats.cs" />
     <Compile Include="Services\IHaloApi.cs" />
     <Compile Include="Models\Match.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

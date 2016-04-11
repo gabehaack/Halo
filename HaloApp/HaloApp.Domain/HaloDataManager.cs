@@ -145,21 +145,62 @@ namespace HaloApp.Domain
             return await _haloRepository.GetMatchesAsync(player);
         }
 
+        // TODO - medals and other raw data not being analyzed right now
+        // Also, accuracy, k/d and some other things aren't showing up correctly,
+        // accuracy is 0 so calculated wrong, k/d doesn't show 2nd decimal place
+
+        public PlayerStats GetPlayerStats(IList<Match> matches, string player)
+        {
+            var matchPlayers = matches
+                .Select(m => m.GetPlayer(player))
+                .ToList();
+            var weaponIds = matchPlayers
+                .SelectMany(p => p.WeaponsStats.Select(w => w.Id))
+                .Distinct()
+                .ToList();
+            var weaponsStats = new List<WeaponStats>();
+            foreach (var weaponId in weaponIds)
+            {
+                var weapons = matchPlayers
+                    .Select(p => p.WeaponsStats.FirstOrDefault(w => w.Id == weaponId))
+                    .Where(w => w != null)
+                    .ToList();
+                weaponsStats.Add(new WeaponStats
+                {
+                    DamageDealt = weapons.Sum(w => w.DamageDealt),
+                    Headshots = weapons.Sum(w => w.Headshots),
+                    Id = weaponId,
+                    Kills = weapons.Sum(w => w.Kills),
+                    PossessionTime = TimeSpan.FromMilliseconds(weapons.Sum(w => w.PossessionTime.TotalMilliseconds)),
+                    ShotsFired = weapons.Sum(w => w.ShotsFired),
+                    ShotsLanded = weapons.Sum(w => w.ShotsLanded),
+                });
+            }
+            return new PlayerStats
+            {
+                Assists = matchPlayers.Sum(p => p.TotalAssists),
+                DamageDealt = matchPlayers.Sum(p => p.DamageDealt),
+                Deaths = matchPlayers.Sum(p => p.TotalDeaths),
+                GamesPlayed = matchPlayers.Count,
+                Kills = matchPlayers.Sum(p => p.TotalKills),
+                Name = player,
+                ShotsFired = matchPlayers.Sum(p => p.TotalShotsFired),
+                ShotsLanded = matchPlayers.Sum(p => p.TotalShotsLanded),
+                TimePlayed = TimeSpan.FromMilliseconds(matches.Sum(m => m.Duration.TotalMilliseconds)),
+                WeaponsStats = weaponsStats,
+            };
+        }
+
         #endregion
 
-        #region Analysis - maybe should be separate class?
+        public static double Round(double value)
+        {
+            return Math.Round(value, 1);
+        }
 
-        /*
-        TODO
-        Some calculations in MatchPlayer object?
-         - KDA
-         - Dmg/D
-         - K/D
-         - K/sec
-         - Dmg/sec
-
-        */
-
-        #endregion
+        public static double RoundPercentage(double value)
+        {
+            return Math.Round(value, 3);
+        }
     }
 }

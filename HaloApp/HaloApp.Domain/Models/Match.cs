@@ -1,6 +1,7 @@
 ﻿using HaloApp.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HaloApp.Domain.Models
 {
@@ -18,5 +19,10 @@ namespace HaloApp.Domain.Models
         public IList<MatchPlayer> Players { get; set; }
         public Guid SeasonId { get; set; }
         public bool TeamGame { get; set; }
+
+        public MatchPlayer GetPlayer(string player)
+        {
+            return Players.FirstOrDefault(p => p.Name == player);
+        }
     }
 }
