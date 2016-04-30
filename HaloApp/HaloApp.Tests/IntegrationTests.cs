@@ -1,4 +1,5 @@
-﻿using HaloApp.ApiClient;
+﻿using AutoMapper;
+using HaloApp.ApiClient;
 using HaloApp.Data;
 using HaloApp.Domain;
 using HaloApp.Domain.Services;
@@ -21,6 +22,30 @@ namespace HaloApp.Tests
             ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
 
         private const string Player = "shockRocket";
+
+        private static HaloDataManager HaloDataManager()
+        {
+            return new HaloDataManager(HaloApiClient(), HaloRepository());
+        }
+
+        private static IHaloApi HaloApiClient()
+        {
+            return new HaloApi(HaloApiUri, SubscriptionKey);
+        }
+
+        private static IHaloRepository HaloRepository()
+        {
+            IMongoClient mongoClient = new MongoClient(MongoDbConnection);
+            return new MongoHaloRepository(mongoClient);
+        }
+
+        public IntegrationTests()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<HaloApiMapProfile>();
+            });
+        }
 
         [Fact]
         public async Task ReplaceAllMetadata()
@@ -51,22 +76,6 @@ namespace HaloApp.Tests
             double othertotal = player.WeaponsStats
                 .Sum(w => w.DamageDealt);
             double diff = totalWeaponDamage - othertotal;
-        }
-
-        private static HaloDataManager HaloDataManager()
-        {
-            return new HaloDataManager(HaloApiClient(), HaloRepository());
-        }
-
-        private static IHaloApi HaloApiClient()
-        {
-            return new HaloApi(HaloApiUri, SubscriptionKey);
-        }
-
-        private static IHaloRepository HaloRepository()
-        {
-            IMongoClient mongoClient = new MongoClient(MongoDbConnection);
-            return new MongoHaloRepository(mongoClient);
         }
     }
 }

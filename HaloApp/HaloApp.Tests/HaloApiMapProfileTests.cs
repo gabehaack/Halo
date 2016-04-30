@@ -34,6 +34,70 @@ namespace HaloApp.Tests
             Mapper.AssertConfigurationIsValid();
         }
 
+        #region Type Conversion
+
+        [Fact]
+        public void UriTypeConversion()
+        {
+            string source = "http://uri";
+            var uri = Mapper.Map<Uri>(source);
+
+            Assert.NotNull(uri);
+            Assert.IsType<Uri>(uri);
+            Assert.True(uri.Equals(new Uri(source)));
+        }
+
+        [Fact]
+        public void UriTypeConversion_Null()
+        {
+            string source = null;
+            var uri = Mapper.Map<Uri>(source);
+
+            Assert.Null(uri);
+        }
+
+        [Fact]
+        public void GuidTypeConversion()
+        {
+            var source = Guid.NewGuid();
+            var guid = Mapper.Map<Guid>(source.ToString());
+
+            Assert.NotNull(guid);
+            Assert.IsType<Guid>(guid);
+            Assert.Equal(source, guid);
+        }
+
+        [Fact]
+        public void GuidTypeConversion_Null()
+        {
+            string source = null;
+            var guid = Mapper.Map<Guid>(source);
+
+            Assert.Equal(Guid.Empty, guid);
+        }
+
+        [Fact]
+        public void TimeSpanTypeConversion()
+        {
+            string source = "PT1M30S";
+            var timeSpan = Mapper.Map<TimeSpan>(source);
+
+            Assert.NotNull(timeSpan);
+            Assert.IsType<TimeSpan>(timeSpan);
+            Assert.Equal(TimeSpan.FromSeconds(90), timeSpan);
+        }
+
+        [Fact]
+        public void TimeSpanTypeConversion_Null()
+        {
+            string source = null;
+            var timeSpan = Mapper.Map<TimeSpan>(source);
+
+            Assert.Equal(TimeSpan.Zero, timeSpan);
+        }
+        
+        #endregion
+
         [Fact]
         public void CsrTier()
         {

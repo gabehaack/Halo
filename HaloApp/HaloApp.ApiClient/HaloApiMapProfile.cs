@@ -103,7 +103,7 @@ namespace HaloApp.ApiClient
         {
             public Uri Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 Uri uri;
                 return Uri.TryCreate(source, UriKind.Absolute, out uri)
                     ? uri
@@ -115,7 +115,7 @@ namespace HaloApp.ApiClient
         {
             public Guid Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 Guid guid;
                 return Guid.TryParse(source, out guid)
                     ? guid
@@ -127,8 +127,10 @@ namespace HaloApp.ApiClient
         {
             public TimeSpan Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
-                return XmlConvert.ToTimeSpan(source);
+                string source = (string) context.SourceValue;
+                return !String.IsNullOrWhiteSpace(source)
+                    ? XmlConvert.ToTimeSpan(source)
+                    : TimeSpan.Zero;
             }
         }
 
@@ -136,7 +138,7 @@ namespace HaloApp.ApiClient
         {
             public GameMode Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<GameMode>(source);
             }
         }
@@ -145,7 +147,7 @@ namespace HaloApp.ApiClient
         {
             public FlexibleStatType Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<FlexibleStatType>(source);
             }
         }
@@ -154,7 +156,7 @@ namespace HaloApp.ApiClient
         {
             public MedalClassification Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<MedalClassification>(source);
             }
         }
@@ -163,7 +165,7 @@ namespace HaloApp.ApiClient
         {
             public WeaponType Convert(ResolutionContext context)
             {
-                string source = (string)context.SourceValue;
+                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<WeaponType>(source);
             }
         }
