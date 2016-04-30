@@ -10,6 +10,7 @@ using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace HaloApp.Tests
@@ -20,6 +21,13 @@ namespace HaloApp.Tests
         private static Random Random = new Random();
         private static DataGenerator DataGenerator = new DataGenerator(Random);
         private const string Player = "shockRocket";
+
+        private static HaloDataManager HaloDataManager()
+        {
+            var haloApi = Substitute.For<IHaloApi>();
+            var haloRepository = Substitute.For<IHaloRepository>();
+            return new HaloDataManager(haloApi, haloRepository);
+        }
 
         [Fact]
         public void Ctor()
@@ -34,127 +42,81 @@ namespace HaloApp.Tests
         [Fact]
         public void GetPlayerStats()
         {
-            var haloApi = Substitute.For<IHaloApi>();
-            var haloRepository = Substitute.For<IHaloRepository>();
-            var haloDataManager = new HaloDataManager(haloApi, haloRepository);
+            var haloDataManager = HaloDataManager();
+            var matches = MatchData();
 
-            var matches = MatchData(Player, 5);
-            // TODO - actually write the unit test
+            var playerStats = haloDataManager.GetPlayerStats(matches, Player);
+            Assert.Equal(0.5, playerStats.Accuracy);
         }
 
-        private IList<Match> MatchData(string player, int quantity)
+        private IList<Match> MatchData()
         {
-            var matches = new List<Match>();
-            for (int i = 0; i < quantity; i++)
+            return new List<Match>
             {
-                matches.Add(MatchDatum(player));
-            }
-            return matches;
-        }
-
-        private Match MatchDatum(string player)
-        {
-            return new Match
-            {
-                Completed = DateTime.Now,
-                Duration = TimeSpan.FromMinutes(DataGenerator.Int(10, 20)),
-                GameBaseVariantId = Guid.NewGuid(),
-                GameMode = EnumUtility.GetRandomEnumValue<GameMode>(),
-                GameVariantId = Guid.NewGuid(),
-                Id = Guid.NewGuid(),
-                MapId = Guid.NewGuid(),
-                MapVariant = Guid.NewGuid(),
-                Players = MatchPlayerData(player),
-                PlaylistId = Guid.NewGuid(),
-                SeasonId = Guid.NewGuid(),
-                TeamGame = DataGenerator.Bool(),
+                new Match
+                {
+                    Duration = TimeSpan.FromMinutes(10),
+                    GameMode = GameMode.Arena,
+                    Players = MatchPlayerData(),
+                    TeamGame = true,
+                },
             };
         }
 
-        private IList<MatchPlayer> MatchPlayerData(string player)
+        private IList<MatchPlayer> MatchPlayerData()
         {
-            var matchPlayers = new List<MatchPlayer>();
-            int team1 = DataGenerator.PositiveInt();
-            matchPlayers.Add(MatchPlayerDatum(player, team1));
-            for (int i = 0; i < 3; i++)
+            return new List<MatchPlayer>
             {
-                matchPlayers.Add(MatchPlayerDatum(DataGenerator.String(10, 15), team1));
-            }
-            int team2 = DataGenerator.PositiveInt();
-            for (int i = 0; i < 4; i++)
-            {
-                matchPlayers.Add(MatchPlayerDatum(DataGenerator.String(10, 15), team2));
-            }
-            return matchPlayers;
-        }
-
-        private MatchPlayer MatchPlayerDatum(string player, int team)
-        {
-            return new MatchPlayer
-            {
-                AverageLifeTime = TimeSpan.FromSeconds(DataGenerator.PositiveInt(60)),
-                CurrentCsr = CsrDatum(),
-                Dnf = DataGenerator.Bool(),
-                Name = player,
-                PreviousCsr = CsrDatum(),
-                Rank = DataGenerator.Int(),
-                Team = team,
-                TotalAssassinations = DataGenerator.Int(),
-                TotalAssists = DataGenerator.Int(),
-                TotalDeaths = DataGenerator.Int(),
-                TotalGrenadeDamage = DataGenerator.Double(1000),
-                TotalGrenadeKills = DataGenerator.Int(),
-                TotalGroundPoundDamage = DataGenerator.Double(1000),
-                TotalGroundPoundKills = DataGenerator.Int(),
-                TotalHeadshots = DataGenerator.Int(),
-                TotalKills = DataGenerator.Int(),
-                TotalMeleeDamage = DataGenerator.Double(1000),
-                TotalMeleeKills = DataGenerator.Int(),
-                TotalPowerWeaponDamage = DataGenerator.Double(1000),
-                TotalPowerWeaponGrabs = DataGenerator.Int(),
-                TotalPowerWeaponKills = DataGenerator.Int(),
-                TotalShotsFired = DataGenerator.Int(),
-                TotalShotsLanded = DataGenerator.Int(),
-                TotalShoulderBashDamage = DataGenerator.Double(1000),
-                TotalShoulderBashKills = DataGenerator.Int(),
-                TotalWeaponDamage = DataGenerator.Double(5000),
-                WeaponsStats = WeaponsStatsData(10),
+                new MatchPlayer
+                {
+                    AvgLifeTime = TimeSpan.FromSeconds(60),
+                    Name = "shockRocket",
+                    Team = 1,
+                    Assassinations = 1,
+                    Assists = 10,
+                    Deaths = 10,
+                    GrenadeDamage = 200,
+                    GrenadeKills = 2,
+                    GroundPoundDamage = 100,
+                    GroundPoundKills = 1,
+                    Headshots = 5,
+                    Kills = 20,
+                    MeleeDamage = 300,
+                    MeleeKills = 3,
+                    PowerWeaponDamage = 400,
+                    PowerWeaponKills = 4,
+                    ShotsFired = 200,
+                    ShotsLanded = 100,
+                    ShoulderBashDamage = 100,
+                    ShoulderBashKills = 1,
+                    WeaponDamage = 1500,
+                    WeaponsStats = WeaponStatsData(),
+                },
             };
         }
 
-        private Csr CsrDatum()
+        private IList<WeaponStats> WeaponStatsData()
         {
-            return new Csr
+            return new List<WeaponStats>
             {
-                CsrDesignationId = DataGenerator.Int(),
-                CsrDesignationTierId = DataGenerator.Int(),
-                PercentToNextTier = DataGenerator.Int(100),
-                Rank = DataGenerator.Int(),
-                Value = DataGenerator.Int(),
-            };
-        }
-
-        private IList<WeaponStats> WeaponsStatsData(int quantity)
-        {
-            var weaponsStats = new List<WeaponStats>();
-            for (int i = 0; i < quantity; i++)
-            {
-                weaponsStats.Add(WeaponStatsData());
-            }
-            return weaponsStats;
-        }
-
-        private WeaponStats WeaponStatsData()
-        {
-            return new WeaponStats
-            {
-                DamageDealt = DataGenerator.Double(1000),
-                Headshots = DataGenerator.Int(10),
-                Id = DataGenerator.Int(),
-                Kills = DataGenerator.Int(),
-                PossessionTime = TimeSpan.FromMinutes(DataGenerator.Int(5)),
-                ShotsFired = DataGenerator.Int(),
-                ShotsLanded = DataGenerator.Int(),
+                new WeaponStats
+                {
+                    DamageDealt = 1000,
+                    Headshots = 5,
+                    Kills = 10,
+                    PossessionTime = TimeSpan.FromMinutes(5),
+                    ShotsFired = 100,
+                    ShotsLanded = 50,
+                },
+                new WeaponStats
+                {
+                    DamageDealt = 500,
+                    Headshots = 0,
+                    Kills = 5,
+                    PossessionTime = TimeSpan.FromMinutes(5),
+                    ShotsFired = 100,
+                    ShotsLanded = 25,
+                },
             };
         }
     }

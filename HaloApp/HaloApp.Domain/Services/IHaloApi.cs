@@ -8,20 +8,20 @@ namespace HaloApp.Domain.Services
 {
     public interface IHaloApi
     {
-        Task<IEnumerable<CsrDesignation>> GetCsrDesignationMetadataAsync();
-        Task<IEnumerable<FlexibleStat>> GetFlexibleStatMetadataAsync();
-        Task<IEnumerable<GameBaseVariant>> GetGameBaseVariantMetadataAsync();
+        Task<IList<CsrDesignation>> GetCsrDesignationMetadataAsync();
+        Task<IList<FlexibleStat>> GetFlexibleStatMetadataAsync();
+        Task<IList<GameBaseVariant>> GetGameBaseVariantMetadataAsync();
         Task<GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId);
-        //Task<IEnumerable<Impulse>> GetImpulseMetadataAsync();
-        Task<IEnumerable<Map>> GetMapMetadataAsync();
+        //Task<IList<Impulse>> GetImpulseMetadataAsync();
+        Task<IList<Map>> GetMapMetadataAsync();
         Task<MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId);
-        Task<IEnumerable<Match>> GetMatchesAsync(string player, int start = 0, int count = 25);
-        Task<IEnumerable<Medal>> GetMedalMetadataAsync();
-        Task<IEnumerable<Playlist>> GetPlaylistMetadataAsync();
-        Task<IEnumerable<Season>> GetSeasonMetadataAsync();
-        Task<IEnumerable<SpartanRank>> GetSpartanRankMetadataAsync();
-        Task<IEnumerable<TeamColor>> GetTeamColorMetadataAsync();
-        Task<IEnumerable<Vehicle>> GetVehicleMetadataAsync();
-        Task<IEnumerable<Weapon>> GetWeaponMetadataAsync();
+        Task<IList<Match>> GetMatchesAsync(string player, int start = 0, int count = 25);
+        Task<IList<Medal>> GetMedalMetadataAsync();
+        Task<IList<Playlist>> GetPlaylistMetadataAsync();
+        Task<IList<Season>> GetSeasonMetadataAsync();
+        Task<IList<SpartanRank>> GetSpartanRankMetadataAsync();
+        Task<IList<TeamColor>> GetTeamColorMetadataAsync();
+        Task<IList<Vehicle>> GetVehicleMetadataAsync();
+        Task<IList<Weapon>> GetWeaponMetadataAsync();
     }
 }

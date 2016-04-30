@@ -155,21 +155,21 @@ namespace HaloApp.Domain
                 .Select(m => m.GetPlayer(player))
                 .ToList();
             var weaponIds = matchPlayers
-                .SelectMany(p => p.WeaponsStats.Select(w => w.Id))
+                .SelectMany(p => p.WeaponsStats.Select(w => w.Weapon.Id))
                 .Distinct()
                 .ToList();
             var weaponsStats = new List<WeaponStats>();
             foreach (var weaponId in weaponIds)
             {
                 var weapons = matchPlayers
-                    .Select(p => p.WeaponsStats.FirstOrDefault(w => w.Id == weaponId))
+                    .Select(p => p.WeaponsStats.FirstOrDefault(w => w.Weapon.Id == weaponId))
                     .Where(w => w != null)
                     .ToList();
                 weaponsStats.Add(new WeaponStats
                 {
                     DamageDealt = weapons.Sum(w => w.DamageDealt),
                     Headshots = weapons.Sum(w => w.Headshots),
-                    Id = weaponId,
+                    Weapon = weapons.First().Weapon,
                     Kills = weapons.Sum(w => w.Kills),
                     PossessionTime = TimeSpan.FromMilliseconds(weapons.Sum(w => w.PossessionTime.TotalMilliseconds)),
                     ShotsFired = weapons.Sum(w => w.ShotsFired),
@@ -178,14 +178,14 @@ namespace HaloApp.Domain
             }
             return new PlayerStats
             {
-                Assists = matchPlayers.Sum(p => p.TotalAssists),
+                Assists = matchPlayers.Sum(p => p.Assists),
                 DamageDealt = matchPlayers.Sum(p => p.DamageDealt),
-                Deaths = matchPlayers.Sum(p => p.TotalDeaths),
+                Deaths = matchPlayers.Sum(p => p.Deaths),
                 GamesPlayed = matchPlayers.Count,
-                Kills = matchPlayers.Sum(p => p.TotalKills),
+                Kills = matchPlayers.Sum(p => p.Kills),
                 Name = player,
-                ShotsFired = matchPlayers.Sum(p => p.TotalShotsFired),
-                ShotsLanded = matchPlayers.Sum(p => p.TotalShotsLanded),
+                ShotsFired = matchPlayers.Sum(p => p.ShotsFired),
+                ShotsLanded = matchPlayers.Sum(p => p.ShotsLanded),
                 TimePlayed = TimeSpan.FromMilliseconds(matches.Sum(m => m.Duration.TotalMilliseconds)),
                 WeaponsStats = weaponsStats,
             };

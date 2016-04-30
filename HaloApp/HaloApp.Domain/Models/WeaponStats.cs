@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HaloApp.Domain.Models.Metadata;
+using System;
 
 namespace HaloApp.Domain.Models
 {
     public class WeaponStats
     {
-        public long Id { get; set; }
+        public Weapon Weapon { get; set; }
         public int ShotsFired { get; set; }
         public int ShotsLanded { get; set; }
         public int Headshots { get; set; }

@@ -1,4 +1,5 @@
-﻿using HaloApp.ApiClient.Models;
+﻿using AutoMapper;
+using HaloApp.ApiClient.Models;
 using HaloApp.ApiClient.Models.Metadata;
 using HaloApp.Domain.Enums;
 using HaloApp.Domain.Services;
@@ -38,31 +39,37 @@ namespace HaloApp.ApiClient
 
         #region Metadata
 
-        public async Task<IEnumerable<DomainMetadata.CsrDesignation>> GetCsrDesignationMetadataAsync()
+        public async Task<IList<DomainMetadata.CsrDesignation>> GetCsrDesignationMetadataAsync()
         {
             var csrDesignationMetadata = await GetMetadataAsync<CsrDesignation>("csr-designations");
-            return csrDesignationMetadata.Select(m => Mapper.CsrDesignation(m));
+            return csrDesignationMetadata
+                .Select(Mapper.Map<DomainMetadata.CsrDesignation>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.FlexibleStat>> GetFlexibleStatMetadataAsync()
+        public async Task<IList<DomainMetadata.FlexibleStat>> GetFlexibleStatMetadataAsync()
         {
             var flexibleStatMetadata = await GetMetadataAsync<FlexibleStat>("flexible-stats");
-            return flexibleStatMetadata.Select(m => Mapper.FlexibleStat(m));
+            return flexibleStatMetadata
+                .Select(Mapper.Map<DomainMetadata.FlexibleStat>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.GameBaseVariant>> GetGameBaseVariantMetadataAsync()
+        public async Task<IList<DomainMetadata.GameBaseVariant>> GetGameBaseVariantMetadataAsync()
         {
             var gameBaseVariantMetadata = await GetMetadataAsync<GameBaseVariant>("game-base-variants");
-            return gameBaseVariantMetadata.Select(m => Mapper.GameBaseVariant(m));
+            return gameBaseVariantMetadata
+                .Select(Mapper.Map<DomainMetadata.GameBaseVariant>)
+                .ToList();
         }
 
         public async Task<DomainMetadata.GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId)
         {
             var gameVariantMetadatum = await GetMetadatumAsync<GameVariant>("game-variants/", gameVariantId);
-            return Mapper.GameVariant(gameVariantMetadatum);
+            return Mapper.Map<DomainMetadata.GameVariant>(gameVariantMetadatum);
         }
 
-        //public async Task<IEnumerable<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
+        //public async Task<IList<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
         //{
         //    var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
         //    return impulseMetadata.Select(m => Mapper.Impulse(m));
@@ -71,62 +78,78 @@ namespace HaloApp.ApiClient
         public async Task<DomainMetadata.MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId)
         {
             var mapVariantMetadatum = await GetMetadatumAsync<MapVariant>("map-variants/", mapVariantId);
-            return Mapper.MapVariant(mapVariantMetadatum);
+            return Mapper.Map<DomainMetadata.MapVariant>(mapVariantMetadatum);
         }
 
-        public async Task<IEnumerable<DomainMetadata.Map>> GetMapMetadataAsync()
+        public async Task<IList<DomainMetadata.Map>> GetMapMetadataAsync()
         {
             var mapMetadata = await GetMetadataAsync<Map>("maps");
-            return mapMetadata.Select(m => Mapper.Map(m));
+            return mapMetadata
+                .Select(Mapper.Map<DomainMetadata.Map>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.Medal>> GetMedalMetadataAsync()
+        public async Task<IList<DomainMetadata.Medal>> GetMedalMetadataAsync()
         {
             var medalMetadata = await GetMetadataAsync<Medal>("medals");
-            return medalMetadata.Select(m => Mapper.Medal(m));
+            return medalMetadata
+                .Select(Mapper.Map<DomainMetadata.Medal>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.Playlist>> GetPlaylistMetadataAsync()
+        public async Task<IList<DomainMetadata.Playlist>> GetPlaylistMetadataAsync()
         {
             var playlistMetadata = await GetMetadataAsync<Playlist>("playlists");
-            return playlistMetadata.Select(m => Mapper.Playlist(m));
+            return playlistMetadata
+                .Select(Mapper.Map<DomainMetadata.Playlist>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.Season>> GetSeasonMetadataAsync()
+        public async Task<IList<DomainMetadata.Season>> GetSeasonMetadataAsync()
         {
             var seasonMetadata = await GetMetadataAsync<Season>("seasons");
-            return seasonMetadata.Select(m => Mapper.Season(m));
+            return seasonMetadata
+                .Select(Mapper.Map<DomainMetadata.Season>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.SpartanRank>> GetSpartanRankMetadataAsync()
+        public async Task<IList<DomainMetadata.SpartanRank>> GetSpartanRankMetadataAsync()
         {
             var spartanRankMetadata = await GetMetadataAsync<SpartanRank>("spartan-ranks");
-            return spartanRankMetadata.Select(m => Mapper.SpartanRank(m));
+            return spartanRankMetadata
+                .Select(Mapper.Map<DomainMetadata.SpartanRank>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.TeamColor>> GetTeamColorMetadataAsync()
+        public async Task<IList<DomainMetadata.TeamColor>> GetTeamColorMetadataAsync()
         {
             var teamColorMetadata = await GetMetadataAsync<TeamColor>("team-colors");
-            return teamColorMetadata.Select(m => Mapper.TeamColor(m));
+            return teamColorMetadata
+                .Select(Mapper.Map<DomainMetadata.TeamColor>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.Vehicle>> GetVehicleMetadataAsync()
+        public async Task<IList<DomainMetadata.Vehicle>> GetVehicleMetadataAsync()
         {
             var vehicleMetadata = await GetMetadataAsync<Vehicle>("vehicles");
-            return vehicleMetadata.Select(m => Mapper.Vehicle(m));
+            return vehicleMetadata
+                .Select(Mapper.Map<DomainMetadata.Vehicle>)
+                .ToList();
         }
 
-        public async Task<IEnumerable<DomainMetadata.Weapon>> GetWeaponMetadataAsync()
+        public async Task<IList<DomainMetadata.Weapon>> GetWeaponMetadataAsync()
         {
             var weaponMetadata = await GetMetadataAsync<Weapon>("weapons");
-            return weaponMetadata.Select(m => Mapper.Weapon(m));
+            return weaponMetadata
+                .Select(Mapper.Map<DomainMetadata.Weapon>)
+                .ToList();
         }
 
         #endregion
 
         #region Match Data
 
-        public async Task<IEnumerable<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int count = 25)
+        public async Task<IList<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int count = 25)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
             queryString["modes"] = (GameMode.Arena).ToString().ToLower();
@@ -135,11 +158,13 @@ namespace HaloApp.ApiClient
             string endpoint = String.Format("/players/{0}/matches?{1}", player, queryString);
             var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
 
-            var matches = new HashSet<DomainModels.Match>();
+            var matches = new List<DomainModels.Match>();
             foreach (var playerMatch in playerMatches.Results)
             {
                 var matchReport = await GetMatchReportAsync(Guid.Parse(playerMatch.Id.MatchId));
-                matches.Add(Mapper.Match(playerMatch, matchReport));
+                matches.Add(Mapper.Map<DomainModels.Match>(playerMatch)
+                                  .Map(matchReport)
+                                  .Map(matchReport.PlayerStats.First()));
             }
             return matches;
         }

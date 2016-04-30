@@ -34,24 +34,44 @@ namespace HaloApp.Data
             await metadataCollection.InsertManyAsync(metadata);
         }
 
+        public async Task<IList<TMetadata>> GetMetadataAsync<TMetadata>()
+        {
+            string metadataCollectionName = typeof(TMetadata).Name + 's';
+            var metadataCollection = _haloDb.GetCollection<TMetadata>(metadataCollectionName);
+            return await metadataCollection.AsQueryable()
+                .ToListAsync();
+        }
+
         public async Task AddMatchesAsync(IList<Match> matches)
         {
             var matchCollection = _haloDb.GetCollection<Match>("Matches");
             await matchCollection.InsertManyAsync(matches);
         }
 
-        public async Task<IEnumerable<Match>> GetMatchesAsync(string player)
+        public async Task<IList<Match>> GetMatchesAsync(string player)
         {
             var matchCollection = _haloDb.GetCollection<Match>("Matches");
-            return await matchCollection.AsQueryable()
+            var matches = await matchCollection.AsQueryable()
                 .Where(m => m.Players.Any(p => p.Name == player))
                 .ToListAsync();
+            var weapons = await GetMetadataAsync<Weapon>();
+            foreach (var match in matches)
+            {
+                foreach (var matchPlayer in match.Players)
+                {
+                    foreach (var weaponStat in matchPlayer.WeaponsStats)
+                    {
+                        weaponStat.Weapon = weapons
+                            .FirstOrDefault(w => w.Id == weaponStat.Weapon.Id);
+                    }
+                }
+            }
+            return matches;
         }
 
         private void RegisterClasses()
         {
-            #region Metadata
-
+            // Metadata
             BsonClassMap.RegisterClassMap<CsrDesignation>();
             BsonClassMap.RegisterClassMap<CsrTier>();
             BsonClassMap.RegisterClassMap<FlexibleStat>();
@@ -68,8 +88,6 @@ namespace HaloApp.Data
             BsonClassMap.RegisterClassMap<TeamColor>();
             BsonClassMap.RegisterClassMap<Vehicle>();
             BsonClassMap.RegisterClassMap<Weapon>();
-
-            #endregion
 
             BsonClassMap.RegisterClassMap<Csr>();
             BsonClassMap.RegisterClassMap<Match>();

@@ -25,7 +25,7 @@ namespace HaloApp.Tests
         [Fact]
         public async Task ReplaceAllMetadata()
         {
-            var haloDataManager = CreateHaloDataManager();
+            var haloDataManager = HaloDataManager();
 
             await haloDataManager.ReplaceAllMetadataAsync();
         }
@@ -33,7 +33,7 @@ namespace HaloApp.Tests
         [Fact]
         public async Task StoreMatches()
         {
-            var haloDataManager = CreateHaloDataManager();
+            var haloDataManager = HaloDataManager();
 
             await haloDataManager.StoreMatchesAsync(Player);
         }
@@ -41,23 +41,29 @@ namespace HaloApp.Tests
         [Fact]
         public async Task GetMatches()
         {
-            var haloDataManager = CreateHaloDataManager();
+            var haloDataManager = HaloDataManager();
 
             var matches = await haloDataManager.GetMatchesAsync(Player);
             var playerStats = haloDataManager.GetPlayerStats(matches.ToList(), Player);
+
+            var player = matches.First().GetPlayer(Player);
+            double totalWeaponDamage = player.WeaponDamage;
+            double othertotal = player.WeaponsStats
+                .Sum(w => w.DamageDealt);
+            double diff = totalWeaponDamage - othertotal;
         }
 
-        private static HaloDataManager CreateHaloDataManager()
+        private static HaloDataManager HaloDataManager()
         {
-            return new HaloDataManager(CreateHaloApiClient(), CreateHaloRepository());
+            return new HaloDataManager(HaloApiClient(), HaloRepository());
         }
 
-        private static IHaloApi CreateHaloApiClient()
+        private static IHaloApi HaloApiClient()
         {
             return new HaloApi(HaloApiUri, SubscriptionKey);
         }
 
-        private static IHaloRepository CreateHaloRepository()
+        private static IHaloRepository HaloRepository()
         {
             IMongoClient mongoClient = new MongoClient(MongoDbConnection);
             return new MongoHaloRepository(mongoClient);

@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GHaack.Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GHaack.Utilities.1.0.0.3\lib\net45\GHaack.Utilities.dll</HintPath>
       <Private>True</Private>
@@ -50,7 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HaloApi.cs" />
-    <Compile Include="Mapper.cs" />
+    <Compile Include="HaloApiMapProfile.cs" />
+    <Compile Include="MapExtensions.cs" />
     <Compile Include="Models\Metadata\CsrDesignation.cs" />
     <Compile Include="Models\Metadata\FlexibleStat.cs" />
     <Compile Include="Models\Metadata\GameVariant.cs" />
