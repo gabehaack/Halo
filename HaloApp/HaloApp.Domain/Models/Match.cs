@@ -12,7 +12,7 @@ namespace HaloApp.Domain.Models
         public TimeSpan Duration { get; set; }
         public Guid Id { get; set; }
         public Guid MapId { get; set; }
-        public Guid MapVariant { get; set; }
+        public Guid MapVariantId { get; set; }
         public Guid GameBaseVariantId { get; set; }
         public Guid GameVariantId { get; set; }
         public Guid PlaylistId { get; set; }

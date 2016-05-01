@@ -185,7 +185,7 @@ namespace HaloApp.ApiClient
             return await DeserializeContentAsync<T>(response);
         }
 
-        private async Task<List<T>> GetMetadataAsync<T>(string entity)
+        private async Task<IList<T>> GetMetadataAsync<T>(string entity)
         {
             var response = await GetAsync("/metadata/h5/metadata/" + entity);
             return await DeserializeContentAsync<List<T>>(response);

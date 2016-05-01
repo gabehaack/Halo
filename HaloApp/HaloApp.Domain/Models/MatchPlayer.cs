@@ -30,6 +30,7 @@ namespace HaloApp.Domain.Models
         public int PowerWeaponKills { get; set; }
         public double PowerWeaponDamage { get; set; }
         public int PowerWeaponGrabs { get; set; }
+        public TimeSpan PowerWeaponPossessionTime { get; set; }
         public int GrenadeKills { get; set; }
         public IList<WeaponStats> WeaponsStats { get; set; }
 
