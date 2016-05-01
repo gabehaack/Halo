@@ -87,14 +87,9 @@ namespace HaloApp.ApiClient
                    src => src.Id.MatchId))
                 .ForMember(dest => dest.MapVariantId, opt => opt.MapFrom(
                    src => src.MapVariant.ResourceId))
-                .ForMember(dest => dest.PlaylistId, opt => opt.Ignore())
-                .ForMember(dest => dest.Players, opt => opt.Ignore());
-
-            CreateMap<ApiModels.MatchPlayerStats, DomainModels.Match>()
-                .ForAllMembers(opt => opt.Ignore());
-            CreateMap<ApiModels.MatchPlayerStats, DomainModels.Match>()
                 .ForMember(dest => dest.PlaylistId, opt => opt.MapFrom(
-                   src => src.PlaylistId));
+                   src => src.HopperId))
+                .ForMember(dest => dest.Players, opt => opt.Ignore());
 
             CreateMap<ApiModels.MatchReport, DomainModels.Match>()
                 .ForAllMembers(opt => opt.Ignore());

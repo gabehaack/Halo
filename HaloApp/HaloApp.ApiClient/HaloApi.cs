@@ -149,24 +149,26 @@ namespace HaloApp.ApiClient
 
         #region Match Data
 
-        public async Task<IList<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int count = 25)
+        public async Task<IList<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int quantity = 25)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
             queryString["modes"] = (GameMode.Arena).ToString().ToLower();
             queryString["start"] = start.ToString();
-            queryString["count"] = count.ToString();
+            queryString["count"] = quantity.ToString();
             string endpoint = String.Format("/players/{0}/matches?{1}", player, queryString);
-            var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
 
-            var matches = new List<DomainModels.Match>();
-            foreach (var playerMatch in playerMatches.Results)
-            {
-                var matchReport = await GetMatchReportAsync(Guid.Parse(playerMatch.Id.MatchId));
-                matches.Add(Mapper.Map<DomainModels.Match>(playerMatch)
-                                  .Map(matchReport)
-                                  .Map(matchReport.PlayerStats.First()));
-            }
-            return matches;
+            var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
+            return playerMatches.Results
+                .Select(Mapper.Map<DomainModels.Match>)
+                .ToList();
+        }
+
+        public async Task<IList<DomainModels.MatchPlayer>> GetMatchStatsAsync(Guid matchId)
+        {
+            var matchReport = await GetMatchReportAsync(matchId);
+            return matchReport.PlayerStats
+                .Select(Mapper.Map<DomainModels.MatchPlayer>)
+                .ToList();
         }
 
         private async Task<MatchReport> GetMatchReportAsync(Guid matchId)

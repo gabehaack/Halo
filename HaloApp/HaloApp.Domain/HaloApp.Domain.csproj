@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncExtensions.cs" />
     <Compile Include="Enums\GameMode.cs" />
     <Compile Include="Enums\FlexibleStatType.cs" />
     <Compile Include="Enums\MedalClassification.cs" />

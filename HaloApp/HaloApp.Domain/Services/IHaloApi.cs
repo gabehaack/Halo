@@ -8,6 +8,7 @@ namespace HaloApp.Domain.Services
 {
     public interface IHaloApi
     {
+        // Metadata
         Task<IList<CsrDesignation>> GetCsrDesignationMetadataAsync();
         Task<IList<FlexibleStat>> GetFlexibleStatMetadataAsync();
         Task<IList<GameBaseVariant>> GetGameBaseVariantMetadataAsync();
@@ -15,7 +16,6 @@ namespace HaloApp.Domain.Services
         //Task<IList<Impulse>> GetImpulseMetadataAsync();
         Task<IList<Map>> GetMapMetadataAsync();
         Task<MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId);
-        Task<IList<Match>> GetMatchesAsync(string player, int start = 0, int count = 25);
         Task<IList<Medal>> GetMedalMetadataAsync();
         Task<IList<Playlist>> GetPlaylistMetadataAsync();
         Task<IList<Season>> GetSeasonMetadataAsync();
@@ -23,5 +23,8 @@ namespace HaloApp.Domain.Services
         Task<IList<TeamColor>> GetTeamColorMetadataAsync();
         Task<IList<Vehicle>> GetVehicleMetadataAsync();
         Task<IList<Weapon>> GetWeaponMetadataAsync();
+
+        Task<IList<Match>> GetMatchesAsync(string player, int start = 0, int quantity = 25);
+        Task<IList<MatchPlayer>> GetMatchStatsAsync(Guid matchId);
     }
 }

@@ -134,13 +134,51 @@ namespace HaloApp.Domain
 
         #region Match Data
 
-        public async Task StoreMatchesAsync(string player)
+        public async Task StoreMatchesAsync(string player, int start = 0, int quantity = 25)
         {
-            var matches = await _haloApi.GetMatchesAsync(player);
-            await _haloRepository.AddMatchesAsync(matches.ToList());
+            if (start < 0)
+                start = 0;
+            if (quantity < 1)
+                quantity = 1;
+
+            var existingMatches = await _haloRepository.GetMatchesAsync(player);
+
+            // Get player matches (with no stats)
+            IEnumerable<Match> matches = new HashSet<Match>();
+            int batchRemaining = quantity;
+            int batchStart = start;
+            for ( ; batchRemaining > 0 ; )
+            {
+                var batch = await _haloApi.GetMatchesAsync(player, batchStart, 25);
+                matches = matches.Concat(batch);
+
+                batchRemaining -= 25;
+                batchStart += 25;
+            }
+            var matchList = matches.ToList();
+
+            var duplicateMatches = new List<Match>();
+            // Get stats for any new matches
+            foreach (var match in matchList)
+            {
+                if (existingMatches.Any(m => m.Id == match.Id))
+                {
+                    duplicateMatches.Add(match);
+                    continue;
+                }
+
+                var players = await _haloApi.GetMatchStatsAsync(match.Id);
+                match.Players = players;
+            }
+
+            // Only new matches are added to the database
+            matchList.RemoveAll(m => duplicateMatches.Contains(m));
+            if (!matchList.Any())
+                return;
+            await _haloRepository.AddMatchesAsync(matchList);
         }
 
-        public async Task<IEnumerable<Match>> GetMatchesAsync(string player)
+        public async Task<IEnumerable<Match>> RetrieveStoredMatchesAsync(string player)
         {
             return await _haloRepository.GetMatchesAsync(player);
         }

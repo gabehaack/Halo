@@ -635,16 +635,9 @@ namespace HaloApp.Tests
             Assert.True(match.Id.Equals(MatchGuid));
             Assert.True(match.MapId.Equals(MapGuid));
             Assert.True(match.MapVariantId.Equals(MapVariantGuid));
+            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
             Assert.True(match.SeasonId.Equals(SeasonGuid));
             Assert.True(match.TeamGame);
-        }
-
-        [Fact]
-        public void MatchFromMatchPlayerStats()
-        {
-            var match = Mapper.Map<DomainModels.Match>(MatchPlayerStatsData()[0]);
-
-            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
         }
 
         [Fact]
@@ -709,7 +702,6 @@ namespace HaloApp.Tests
         public void Match()
         {
             var match = Mapper.Map<DomainModels.Match>(PlayerMatchData()[0])
-                              .Map(MatchPlayerStatsData()[0])
                               .Map(MatchReportData()[0]);
 
             Assert.True(match.Completed.Equals(new DateTime(2016, 3, 3)));
@@ -720,9 +712,9 @@ namespace HaloApp.Tests
             Assert.True(match.Id.Equals(MatchGuid));
             Assert.True(match.MapId.Equals(MapGuid));
             Assert.True(match.MapVariantId.Equals(MapVariantGuid));
+            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
             Assert.True(match.SeasonId.Equals(SeasonGuid));
             Assert.True(match.TeamGame);
-            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
 
             var matchPlayer = match.Players[0];
             Assert.True(TimeSpan.FromSeconds(70).Equals(matchPlayer.AvgLifeTime));
@@ -837,7 +829,6 @@ namespace HaloApp.Tests
                     {
                         Gamertag = "matchPlayerName",
                     },
-                    PlaylistId = PlaylistGuid.ToString(),
                     PreviousCsr = MatchCsrData()[1],
                     Rank = 1000,
                     TeamId = 100,
@@ -866,7 +857,6 @@ namespace HaloApp.Tests
             };
         }
 
-        private static readonly Guid HopperGuid = Guid.NewGuid();
         private static readonly Guid MatchGuid = Guid.NewGuid();
         private static IList<ApiModels.PlayerMatch> PlayerMatchData()
         {
@@ -879,6 +869,7 @@ namespace HaloApp.Tests
                     {
                         ResourceId = GameVariantGuid.ToString(),
                     },
+                    HopperId = PlaylistGuid.ToString(),
                     Id = new ApiModels.MatchIdClass
                     {
                         GameMode = (int) GameMode.Arena,

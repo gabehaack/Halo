@@ -25,10 +25,10 @@ namespace HaloApp.Tests
 
         private static HaloDataManager HaloDataManager()
         {
-            return new HaloDataManager(HaloApiClient(), HaloRepository());
+            return new HaloDataManager(HaloApi(), HaloRepository());
         }
 
-        private static IHaloApi HaloApiClient()
+        private static IHaloApi HaloApi()
         {
             return new HaloApi(HaloApiUri, SubscriptionKey);
         }
@@ -48,6 +48,15 @@ namespace HaloApp.Tests
         }
 
         [Fact]
+        public async Task GetMatches()
+        {
+            var haloApi = HaloApi();
+
+            var matches = await haloApi.GetMatchesAsync(Player, 0, 1);
+            var match = matches.First();
+        }
+
+        [Fact]
         public async Task ReplaceAllMetadata()
         {
             var haloDataManager = HaloDataManager();
@@ -60,15 +69,15 @@ namespace HaloApp.Tests
         {
             var haloDataManager = HaloDataManager();
 
-            await haloDataManager.StoreMatchesAsync(Player);
+            await haloDataManager.StoreMatchesAsync(Player, 0, 100);
         }
 
         [Fact]
-        public async Task GetMatches()
+        public async Task RetrieveStoredMatches()
         {
             var haloDataManager = HaloDataManager();
 
-            var matches = await haloDataManager.GetMatchesAsync(Player);
+            var matches = await haloDataManager.RetrieveStoredMatchesAsync(Player);
             var playerStats = haloDataManager.GetPlayerStats(matches.ToList(), Player);
 
             var player = matches.First().GetPlayer(Player);
