@@ -1,13 +1,13 @@
-﻿using GHaack.Utilities;
-using System;
+﻿using System;
 using System.Linq;
 using System.Xml;
 using AutoMapper;
+using GHaack.Utilities;
 using HaloApp.Domain.Enums;
-using ApiModels = HaloApp.ApiClient.Models;
 using ApiMetadata = HaloApp.ApiClient.Models.Metadata;
+using ApiModels = HaloApp.ApiClient.Models;
 using DomainMetadata = HaloApp.Domain.Models.Metadata;
-using DomainModels = HaloApp.Domain.Models;
+using DomainModels = HaloApp.Domain.Models.Dto;
 
 namespace HaloApp.ApiClient
 {
@@ -40,7 +40,9 @@ namespace HaloApp.ApiClient
             CreateMap<ApiMetadata.FlexibleStat, DomainMetadata.FlexibleStat>();
             CreateMap<ApiMetadata.GameBaseVariant, DomainMetadata.GameBaseVariant>();
             CreateMap<ApiMetadata.GameVariant, DomainMetadata.GameVariant>();
-            //CreateMap<Impulse, DomainMetadata.Impulse>();
+            CreateMap<ApiMetadata.Impulse, DomainMetadata.Impulse>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(
+                   src => src.internalName));
             CreateMap<ApiMetadata.Map, DomainMetadata.Map>();
             CreateMap<ApiMetadata.MapVariant, DomainMetadata.MapVariant>();
             CreateMap<ApiMetadata.Medal, DomainMetadata.Medal>();
@@ -49,14 +51,13 @@ namespace HaloApp.ApiClient
             CreateMap<ApiMetadata.Season, DomainMetadata.Season>()
                 .ForMember(dest => dest.PlaylistIds, opt => opt.MapFrom(
                    src => src.playlists.Select(p => p.id)));
-
             CreateMap<ApiMetadata.SpartanRank, DomainMetadata.SpartanRank>();
             CreateMap<ApiMetadata.TeamColor, DomainMetadata.TeamColor>();
             CreateMap<ApiMetadata.Vehicle, DomainMetadata.Vehicle>();
             CreateMap<ApiMetadata.Weapon, DomainMetadata.Weapon>();
 
             // Match stats
-            CreateMap<ApiModels.MatchCsr, DomainModels.Csr>()
+            CreateMap<ApiModels.MatchCsr, DomainModels.CsrDto>()
                 .ForMember(dest => dest.CsrDesignationId, opt => opt.MapFrom(
                    src => src.DesignationId))
                 .ForMember(dest => dest.CsrDesignationTierId, opt => opt.MapFrom(
@@ -64,11 +65,11 @@ namespace HaloApp.ApiClient
                 .ForMember(dest => dest.Value, opt => opt.MapFrom(
                    src => src.Csr));
 
-            CreateMap<ApiModels.MatchWeapon, DomainModels.WeaponStats>()
-                .ForMember(dest => dest.Weapon, opt => opt.MapFrom(
-                   src => new DomainMetadata.Weapon { Id = src.WeaponId.StockId }));
+            CreateMap<ApiModels.MatchWeapon, DomainModels.WeaponStatsDto>()
+                .ForMember(dest => dest.WeaponId, opt => opt.MapFrom(
+                   src => src.WeaponId.StockId));
 
-            CreateMap<ApiModels.MatchPlayerStats, DomainModels.MatchPlayer>()
+            CreateMap<ApiModels.MatchPlayerStats, DomainModels.PlayerDto>()
                 .ForMember(dest => dest.AvgLifeTime, opt => opt.MapFrom(
                    src => src.AvgLifeTimeOfPlayer))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(
@@ -76,7 +77,9 @@ namespace HaloApp.ApiClient
                 .ForMember(dest => dest.WeaponsStats, opt => opt.MapFrom(
                    src => src.WeaponStats));
 
-            CreateMap<ApiModels.PlayerMatch, DomainModels.Match>()
+            CreateMap<ApiModels.MatchTeamStats, DomainModels.TeamDto>();
+
+            CreateMap<ApiModels.PlayerMatch, DomainModels.MatchDto>()
                 .ForMember(dest => dest.Completed, opt => opt.MapFrom(
                    src => src.MatchCompletedDate.ISO8601Date))
                 .ForMember(dest => dest.GameMode, opt => opt.MapFrom(
@@ -89,13 +92,16 @@ namespace HaloApp.ApiClient
                    src => src.MapVariant.ResourceId))
                 .ForMember(dest => dest.PlaylistId, opt => opt.MapFrom(
                    src => src.HopperId))
-                .ForMember(dest => dest.Players, opt => opt.Ignore());
+                .ForMember(dest => dest.Players, opt => opt.Ignore())
+                .ForMember(dest => dest.Teams, opt => opt.Ignore());
 
-            CreateMap<ApiModels.MatchReport, DomainModels.Match>()
+            CreateMap<ApiModels.MatchReport, DomainModels.MatchDto>()
                 .ForAllMembers(opt => opt.Ignore());
-            CreateMap<ApiModels.MatchReport, DomainModels.Match>()
+            CreateMap<ApiModels.MatchReport, DomainModels.MatchDto>()
                 .ForMember(dest => dest.Players, opt => opt.MapFrom(
-                   src => src.PlayerStats));
+                   src => src.PlayerStats))
+                .ForMember(dest => dest.Teams, opt => opt.MapFrom(
+                   src => src.TeamStats));
         }
 
         #region Type Conversions

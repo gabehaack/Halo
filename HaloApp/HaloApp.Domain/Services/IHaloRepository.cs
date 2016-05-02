@@ -1,4 +1,4 @@
-﻿using HaloApp.Domain.Models;
+﻿using HaloApp.Domain.Models.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +8,7 @@ namespace HaloApp.Domain.Services
     {
         Task ReplaceMetadataAsync<TMetadata>(IList<TMetadata> metadata);
         Task<IList<TMetadata>> GetMetadataAsync<TMetadata>();
-        Task AddMatchesAsync(IList<Match> matches);
-        Task<IList<Match>> GetMatchesAsync(string player);
+        Task AddMatchesAsync(IList<MatchDto> matches);
+        Task<IList<MatchDto>> GetMatchesAsync(string player);
     }
 }

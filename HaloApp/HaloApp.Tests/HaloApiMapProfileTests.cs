@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics.CodeAnalysis;
-using HaloApp.ApiClient;
-using Xunit;
-using System.Threading.Tasks;
-using MongoDB.Driver;
-using HaloApp.Domain.Services;
-using HaloApp.Data;
-using AutoMapper;
-using ApiModels = HaloApp.ApiClient.Models;
-using ApiMetadata = HaloApp.ApiClient.Models.Metadata;
-using DomainMetadata = HaloApp.Domain.Models.Metadata;
-using DomainModels = HaloApp.Domain.Models;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using AutoMapper;
+using HaloApp.ApiClient;
 using HaloApp.Domain.Enums;
+using Xunit;
+using ApiMetadata = HaloApp.ApiClient.Models.Metadata;
+using ApiModels = HaloApp.ApiClient.Models;
+using DomainMetadata = HaloApp.Domain.Models.Metadata;
+using DomainModels = HaloApp.Domain.Models.Dto;
 
 namespace HaloApp.Tests
 {
@@ -107,7 +102,7 @@ namespace HaloApp.Tests
             var csrTier = Mapper.Map<DomainMetadata.CsrTier>(CsrTierData()[0]);
 
             Assert.Equal(new Uri("http://csrTierIconImageUrl"), csrTier.IconImageUrl);
-            Assert.Equal(2, csrTier.Id);
+            Assert.Equal(11, csrTier.Id);
         }
 
         [Fact]
@@ -120,7 +115,7 @@ namespace HaloApp.Tests
             Assert.Equal("csrDesignationName", csrDesignation.Name);
             var csrTier = csrDesignation.Tiers[0];
             Assert.Equal(new Uri("http://csrTierIconImageUrl"), csrTier.IconImageUrl);
-            Assert.Equal(2, csrTier.Id);
+            Assert.Equal(11, csrTier.Id);
         }
 
         [Fact]
@@ -158,6 +153,15 @@ namespace HaloApp.Tests
         }
 
         [Fact]
+        public void Impulse()
+        {
+            var impulse = Mapper.Map<DomainMetadata.Impulse>(ImpulseData()[0]);
+
+            Assert.Equal(21, impulse.Id);
+            Assert.Equal("impulseName", impulse.Name);
+        }
+
+        [Fact]
         public void Map()
         {
             var map = Mapper.Map<DomainMetadata.Map>(MapData()[0]);
@@ -187,13 +191,13 @@ namespace HaloApp.Tests
         {
             var medalSpriteLocation = Mapper.Map<DomainMetadata.MedalSpriteLocation>(MedalSpriteLocationData()[0]);
 
-            Assert.Equal(3, medalSpriteLocation.Left);
-            Assert.Equal(4, medalSpriteLocation.Height);
-            Assert.Equal(5, medalSpriteLocation.SpriteHeight);
+            Assert.Equal(31, medalSpriteLocation.Left);
+            Assert.Equal(32, medalSpriteLocation.Height);
+            Assert.Equal(33, medalSpriteLocation.SpriteHeight);
             Assert.True(medalSpriteLocation.SpriteSheetUri.Equals(new Uri("http://spriteSheetUri")));
-            Assert.Equal(6, medalSpriteLocation.SpriteWidth);
-            Assert.Equal(7, medalSpriteLocation.Top);
-            Assert.Equal(8, medalSpriteLocation.Width);
+            Assert.Equal(34, medalSpriteLocation.SpriteWidth);
+            Assert.Equal(35, medalSpriteLocation.Top);
+            Assert.Equal(36, medalSpriteLocation.Width);
         }
 
         [Fact]
@@ -203,18 +207,18 @@ namespace HaloApp.Tests
 
             Assert.Equal(MedalClassification.Spree, medal.Classification);
             Assert.Equal("medalDescription", medal.Description);
-            Assert.Equal(9, medal.Difficulty);
-            Assert.Equal(10, medal.Id);
+            Assert.Equal(41, medal.Difficulty);
+            Assert.Equal(42, medal.Id);
             Assert.Equal("medalName", medal.Name);
 
             var medalSpriteLocation = medal.SpriteLocation;
-            Assert.Equal(3, medalSpriteLocation.Left);
-            Assert.Equal(4, medalSpriteLocation.Height);
-            Assert.Equal(5, medalSpriteLocation.SpriteHeight);
+            Assert.Equal(31, medalSpriteLocation.Left);
+            Assert.Equal(32, medalSpriteLocation.Height);
+            Assert.Equal(33, medalSpriteLocation.SpriteHeight);
             Assert.True(medalSpriteLocation.SpriteSheetUri.Equals(new Uri("http://spriteSheetUri")));
-            Assert.Equal(6, medalSpriteLocation.SpriteWidth);
-            Assert.Equal(7, medalSpriteLocation.Top);
-            Assert.Equal(8, medalSpriteLocation.Width);
+            Assert.Equal(34, medalSpriteLocation.SpriteWidth);
+            Assert.Equal(35, medalSpriteLocation.Top);
+            Assert.Equal(36, medalSpriteLocation.Width);
         }
 
         [Fact]
@@ -252,8 +256,8 @@ namespace HaloApp.Tests
         {
             var spartanRank = Mapper.Map<DomainMetadata.SpartanRank>(SpartanRankData()[0]);
 
-            Assert.Equal(11, spartanRank.Id);
-            Assert.Equal(12, spartanRank.StartXp);
+            Assert.Equal(51, spartanRank.Id);
+            Assert.Equal(52, spartanRank.StartXp);
         }
 
         [Fact]
@@ -264,7 +268,7 @@ namespace HaloApp.Tests
             Assert.Equal("teamColor", teamColor.Color);
             Assert.Equal("teamColorDescription", teamColor.Description);
             Assert.True(teamColor.IconUrl.Equals(new Uri("http://teamColorIconUrl")));
-            Assert.Equal(13, teamColor.Id);
+            Assert.Equal(61, teamColor.Id);
             Assert.Equal("teamColorName", teamColor.Name);
         }
 
@@ -274,7 +278,7 @@ namespace HaloApp.Tests
             var vehicle = Mapper.Map<DomainMetadata.Vehicle>(VehicleData()[0]);
 
             Assert.Equal("vehicleDescription", vehicle.Description);
-            Assert.Equal(13, vehicle.Id);
+            Assert.Equal(71, vehicle.Id);
             Assert.True(vehicle.LargeIconImageUrl.Equals(new Uri("http://vehicleLargeIconImageUrl")));
             Assert.Equal("vehicleName", vehicle.Name);
             Assert.True(vehicle.SmallIconImageUrl.Equals(new Uri("http://vehicleSmallIconImageUrl")));
@@ -287,7 +291,7 @@ namespace HaloApp.Tests
             var weapon = Mapper.Map<DomainMetadata.Weapon>(WeaponData()[0]);
 
             Assert.Equal("weaponDescription", weapon.Description);
-            Assert.Equal(14, weapon.Id);
+            Assert.Equal(81, weapon.Id);
             Assert.True(weapon.LargeIconImageUrl.Equals(new Uri("http://weaponLargeIconImageUrl")));
             Assert.Equal("weaponName", weapon.Name);
             Assert.True(weapon.SmallIconImageUrl.Equals(new Uri("http://weaponSmallIconImageUrl")));
@@ -319,7 +323,7 @@ namespace HaloApp.Tests
                 new ApiMetadata.CsrTier
                 {
                     iconImageUrl = "http://csrTierIconImageUrl",
-                    id = 2,
+                    id = 11,
                 },
             };
         }
@@ -371,6 +375,17 @@ namespace HaloApp.Tests
                 },
             };
         }
+        private static IList<ApiMetadata.Impulse> ImpulseData()
+        {
+            return new List<ApiMetadata.Impulse>
+            {
+                new ApiMetadata.Impulse
+                {
+                    id = 21,
+                    internalName = "impulseName",
+                },
+            };
+        }
 
         private static readonly Guid MapGuid = Guid.NewGuid();
         private static IList<ApiMetadata.Map> MapData()
@@ -413,13 +428,13 @@ namespace HaloApp.Tests
             {
                 new ApiMetadata.MedalSpriteLocation
                 {
-                    left = 3,
-                    height = 4,
-                    spriteHeight = 5,
+                    left = 31,
+                    height = 32,
+                    spriteHeight = 33,
                     spriteSheetUri = "http://spriteSheetUri",
-                    spriteWidth = 6,
-                    top = 7,
-                    width = 8,
+                    spriteWidth = 34,
+                    top = 35,
+                    width = 36,
                 },
             };
         }
@@ -432,8 +447,8 @@ namespace HaloApp.Tests
                 {
                     classification = MedalClassification.Spree.ToString(),
                     description = "medalDescription",
-                    difficulty = 9,
-                    id = 10,
+                    difficulty = 41,
+                    id = 42,
                     name = "medalName",
                     spriteLocation = MedalSpriteLocationData()[0],
                 },
@@ -482,8 +497,8 @@ namespace HaloApp.Tests
             {
                 new ApiMetadata.SpartanRank
                 {
-                    id = 11,
-                    startXp = 12,
+                    id = 51,
+                    startXp = 52,
                 },
             };
         }
@@ -497,7 +512,7 @@ namespace HaloApp.Tests
                     color = "teamColor",
                     description = "teamColorDescription",
                     iconUrl = "http://teamColorIconUrl",
-                    id = 13,
+                    id = 61,
                     name = "teamColorName",
                 },
             };
@@ -510,7 +525,7 @@ namespace HaloApp.Tests
                 new ApiMetadata.Vehicle
                 {
                     description = "vehicleDescription",
-                    id = 13,
+                    id = 71,
                     largeIconImageUrl = "http://vehicleLargeIconImageUrl",
                     name = "vehicleName",
                     smallIconImageUrl = "http://vehicleSmallIconImageUrl",
@@ -526,7 +541,7 @@ namespace HaloApp.Tests
                 new ApiMetadata.Weapon
                 {
                     description = "weaponDescription",
-                    id = 14,
+                    id = 81,
                     largeIconImageUrl = "http://weaponLargeIconImageUrl",
                     name = "weaponName",
                     smallIconImageUrl = "http://weaponSmallIconImageUrl",
@@ -542,7 +557,7 @@ namespace HaloApp.Tests
         [Fact]
         public void Csr()
         {
-            var csr = Mapper.Map<DomainModels.Csr>(MatchCsrData()[0]);
+            var csr = Mapper.Map<DomainModels.CsrDto>(MatchCsrData()[0]);
 
             Assert.Equal(31, csr.CsrDesignationId);
             Assert.Equal(34, csr.CsrDesignationTierId);
@@ -554,7 +569,7 @@ namespace HaloApp.Tests
         [Fact]
         public void WeaponStats()
         {
-            var weaponStats = Mapper.Map<DomainModels.WeaponStats>(MatchWeaponData()[0]);
+            var weaponStats = Mapper.Map<DomainModels.WeaponStatsDto>(MatchWeaponData()[0]);
 
             Assert.Equal(40, weaponStats.DamageDealt);
             Assert.Equal(41, weaponStats.Headshots);
@@ -562,55 +577,55 @@ namespace HaloApp.Tests
             Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
             Assert.Equal(44, weaponStats.ShotsFired);
             Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.Weapon.Id);
+            Assert.Equal(46, weaponStats.WeaponId);
         }
 
         [Fact]
-        public void MatchPlayer()
+        public void Player()
         {
-            var matchPlayer = Mapper.Map<DomainModels.MatchPlayer>(MatchPlayerStatsData()[0]);
+            var player = Mapper.Map<DomainModels.PlayerDto>(MatchPlayerStatsData()[0]);
 
-            Assert.True(TimeSpan.FromSeconds(70).Equals(matchPlayer.AvgLifeTime));
-            Assert.True(matchPlayer.Dnf);
-            Assert.Equal("matchPlayerName", matchPlayer.Name);
-            Assert.Equal(1000, matchPlayer.Rank);
-            Assert.Equal(100, matchPlayer.Team);
-            Assert.Equal(101, matchPlayer.Assassinations);
-            Assert.Equal(102, matchPlayer.Assists);
-            Assert.Equal(103, matchPlayer.Deaths);
-            Assert.Equal(104, matchPlayer.GrenadeDamage);
-            Assert.Equal(105, matchPlayer.GrenadeKills);
-            Assert.Equal(106, matchPlayer.GroundPoundDamage);
-            Assert.Equal(107, matchPlayer.GroundPoundKills);
-            Assert.Equal(108, matchPlayer.Headshots);
-            Assert.Equal(109, matchPlayer.Kills);
-            Assert.Equal(110, matchPlayer.MeleeDamage);
-            Assert.Equal(111, matchPlayer.MeleeKills);
-            Assert.Equal(112, matchPlayer.PowerWeaponDamage);
-            Assert.Equal(113, matchPlayer.PowerWeaponGrabs);
-            Assert.Equal(114, matchPlayer.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(matchPlayer.PowerWeaponPossessionTime));
-            Assert.Equal(116, matchPlayer.ShotsFired);
-            Assert.Equal(117, matchPlayer.ShotsLanded);
-            Assert.Equal(118, matchPlayer.ShoulderBashDamage);
-            Assert.Equal(119, matchPlayer.ShoulderBashKills);
-            Assert.Equal(120, matchPlayer.WeaponDamage);
+            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
+            Assert.True(player.Dnf);
+            Assert.Equal("playerName", player.Name);
+            Assert.Equal(1000, player.Rank);
+            Assert.Equal(100, player.Team);
+            Assert.Equal(101, player.Assassinations);
+            Assert.Equal(102, player.Assists);
+            Assert.Equal(103, player.Deaths);
+            Assert.Equal(104, player.GrenadeDamage);
+            Assert.Equal(105, player.GrenadeKills);
+            Assert.Equal(106, player.GroundPoundDamage);
+            Assert.Equal(107, player.GroundPoundKills);
+            Assert.Equal(108, player.Headshots);
+            Assert.Equal(109, player.Kills);
+            Assert.Equal(110, player.MeleeDamage);
+            Assert.Equal(111, player.MeleeKills);
+            Assert.Equal(112, player.PowerWeaponDamage);
+            Assert.Equal(113, player.PowerWeaponGrabs);
+            Assert.Equal(114, player.PowerWeaponKills);
+            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
+            Assert.Equal(116, player.ShotsFired);
+            Assert.Equal(117, player.ShotsLanded);
+            Assert.Equal(118, player.ShoulderBashDamage);
+            Assert.Equal(119, player.ShoulderBashKills);
+            Assert.Equal(120, player.WeaponDamage);
 
-            var currentCsr = matchPlayer.CurrentCsr;
+            var currentCsr = player.CurrentCsr;
             Assert.Equal(31, currentCsr.CsrDesignationId);
             Assert.Equal(34, currentCsr.CsrDesignationTierId);
             Assert.Equal(32, currentCsr.PercentToNextTier);
             Assert.Equal(33, currentCsr.Rank);
             Assert.Equal(30, currentCsr.Value);
 
-            var previousCsr = matchPlayer.PreviousCsr;
+            var previousCsr = player.PreviousCsr;
             Assert.Equal(36, previousCsr.CsrDesignationId);
             Assert.Equal(39, previousCsr.CsrDesignationTierId);
             Assert.Equal(37, previousCsr.PercentToNextTier);
             Assert.Equal(38, previousCsr.Rank);
             Assert.Equal(35, previousCsr.Value);
 
-            var weaponsStats = matchPlayer.WeaponsStats;
+            var weaponsStats = player.WeaponsStats;
             Assert.Equal(1, weaponsStats.Count);
             var weaponStats = weaponsStats[0];
             Assert.Equal(40, weaponStats.DamageDealt);
@@ -619,13 +634,27 @@ namespace HaloApp.Tests
             Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
             Assert.Equal(44, weaponStats.ShotsFired);
             Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.Weapon.Id);
+            Assert.Equal(46, weaponStats.WeaponId);
+        }
+
+        [Fact]
+        public void Team()
+        {
+            var team1 = Mapper.Map<DomainModels.TeamDto>(MatchTeamStatsData()[0]);
+            Assert.Equal(2, team1.Rank);
+            Assert.Equal(40, team1.Score);
+            Assert.Equal(1, team1.TeamId);
+
+            var team2 = Mapper.Map<DomainModels.TeamDto>(MatchTeamStatsData()[1]);
+            Assert.Equal(1, team2.Rank);
+            Assert.Equal(50, team2.Score);
+            Assert.Equal(2, team2.TeamId);
         }
 
         [Fact]
         public void MatchFromPlayerMatch()
         {
-            var match = Mapper.Map<DomainModels.Match>(PlayerMatchData()[0]);
+            var match = Mapper.Map<DomainModels.MatchDto>(PlayerMatchData()[0]);
 
             Assert.True(match.Completed.Equals(new DateTime(2016, 3, 3)));
             Assert.True(TimeSpan.FromSeconds(100).Equals(match.Duration));
@@ -643,50 +672,60 @@ namespace HaloApp.Tests
         [Fact]
         public void MatchFromMatchReport()
         {
-            var match = Mapper.Map<DomainModels.Match>(MatchReportData()[0]);
+            var match = Mapper.Map<DomainModels.MatchDto>(MatchReportData()[0]);
 
-            var matchPlayer = match.Players[0];
-            Assert.True(TimeSpan.FromSeconds(70).Equals(matchPlayer.AvgLifeTime));
-            Assert.True(matchPlayer.Dnf);
-            Assert.Equal("matchPlayerName", matchPlayer.Name);
-            Assert.Equal(1000, matchPlayer.Rank);
-            Assert.Equal(100, matchPlayer.Team);
-            Assert.Equal(101, matchPlayer.Assassinations);
-            Assert.Equal(102, matchPlayer.Assists);
-            Assert.Equal(103, matchPlayer.Deaths);
-            Assert.Equal(104, matchPlayer.GrenadeDamage);
-            Assert.Equal(105, matchPlayer.GrenadeKills);
-            Assert.Equal(106, matchPlayer.GroundPoundDamage);
-            Assert.Equal(107, matchPlayer.GroundPoundKills);
-            Assert.Equal(108, matchPlayer.Headshots);
-            Assert.Equal(109, matchPlayer.Kills);
-            Assert.Equal(110, matchPlayer.MeleeDamage);
-            Assert.Equal(111, matchPlayer.MeleeKills);
-            Assert.Equal(112, matchPlayer.PowerWeaponDamage);
-            Assert.Equal(113, matchPlayer.PowerWeaponGrabs);
-            Assert.Equal(114, matchPlayer.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(matchPlayer.PowerWeaponPossessionTime));
-            Assert.Equal(116, matchPlayer.ShotsFired);
-            Assert.Equal(117, matchPlayer.ShotsLanded);
-            Assert.Equal(118, matchPlayer.ShoulderBashDamage);
-            Assert.Equal(119, matchPlayer.ShoulderBashKills);
-            Assert.Equal(120, matchPlayer.WeaponDamage);
+            var player = match.Players[0];
+            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
+            Assert.True(player.Dnf);
+            Assert.Equal("playerName", player.Name);
+            Assert.Equal(1000, player.Rank);
+            Assert.Equal(100, player.Team);
+            Assert.Equal(101, player.Assassinations);
+            Assert.Equal(102, player.Assists);
+            Assert.Equal(103, player.Deaths);
+            Assert.Equal(104, player.GrenadeDamage);
+            Assert.Equal(105, player.GrenadeKills);
+            Assert.Equal(106, player.GroundPoundDamage);
+            Assert.Equal(107, player.GroundPoundKills);
+            Assert.Equal(108, player.Headshots);
+            Assert.Equal(109, player.Kills);
+            Assert.Equal(110, player.MeleeDamage);
+            Assert.Equal(111, player.MeleeKills);
+            Assert.Equal(112, player.PowerWeaponDamage);
+            Assert.Equal(113, player.PowerWeaponGrabs);
+            Assert.Equal(114, player.PowerWeaponKills);
+            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
+            Assert.Equal(116, player.ShotsFired);
+            Assert.Equal(117, player.ShotsLanded);
+            Assert.Equal(118, player.ShoulderBashDamage);
+            Assert.Equal(119, player.ShoulderBashKills);
+            Assert.Equal(120, player.WeaponDamage);
 
-            var currentCsr = matchPlayer.CurrentCsr;
+            var team1 = match.Teams[0];
+            Assert.Equal(2, team1.Rank);
+            Assert.Equal(40, team1.Score);
+            Assert.Equal(1, team1.TeamId);
+
+            var team2 = match.Teams[1];
+            Assert.Equal(1, team2.Rank);
+            Assert.Equal(50, team2.Score);
+            Assert.Equal(2, team2.TeamId);
+
+            var currentCsr = player.CurrentCsr;
             Assert.Equal(31, currentCsr.CsrDesignationId);
             Assert.Equal(34, currentCsr.CsrDesignationTierId);
             Assert.Equal(32, currentCsr.PercentToNextTier);
             Assert.Equal(33, currentCsr.Rank);
             Assert.Equal(30, currentCsr.Value);
 
-            var previousCsr = matchPlayer.PreviousCsr;
+            var previousCsr = player.PreviousCsr;
             Assert.Equal(36, previousCsr.CsrDesignationId);
             Assert.Equal(39, previousCsr.CsrDesignationTierId);
             Assert.Equal(37, previousCsr.PercentToNextTier);
             Assert.Equal(38, previousCsr.Rank);
             Assert.Equal(35, previousCsr.Value);
 
-            var weaponsStats = matchPlayer.WeaponsStats;
+            var weaponsStats = player.WeaponsStats;
             Assert.Equal(1, weaponsStats.Count);
             var weaponStats = weaponsStats[0];
             Assert.Equal(40, weaponStats.DamageDealt);
@@ -695,13 +734,13 @@ namespace HaloApp.Tests
             Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
             Assert.Equal(44, weaponStats.ShotsFired);
             Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.Weapon.Id);
+            Assert.Equal(46, weaponStats.WeaponId);
         }
 
         [Fact]
         public void Match()
         {
-            var match = Mapper.Map<DomainModels.Match>(PlayerMatchData()[0])
+            var match = Mapper.Map<DomainModels.MatchDto>(PlayerMatchData()[0])
                               .Map(MatchReportData()[0]);
 
             Assert.True(match.Completed.Equals(new DateTime(2016, 3, 3)));
@@ -716,48 +755,48 @@ namespace HaloApp.Tests
             Assert.True(match.SeasonId.Equals(SeasonGuid));
             Assert.True(match.TeamGame);
 
-            var matchPlayer = match.Players[0];
-            Assert.True(TimeSpan.FromSeconds(70).Equals(matchPlayer.AvgLifeTime));
-            Assert.True(matchPlayer.Dnf);
-            Assert.Equal("matchPlayerName", matchPlayer.Name);
-            Assert.Equal(1000, matchPlayer.Rank);
-            Assert.Equal(100, matchPlayer.Team);
-            Assert.Equal(101, matchPlayer.Assassinations);
-            Assert.Equal(102, matchPlayer.Assists);
-            Assert.Equal(103, matchPlayer.Deaths);
-            Assert.Equal(104, matchPlayer.GrenadeDamage);
-            Assert.Equal(105, matchPlayer.GrenadeKills);
-            Assert.Equal(106, matchPlayer.GroundPoundDamage);
-            Assert.Equal(107, matchPlayer.GroundPoundKills);
-            Assert.Equal(108, matchPlayer.Headshots);
-            Assert.Equal(109, matchPlayer.Kills);
-            Assert.Equal(110, matchPlayer.MeleeDamage);
-            Assert.Equal(111, matchPlayer.MeleeKills);
-            Assert.Equal(112, matchPlayer.PowerWeaponDamage);
-            Assert.Equal(113, matchPlayer.PowerWeaponGrabs);
-            Assert.Equal(114, matchPlayer.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(matchPlayer.PowerWeaponPossessionTime));
-            Assert.Equal(116, matchPlayer.ShotsFired);
-            Assert.Equal(117, matchPlayer.ShotsLanded);
-            Assert.Equal(118, matchPlayer.ShoulderBashDamage);
-            Assert.Equal(119, matchPlayer.ShoulderBashKills);
-            Assert.Equal(120, matchPlayer.WeaponDamage);
+            var player = match.Players[0];
+            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
+            Assert.True(player.Dnf);
+            Assert.Equal("playerName", player.Name);
+            Assert.Equal(1000, player.Rank);
+            Assert.Equal(100, player.Team);
+            Assert.Equal(101, player.Assassinations);
+            Assert.Equal(102, player.Assists);
+            Assert.Equal(103, player.Deaths);
+            Assert.Equal(104, player.GrenadeDamage);
+            Assert.Equal(105, player.GrenadeKills);
+            Assert.Equal(106, player.GroundPoundDamage);
+            Assert.Equal(107, player.GroundPoundKills);
+            Assert.Equal(108, player.Headshots);
+            Assert.Equal(109, player.Kills);
+            Assert.Equal(110, player.MeleeDamage);
+            Assert.Equal(111, player.MeleeKills);
+            Assert.Equal(112, player.PowerWeaponDamage);
+            Assert.Equal(113, player.PowerWeaponGrabs);
+            Assert.Equal(114, player.PowerWeaponKills);
+            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
+            Assert.Equal(116, player.ShotsFired);
+            Assert.Equal(117, player.ShotsLanded);
+            Assert.Equal(118, player.ShoulderBashDamage);
+            Assert.Equal(119, player.ShoulderBashKills);
+            Assert.Equal(120, player.WeaponDamage);
 
-            var currentCsr = matchPlayer.CurrentCsr;
+            var currentCsr = player.CurrentCsr;
             Assert.Equal(31, currentCsr.CsrDesignationId);
             Assert.Equal(34, currentCsr.CsrDesignationTierId);
             Assert.Equal(32, currentCsr.PercentToNextTier);
             Assert.Equal(33, currentCsr.Rank);
             Assert.Equal(30, currentCsr.Value);
 
-            var previousCsr = matchPlayer.PreviousCsr;
+            var previousCsr = player.PreviousCsr;
             Assert.Equal(36, previousCsr.CsrDesignationId);
             Assert.Equal(39, previousCsr.CsrDesignationTierId);
             Assert.Equal(37, previousCsr.PercentToNextTier);
             Assert.Equal(38, previousCsr.Rank);
             Assert.Equal(35, previousCsr.Value);
 
-            var weaponsStats = matchPlayer.WeaponsStats;
+            var weaponsStats = player.WeaponsStats;
             Assert.Equal(1, weaponsStats.Count);
             var weaponStats = weaponsStats[0];
             Assert.Equal(40, weaponStats.DamageDealt);
@@ -766,7 +805,7 @@ namespace HaloApp.Tests
             Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
             Assert.Equal(44, weaponStats.ShotsFired);
             Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.Weapon.Id);
+            Assert.Equal(46, weaponStats.WeaponId);
         }
 
         #endregion
@@ -827,7 +866,7 @@ namespace HaloApp.Tests
                     DNF = true,
                     Player = new ApiModels.MatchReportPlayer
                     {
-                        Gamertag = "matchPlayerName",
+                        Gamertag = "playerName",
                     },
                     PreviousCsr = MatchCsrData()[1],
                     Rank = 1000,
@@ -853,6 +892,25 @@ namespace HaloApp.Tests
                     TotalShoulderBashKills = 119,
                     TotalWeaponDamage = 120,
                     WeaponStats = MatchWeaponData().ToList(),
+                },
+            };
+        }
+
+        private static IList<ApiModels.MatchTeamStats> MatchTeamStatsData()
+        {
+            return new List<ApiModels.MatchTeamStats>
+            {
+                new ApiModels.MatchTeamStats
+                {
+                    Rank = 2,
+                    Score = 40,
+                    TeamId = 1,
+                },
+                new ApiModels.MatchTeamStats
+                {
+                    Rank = 1,
+                    Score = 50,
+                    TeamId = 2,
                 },
             };
         }
@@ -898,6 +956,7 @@ namespace HaloApp.Tests
                 new ApiModels.MatchReport
                 {
                     PlayerStats = MatchPlayerStatsData().ToList(),
+                    TeamStats = MatchTeamStatsData().ToList(),
                 },
             };
         }

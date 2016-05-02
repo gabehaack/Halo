@@ -1,5 +1,5 @@
-﻿using HaloApp.Domain.Models.Metadata;
-using System;
+﻿using System;
+using HaloApp.Domain.Models.Metadata;
 
 namespace HaloApp.Domain.Models
 {
@@ -15,12 +15,12 @@ namespace HaloApp.Domain.Models
 
         public double Accuracy
         {
-            get { return HaloDataManager.RoundPercentage(ShotsLanded / ShotsFired); }
+            get { return HaloDataManager.RoundPercentage((double) ShotsLanded / ShotsFired); }
         }
 
         public double HeadshotPercentage
         {
-            get { return HaloDataManager.RoundPercentage(Headshots / ShotsFired); }
+            get { return HaloDataManager.RoundPercentage((double) Headshots / ShotsFired); }
         }
 
         public double DamagePerKill
@@ -30,12 +30,12 @@ namespace HaloApp.Domain.Models
 
         public double ShotsFiredPerKill
         {
-            get { return HaloDataManager.Round(ShotsFired / Kills); }
+            get { return HaloDataManager.Round((double) ShotsFired / Kills); }
         }
 
         public double ShotsLandedPerKill
         {
-            get { return HaloDataManager.Round(ShotsFired / Kills); }
+            get { return HaloDataManager.Round((double) ShotsLanded / Kills); }
         }
 
         public double KillsPerMinute

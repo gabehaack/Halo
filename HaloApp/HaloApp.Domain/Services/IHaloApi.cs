@@ -1,4 +1,4 @@
-﻿using HaloApp.Domain.Models;
+﻿using HaloApp.Domain.Models.Dto;
 using HaloApp.Domain.Models.Metadata;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace HaloApp.Domain.Services
         Task<IList<FlexibleStat>> GetFlexibleStatMetadataAsync();
         Task<IList<GameBaseVariant>> GetGameBaseVariantMetadataAsync();
         Task<GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId);
-        //Task<IList<Impulse>> GetImpulseMetadataAsync();
+        Task<IList<Impulse>> GetImpulseMetadataAsync();
         Task<IList<Map>> GetMapMetadataAsync();
         Task<MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId);
         Task<IList<Medal>> GetMedalMetadataAsync();
@@ -24,7 +24,7 @@ namespace HaloApp.Domain.Services
         Task<IList<Vehicle>> GetVehicleMetadataAsync();
         Task<IList<Weapon>> GetWeaponMetadataAsync();
 
-        Task<IList<Match>> GetMatchesAsync(string player, int start = 0, int quantity = 25);
-        Task<IList<MatchPlayer>> GetMatchStatsAsync(Guid matchId);
+        Task<IList<MatchDto>> GetMatchesAsync(string player, int start = 0, int quantity = 25);
+        Task<IList<PlayerDto>> GetMatchStatsAsync(Guid matchId);
     }
 }

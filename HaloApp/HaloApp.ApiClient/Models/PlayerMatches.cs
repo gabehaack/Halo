@@ -21,7 +21,6 @@ namespace HaloApp.ApiClient.Models
         public GameVariantId GameVariant { get; set; }
         public string MatchDuration { get; set; }
         public Iso8601Date MatchCompletedDate { get; set; }
-        public List<MatchTeam> Teams { get; set; }
         public bool IsTeamGame { get; set; }
         public string SeasonId { get; set; }
     }
@@ -61,12 +60,5 @@ namespace HaloApp.ApiClient.Models
     public class MatchPlayerId
     {
         public string Gamertag { get; set; }
-    }
-
-    public class MatchTeam
-    {
-        public int Id { get; set; }
-        public int Score { get; set; }
-        public int Rank { get; set; }
     }
 }

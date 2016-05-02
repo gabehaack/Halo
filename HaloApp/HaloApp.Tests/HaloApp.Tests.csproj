@@ -102,9 +102,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="HaloDomainMapProfileTests.cs" />
     <Compile Include="HaloApiMapProfileTests.cs" />
     <Compile Include="DataTests.cs" />
     <Compile Include="ApiClientTests.cs" />
+    <Compile Include="HaloDomainModelTests.cs" />
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HaloDataManagerTests.cs" />

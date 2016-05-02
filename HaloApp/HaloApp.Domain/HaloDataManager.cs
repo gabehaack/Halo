@@ -1,11 +1,12 @@
-﻿using HaloApp.Domain.Models;
-using HaloApp.Domain.Models.Metadata;
-using HaloApp.Domain.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using HaloApp.Domain.Models;
+using HaloApp.Domain.Models.Dto;
+using HaloApp.Domain.Models.Metadata;
+using HaloApp.Domain.Services;
 
 namespace HaloApp.Domain
 {
@@ -32,7 +33,7 @@ namespace HaloApp.Domain
             Task csrDesignationTask = ReplaceCsrDesignationMetadataAsync();
             Task flexibleStatTask = ReplaceFlexibleStatMetadataAsync();
             Task gameBaseVariantTask = ReplaceGameBaseVariantMetadataAsync();
-            //Task impulseTask = ReplaceImpulseMetadataAsync();
+            Task impulseTask = ReplaceImpulseMetadataAsync();
             Task mapTask = ReplaceMapMetadataAsync();
             Task medalTask = ReplaceMedalMetadataAsync();
             Task playlistTask = ReplacePlaylistMetadataAsync();
@@ -46,7 +47,7 @@ namespace HaloApp.Domain
                 csrDesignationTask,
                 flexibleStatTask,
                 gameBaseVariantTask,
-                //impulseTask,
+                impulseTask,
                 mapTask,
                 medalTask,
                 playlistTask,
@@ -76,11 +77,15 @@ namespace HaloApp.Domain
             await _haloRepository.ReplaceMetadataAsync(gameBaseVariantMetadata.ToList());
         }
 
-        //public async Task ReplaceImpulseMetadataAsync()
-        //{
-        //    var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
-        //    await _haloRepository.ReplaceMetadata(impulseMetadata.ToList());
-        //}
+        public async Task ReplaceImpulseMetadataAsync()
+        {
+            var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
+            var spawnImpulse = impulseMetadata
+                .FirstOrDefault(i => i.Name == "Spawn Impulse");
+            if (spawnImpulse != null)
+                impulseMetadata.Remove(spawnImpulse);
+            await _haloRepository.ReplaceMetadataAsync(impulseMetadata.ToList());
+        }
 
         public async Task ReplaceMapMetadataAsync()
         {
@@ -144,7 +149,7 @@ namespace HaloApp.Domain
             var existingMatches = await _haloRepository.GetMatchesAsync(player);
 
             // Get player matches (with no stats)
-            IEnumerable<Match> matches = new HashSet<Match>();
+            IEnumerable<MatchDto> matches = new HashSet<MatchDto>();
             int batchRemaining = quantity;
             int batchStart = start;
             for ( ; batchRemaining > 0 ; )
@@ -157,7 +162,7 @@ namespace HaloApp.Domain
             }
             var matchList = matches.ToList();
 
-            var duplicateMatches = new List<Match>();
+            var duplicateMatches = new List<MatchDto>();
             // Get stats for any new matches
             foreach (var match in matchList)
             {
@@ -178,14 +183,77 @@ namespace HaloApp.Domain
             await _haloRepository.AddMatchesAsync(matchList);
         }
 
-        public async Task<IEnumerable<Match>> RetrieveStoredMatchesAsync(string player)
+        public async Task<IList<Match>> RetrieveStoredMatchesAsync(string player)
         {
-            return await _haloRepository.GetMatchesAsync(player);
+            var matchDtos = await _haloRepository.GetMatchesAsync(player);
+            return await MatchesAsync(matchDtos);
         }
 
+        #endregion
+
+        #region Mapping
+
+        public async Task<IList<Match>> MatchesAsync(IList<MatchDto> matchDtos)
+        {
+            // Get all needed metadata
+            var csrDesignations = await _haloRepository.GetMetadataAsync<CsrDesignation>();
+            var gameBaseVariants = await _haloRepository.GetMetadataAsync<GameBaseVariant>();
+            var gameVariants = await _haloRepository.GetMetadataAsync<GameVariant>();
+            var maps = await _haloRepository.GetMetadataAsync<Map>();
+            var mapVariants = await _haloRepository.GetMetadataAsync<MapVariant>();
+            var playlists = await _haloRepository.GetMetadataAsync<Playlist>();
+            var seasons = await _haloRepository.GetMetadataAsync<Season>();
+            var weapons = await _haloRepository.GetMetadataAsync<Weapon>();
+
+            // Non-metadata mappings
+            var matches = matchDtos
+                .Select(Mapper.Map<Match>)
+                .ToList();
+
+            // Metadata mappings
+            foreach (var match in matches)
+            {
+                match.GameBaseVariant = gameBaseVariants
+                    .FirstOrDefault(g => g.Id == match.GameBaseVariant.Id);
+                match.GameVariant = gameVariants
+                    .FirstOrDefault(g => g.Id == match.GameVariant.Id);
+                match.Map = maps
+                    .FirstOrDefault(m => m.Id == match.Map.Id);
+                match.MapVariant = mapVariants
+                    .FirstOrDefault(m => m.Id == match.MapVariant.Id);
+                match.Playlist = playlists
+                    .FirstOrDefault(p => p.Id == match.Playlist.Id);
+                match.Season = seasons
+                    .FirstOrDefault(s => s.Id == match.Season.Id);
+
+                foreach (var player in match.Players)
+                {
+                    // TODO - handle null reference exceptions here
+                    //player.CurrentCsr.Designation = csrDesignations
+                    //    .FirstOrDefault(d => d.Id == player.CurrentCsr.Designation.Id);
+                    //player.CurrentCsr.Tier = player.CurrentCsr.Designation.Tiers
+                    //    .FirstOrDefault(t => t.Id == player.CurrentCsr.Tier.Id);
+                    //player.PreviousCsr.Designation = csrDesignations
+                    //    .FirstOrDefault(d => d.Id == player.PreviousCsr.Designation.Id);
+                    //player.PreviousCsr.Tier = player.PreviousCsr.Designation.Tiers
+                    //    .FirstOrDefault(t => t.Id == player.PreviousCsr.Tier.Id);
+
+                    foreach (var weaponStats in player.WeaponsStats)
+                    {
+                        weaponStats.Weapon = weapons
+                            .FirstOrDefault(w => w.Id == weaponStats.Weapon.Id);
+                    }
+                }
+            }
+
+            return matches;
+        }
+
+        #endregion
+
+        #region Data Analysis
+
         // TODO - medals and other raw data not being analyzed right now
-        // Also, accuracy, k/d and some other things aren't showing up correctly,
-        // accuracy is 0 so calculated wrong, k/d doesn't show 2nd decimal place
 
         public PlayerStats GetPlayerStats(IList<Match> matches, string player)
         {
@@ -238,7 +306,7 @@ namespace HaloApp.Domain
 
         public static double RoundPercentage(double value)
         {
-            return Math.Round(value, 3);
+            return Math.Round(value, 2);
         }
     }
 }

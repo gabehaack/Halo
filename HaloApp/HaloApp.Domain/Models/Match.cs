@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HaloApp.Domain.Models.Metadata;
 
 namespace HaloApp.Domain.Models
 {
@@ -11,16 +12,17 @@ namespace HaloApp.Domain.Models
         public GameMode GameMode { get; set; }
         public TimeSpan Duration { get; set; }
         public Guid Id { get; set; }
-        public Guid MapId { get; set; }
-        public Guid MapVariantId { get; set; }
-        public Guid GameBaseVariantId { get; set; }
-        public Guid GameVariantId { get; set; }
-        public Guid PlaylistId { get; set; }
-        public IList<MatchPlayer> Players { get; set; }
-        public Guid SeasonId { get; set; }
+        public Map Map { get; set; }
+        public MapVariant MapVariant { get; set; }
+        public GameBaseVariant GameBaseVariant { get; set; }
+        public GameVariant GameVariant { get; set; }
+        public Playlist Playlist { get; set; }
+        public IList<Player> Players { get; set; }
+        public Season Season { get; set; }
         public bool TeamGame { get; set; }
+        public IList<Team> Teams { get; set; }
 
-        public MatchPlayer GetPlayer(string player)
+        public Player GetPlayer(string player)
         {
             return Players.FirstOrDefault(p => p.Name == player);
         }

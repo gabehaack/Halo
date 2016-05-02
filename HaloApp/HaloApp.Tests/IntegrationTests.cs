@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using HaloApp.ApiClient;
 using HaloApp.Data;
 using HaloApp.Domain;
 using HaloApp.Domain.Services;
 using MongoDB.Driver;
-using System;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace HaloApp.Tests
@@ -20,8 +20,6 @@ namespace HaloApp.Tests
             ConfigurationManager.AppSettings["SubscriptionKey"];
         private static readonly string MongoDbConnection =
             ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
-
-        private const string Player = "shockRocket";
 
         private static HaloDataManager HaloDataManager()
         {
@@ -44,6 +42,7 @@ namespace HaloApp.Tests
             Mapper.Initialize(cfg =>
             {
                 cfg.AddProfile<HaloApiMapProfile>();
+                cfg.AddProfile<HaloDomainMapProfile>();
             });
         }
 
@@ -52,8 +51,11 @@ namespace HaloApp.Tests
         {
             var haloApi = HaloApi();
 
-            var matches = await haloApi.GetMatchesAsync(Player, 0, 1);
+            var matches = await haloApi.GetMatchesAsync("shockRocket", 0, 1);
             var match = matches.First();
+            var players = await haloApi.GetMatchStatsAsync(match.Id);
+            match.Players = players;
+
         }
 
         [Fact]
@@ -61,7 +63,7 @@ namespace HaloApp.Tests
         {
             var haloDataManager = HaloDataManager();
 
-            await haloDataManager.ReplaceAllMetadataAsync();
+            await haloDataManager.ReplaceImpulseMetadataAsync();
         }
 
         [Fact]
@@ -69,7 +71,7 @@ namespace HaloApp.Tests
         {
             var haloDataManager = HaloDataManager();
 
-            await haloDataManager.StoreMatchesAsync(Player, 0, 100);
+            await haloDataManager.StoreMatchesAsync("shockRocket", 0, 100);
         }
 
         [Fact]
@@ -77,10 +79,10 @@ namespace HaloApp.Tests
         {
             var haloDataManager = HaloDataManager();
 
-            var matches = await haloDataManager.RetrieveStoredMatchesAsync(Player);
-            var playerStats = haloDataManager.GetPlayerStats(matches.ToList(), Player);
+            var matches = await haloDataManager.RetrieveStoredMatchesAsync("shockRocket");
+            var playerStats = haloDataManager.GetPlayerStats(matches, "shockRocket");
 
-            var player = matches.First().GetPlayer(Player);
+            var player = matches.First().GetPlayer("shockRocket");
             double totalWeaponDamage = player.WeaponDamage;
             double othertotal = player.WeaponsStats
                 .Sum(w => w.DamageDealt);

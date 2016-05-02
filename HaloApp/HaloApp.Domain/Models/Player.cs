@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HaloApp.Domain.Models
 {
-    public class MatchPlayer
+    public class Player
     {
         public TimeSpan AvgLifeTime { get; set; }
         public string Name { get; set; }

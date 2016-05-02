@@ -6,6 +6,7 @@ namespace HaloApp.ApiClient.Models
     public class MatchReport
     {
         public List<MatchPlayerStats> PlayerStats { get; set; }
+        public List<MatchTeamStats> TeamStats { get; set; }
     }
 
     public class MatchPlayerStats
@@ -50,7 +51,6 @@ namespace HaloApp.ApiClient.Models
         public List<EnemyKills> EnemyKills { get; set; }
         public List<MatchWeapon> WeaponStats { get; set; }
         public List<MatchImpulse> Impulses { get; set; }
-        public List<TeamStat> TeamStats { get; set; }
         public bool IsMatchOver { get; set; }
         public string TotalDuration { get; set; }
         public string MapVariantId { get; set; }
@@ -92,16 +92,22 @@ namespace HaloApp.ApiClient.Models
 
     public class MatchFlexibleStats
     {
-        public List<MatchFlexibleStat> MedalStatCounts { get; set; }
-        public List<MatchFlexibleStat> ImpulseStatCounts { get; set; }
-        public List<MatchFlexibleStat> MedalTimelapses { get; set; }
-        public List<MatchFlexibleStat> ImpulseTimelapses { get; set; }
+        public List<FlexibleStatCount> MedalStatCounts { get; set; }
+        public List<FlexibleStatCount> ImpulseStatCounts { get; set; }
+        public List<FlexibleStatTimelapse> MedalTimelapses { get; set; }
+        public List<FlexibleStatTimelapse> ImpulseTimelapses { get; set; }
     }
 
-    public class MatchImpulse
+    public class FlexibleStatCount
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public int Count { get; set; }
+    }
+
+    public class FlexibleStatTimelapse
+    {
+        public Guid Id { get; set; }
+        public string Timelapse { get; set; }
     }
 
     public class KilledByOpponentDetail
@@ -123,6 +129,12 @@ namespace HaloApp.ApiClient.Models
         public int Csr { get; set; }
         public int PercentToNextTier { get; set; }
         public int? Rank { get; set; }
+    }
+
+    public class MatchImpulse
+    {
+        public long Id { get; set; }
+        public int Count { get; set; }
     }
 
     public class MatchReportPlayer
@@ -173,7 +185,7 @@ namespace HaloApp.ApiClient.Models
         public int Score { get; set; }
     }
 
-    public class TeamStat
+    public class MatchTeamStats
     {
         public int TeamId { get; set; }
         public int Score { get; set; }

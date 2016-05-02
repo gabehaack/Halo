@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HaloApp.Domain.Models
 {
@@ -21,17 +18,17 @@ namespace HaloApp.Domain.Models
 
         public double Accuracy
         {
-            get { return HaloDataManager.RoundPercentage(ShotsLanded / ShotsFired); }
+            get { return HaloDataManager.RoundPercentage((double) ShotsLanded / ShotsFired); }
         }
 
         public double Kda
         {
-            get { return HaloDataManager.Round(Kills + Assists / 3 - Deaths); }
+            get { return HaloDataManager.Round(Kills + (double) Assists / 3 - Deaths); }
         }
 
         public double KillsPerDeath
         {
-            get { return HaloDataManager.Round(Kills / Deaths); }
+            get { return HaloDataManager.Round((double) Kills / Deaths); }
         }
 
         public double KillsPerMinute
@@ -56,12 +53,12 @@ namespace HaloApp.Domain.Models
 
         public double ShotsFiredPerKill
         {
-            get { return HaloDataManager.Round(ShotsFired / Kills); }
+            get { return HaloDataManager.Round((double) ShotsFired / Kills); }
         }
 
         public double ShotsLandedPerKill
         {
-            get { return HaloDataManager.Round(ShotsFired / Kills); }
+            get { return HaloDataManager.Round((double) ShotsLanded / Kills); }
         }
     }
 }

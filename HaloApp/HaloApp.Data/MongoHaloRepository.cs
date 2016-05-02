@@ -1,13 +1,13 @@
-﻿using HaloApp.Domain.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using HaloApp.Domain.Models.Dto;
 using HaloApp.Domain.Models.Metadata;
 using HaloApp.Domain.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HaloApp.Data
 {
@@ -38,35 +38,24 @@ namespace HaloApp.Data
         {
             string metadataCollectionName = typeof(TMetadata).Name + 's';
             var metadataCollection = _haloDb.GetCollection<TMetadata>(metadataCollectionName);
-            return await metadataCollection.AsQueryable()
+            return await metadataCollection
+                .AsQueryable()
                 .ToListAsync();
         }
 
-        public async Task AddMatchesAsync(IList<Match> matches)
+        public async Task AddMatchesAsync(IList<MatchDto> matches)
         {
-            var matchCollection = _haloDb.GetCollection<Match>("Matches");
+            var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
             await matchCollection.InsertManyAsync(matches);
         }
 
-        public async Task<IList<Match>> GetMatchesAsync(string player)
+        public async Task<IList<MatchDto>> GetMatchesAsync(string player)
         {
-            var matchCollection = _haloDb.GetCollection<Match>("Matches");
-            var matches = await matchCollection.AsQueryable()
+            var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
+            return await matchCollection
+                .AsQueryable()
                 .Where(m => m.Players.Any(p => p.Name == player))
                 .ToListAsync();
-            var weapons = await GetMetadataAsync<Weapon>();
-            foreach (var match in matches)
-            {
-                foreach (var matchPlayer in match.Players)
-                {
-                    foreach (var weaponStat in matchPlayer.WeaponsStats)
-                    {
-                        weaponStat.Weapon = weapons
-                            .FirstOrDefault(w => w.Id == weaponStat.Weapon.Id);
-                    }
-                }
-            }
-            return matches;
         }
 
         private void RegisterClasses()
@@ -77,7 +66,7 @@ namespace HaloApp.Data
             BsonClassMap.RegisterClassMap<FlexibleStat>();
             BsonClassMap.RegisterClassMap<GameBaseVariant>();
             BsonClassMap.RegisterClassMap<GameVariant>();
-            //BsonClassMap.RegisterClassMap<Impulse>();
+            BsonClassMap.RegisterClassMap<Impulse>();
             BsonClassMap.RegisterClassMap<Map>();
             BsonClassMap.RegisterClassMap<MapVariant>();
             BsonClassMap.RegisterClassMap<Medal>();
@@ -89,9 +78,9 @@ namespace HaloApp.Data
             BsonClassMap.RegisterClassMap<Vehicle>();
             BsonClassMap.RegisterClassMap<Weapon>();
 
-            BsonClassMap.RegisterClassMap<Csr>();
-            BsonClassMap.RegisterClassMap<Match>();
-            BsonClassMap.RegisterClassMap<MatchPlayer>();
+            BsonClassMap.RegisterClassMap<CsrDto>();
+            BsonClassMap.RegisterClassMap<MatchDto>();
+            BsonClassMap.RegisterClassMap<PlayerDto>();
         }
     }
 }

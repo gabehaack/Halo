@@ -1,10 +1,4 @@
-﻿using AutoMapper;
-using HaloApp.ApiClient.Models;
-using HaloApp.ApiClient.Models.Metadata;
-using HaloApp.Domain.Enums;
-using HaloApp.Domain.Services;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,8 +6,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
+using AutoMapper;
+using HaloApp.ApiClient.Models;
+using HaloApp.ApiClient.Models.Metadata;
+using HaloApp.Domain.Enums;
+using HaloApp.Domain.Services;
+using Newtonsoft.Json;
 using DomainMetadata = HaloApp.Domain.Models.Metadata;
-using DomainModels = HaloApp.Domain.Models;
+using DomainModels = HaloApp.Domain.Models.Dto;
 
 namespace HaloApp.ApiClient
 {
@@ -69,11 +69,13 @@ namespace HaloApp.ApiClient
             return Mapper.Map<DomainMetadata.GameVariant>(gameVariantMetadatum);
         }
 
-        //public async Task<IList<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
-        //{
-        //    var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
-        //    return impulseMetadata.Select(m => Mapper.Impulse(m));
-        //}
+        public async Task<IList<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
+        {
+            var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
+            return impulseMetadata
+                .Select(Mapper.Map<DomainMetadata.Impulse>)
+                .ToList();
+        }
 
         public async Task<DomainMetadata.MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId)
         {
@@ -149,7 +151,7 @@ namespace HaloApp.ApiClient
 
         #region Match Data
 
-        public async Task<IList<DomainModels.Match>> GetMatchesAsync(string player, int start = 0, int quantity = 25)
+        public async Task<IList<DomainModels.MatchDto>> GetMatchesAsync(string player, int start = 0, int quantity = 25)
         {
             var queryString = HttpUtility.ParseQueryString(string.Empty);
             queryString["modes"] = (GameMode.Arena).ToString().ToLower();
@@ -159,15 +161,15 @@ namespace HaloApp.ApiClient
 
             var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
             return playerMatches.Results
-                .Select(Mapper.Map<DomainModels.Match>)
+                .Select(Mapper.Map<DomainModels.MatchDto>)
                 .ToList();
         }
 
-        public async Task<IList<DomainModels.MatchPlayer>> GetMatchStatsAsync(Guid matchId)
+        public async Task<IList<DomainModels.PlayerDto>> GetMatchStatsAsync(Guid matchId)
         {
             var matchReport = await GetMatchReportAsync(matchId);
             return matchReport.PlayerStats
-                .Select(Mapper.Map<DomainModels.MatchPlayer>)
+                .Select(Mapper.Map<DomainModels.PlayerDto>)
                 .ToList();
         }
 
