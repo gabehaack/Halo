@@ -62,77 +62,75 @@ namespace HaloApp.Domain
         public async Task ReplaceCsrDesignationMetadataAsync()
         {
             var csrDesignationMetadata = await _haloApi.GetCsrDesignationMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(csrDesignationMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(csrDesignationMetadata);
         }
 
         public async Task ReplaceFlexibleStatMetadataAsync()
         {
             var flexibleStatMetadata = await _haloApi.GetFlexibleStatMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(flexibleStatMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(flexibleStatMetadata);
         }
 
         public async Task ReplaceGameBaseVariantMetadataAsync()
         {
             var gameBaseVariantMetadata = await _haloApi.GetGameBaseVariantMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(gameBaseVariantMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(gameBaseVariantMetadata);
         }
 
         public async Task ReplaceImpulseMetadataAsync()
         {
             var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
-            var spawnImpulse = impulseMetadata
-                .FirstOrDefault(i => i.Name == "Spawn Impulse");
-            if (spawnImpulse != null)
-                impulseMetadata.Remove(spawnImpulse);
-            await _haloRepository.ReplaceMetadataAsync(impulseMetadata.ToList());
+            var cleanImpulseMetadata = impulseMetadata
+                .Where(i => i.Name != "Spawn Impulse");
+            await _haloRepository.ReplaceMetadataAsync(impulseMetadata);
         }
 
         public async Task ReplaceMapMetadataAsync()
         {
             var mapMetadata = await _haloApi.GetMapMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(mapMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(mapMetadata);
         }
 
         public async Task ReplaceMedalMetadataAsync()
         {
             var medalMetadata = await _haloApi.GetMedalMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(medalMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(medalMetadata);
         }
 
         public async Task ReplacePlaylistMetadataAsync()
         {
             var playlistMetadata = await _haloApi.GetPlaylistMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(playlistMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(playlistMetadata);
         }
 
         public async Task ReplaceSeasonMetadataAsync()
         {
             var seasonMetadata = await _haloApi.GetSeasonMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(seasonMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(seasonMetadata);
         }
 
         public async Task ReplaceSpartanRankMetadataAsync()
         {
             var spartanRankMetadata = await _haloApi.GetSpartanRankMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(spartanRankMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(spartanRankMetadata);
         }
 
         public async Task ReplaceTeamColorMetadataAsync()
         {
             var teamColorMetadata = await _haloApi.GetTeamColorMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(teamColorMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(teamColorMetadata);
         }
 
         public async Task ReplaceVehicleMetadataAsync()
         {
             var vehicleMetadata = await _haloApi.GetVehicleMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(vehicleMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(vehicleMetadata);
         }
 
         public async Task ReplaceWeaponMetadataAsync()
         {
             var weaponMetadata = await _haloApi.GetWeaponMetadataAsync();
-            await _haloRepository.ReplaceMetadataAsync(weaponMetadata.ToList());
+            await _haloRepository.ReplaceMetadataAsync(weaponMetadata);
         }
 
         #endregion
@@ -183,7 +181,7 @@ namespace HaloApp.Domain
             await _haloRepository.AddMatchesAsync(matchList);
         }
 
-        public async Task<IList<Match>> RetrieveStoredMatchesAsync(string player)
+        public async Task<IEnumerable<Match>> RetrieveStoredMatchesAsync(string player)
         {
             var matchDtos = await _haloRepository.GetMatchesAsync(player);
             return await MatchesAsync(matchDtos);
@@ -193,7 +191,7 @@ namespace HaloApp.Domain
 
         #region Mapping
 
-        public async Task<IList<Match>> MatchesAsync(IList<MatchDto> matchDtos)
+        public async Task<IEnumerable<Match>> MatchesAsync(IEnumerable<MatchDto> matchDtos)
         {
             // Get all needed metadata
             var csrDesignations = await _haloRepository.GetMetadataAsync<CsrDesignation>();
@@ -207,8 +205,7 @@ namespace HaloApp.Domain
 
             // Non-metadata mappings
             var matches = matchDtos
-                .Select(Mapper.Map<Match>)
-                .ToList();
+                .Select(Mapper.Map<Match>);
 
             // Metadata mappings
             foreach (var match in matches)
@@ -255,22 +252,26 @@ namespace HaloApp.Domain
 
         // TODO - medals and other raw data not being analyzed right now
 
-        public PlayerStats GetPlayerStats(IList<Match> matches, string player)
+        public PlayerStats GetPlayerStats(IEnumerable<Match> matches, string player)
         {
             var matchPlayers = matches
-                .Select(m => m.GetPlayer(player))
-                .ToList();
+                .Select(m => m.GetPlayer(player));
+            var nullWeapons = matchPlayers
+                .Where(p => p.WeaponsStats.Any(w => w == null));
+            if (nullWeapons.Any())
+            {
+                var blah = true;
+            }
             var weaponIds = matchPlayers
                 .SelectMany(p => p.WeaponsStats.Select(w => w.Weapon.Id))
-                .Distinct()
-                .ToList();
+                .Distinct();
             var weaponsStats = new List<WeaponStats>();
             foreach (var weaponId in weaponIds)
             {
                 var weapons = matchPlayers
                     .Select(p => p.WeaponsStats.FirstOrDefault(w => w.Weapon.Id == weaponId))
-                    .Where(w => w != null)
-                    .ToList();
+                    .Where(w => w != null);
+                ;
                 weaponsStats.Add(new WeaponStats
                 {
                     DamageDealt = weapons.Sum(w => w.DamageDealt),
@@ -287,7 +288,7 @@ namespace HaloApp.Domain
                 Assists = matchPlayers.Sum(p => p.Assists),
                 DamageDealt = matchPlayers.Sum(p => p.DamageDealt),
                 Deaths = matchPlayers.Sum(p => p.Deaths),
-                GamesPlayed = matchPlayers.Count,
+                GamesPlayed = matchPlayers.Count(),
                 Kills = matchPlayers.Sum(p => p.Kills),
                 Name = player,
                 ShotsFired = matchPlayers.Sum(p => p.ShotsFired),

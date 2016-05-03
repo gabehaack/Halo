@@ -14,7 +14,7 @@ namespace HaloApp.Domain.Models
         public double DamageDealt { get; set; }
         public int ShotsLanded { get; set; }
         public int ShotsFired { get; set; }
-        public IList<WeaponStats> WeaponsStats { get; set; }
+        public IEnumerable<WeaponStats> WeaponsStats { get; set; }
 
         public double Accuracy
         {

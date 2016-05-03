@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 using HaloApp.ApiClient;
 using HaloApp.Data;
 using HaloApp.Domain;
 using HaloApp.Domain.Enums;
 using HaloApp.Domain.Models;
+using HaloApp.Domain.Models.Dto;
 using HaloApp.Domain.Models.Metadata;
 using HaloApp.Domain.Services;
 using MongoDB.Driver;
@@ -23,6 +26,16 @@ namespace HaloApp.Tests
             var haloRepository = Substitute.For<IHaloRepository>();
             return new HaloDataManager(haloApi, haloRepository);
         }
+
+        private static HaloDataManager HaloDataManager(IEnumerable<Weapon> weapons)
+        {
+            var haloApi = Substitute.For<IHaloApi>();
+            var haloRepository = Substitute.For<IHaloRepository>();
+            haloRepository.GetMetadataAsync<Weapon>().Returns(weapons);
+            return new HaloDataManager(haloApi, haloRepository);
+        }
+
+        #region Tests
 
         [Fact]
         public void Ctor()
@@ -51,7 +64,7 @@ namespace HaloApp.Tests
             Assert.Equal(100, playerStats.ShotsLanded);
             Assert.True(TimeSpan.FromMinutes(10).Equals(playerStats.TimePlayed));
 
-            var weapon1 = playerStats.WeaponsStats[0];
+            var weapon1 = playerStats.WeaponsStats.First();
             Assert.Equal(1000, weapon1.DamageDealt);
             Assert.Equal(5, weapon1.Headshots);
             Assert.Equal(10, weapon1.Kills);
@@ -60,7 +73,7 @@ namespace HaloApp.Tests
             Assert.Equal(80, weapon1.ShotsLanded);
             Assert.Equal(1, weapon1.Weapon.Id);
 
-            var weapon2 = playerStats.WeaponsStats[1];
+            var weapon2 = playerStats.WeaponsStats.ElementAt(1);
             Assert.Equal(500, weapon2.DamageDealt);
             Assert.Equal(1, weapon2.Headshots);
             Assert.Equal(5, weapon2.Kills);
@@ -70,20 +83,30 @@ namespace HaloApp.Tests
             Assert.Equal(2, weapon2.Weapon.Id);
         }
 
-        private IList<Match> MatchData()
+        [Fact]
+        public async Task MatchesAsync()
+        {
+            var haloDataManager = HaloDataManager(WeaponData());
+        }
+
+        #endregion
+
+        #region
+
+        private static IList<Match> MatchData()
         {
             return new List<Match>
             {
                 new Match
                 {
-                    Duration = TimeSpan.FromMinutes(5),
+                    Duration = TimeSpan.FromMinutes(6),
                     GameMode = GameMode.Arena,
                     Players = MatchPlayerData1(),
                     TeamGame = true,
                 },
                 new Match
                 {
-                    Duration = TimeSpan.FromMinutes(5),
+                    Duration = TimeSpan.FromMinutes(4),
                     GameMode = GameMode.Arena,
                     Players = MatchPlayerData2(),
                     TeamGame = true,
@@ -204,5 +227,37 @@ namespace HaloApp.Tests
                 },
             };
         }
+
+        private static IList<MatchDto> MatchDtoData()
+        {
+            return new List<MatchDto>
+            {
+                new MatchDto
+                {
+                    
+                },
+            };
+        }
+
+        private static IList<Weapon> WeaponData()
+        {
+            return new List<Weapon>
+            {
+                new Weapon
+                {
+                    Description = "weaponDescription1",
+                    Id = 1,
+                    Name = "weaponName1",
+                },
+                new Weapon
+                {
+                    Description = "weaponDescription2",
+                    Id = 2,
+                    Name = "weaponName2",
+                },
+            };
+        }
+
+        #endregion
     }
 }

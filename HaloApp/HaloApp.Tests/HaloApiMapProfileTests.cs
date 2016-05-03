@@ -113,7 +113,7 @@ namespace HaloApp.Tests
             Assert.Equal(new Uri("http://csrDesignationBannerImageUrl"), csrDesignation.BannerImageUrl);
             Assert.Equal(1, csrDesignation.Id);
             Assert.Equal("csrDesignationName", csrDesignation.Name);
-            var csrTier = csrDesignation.Tiers[0];
+            var csrTier = csrDesignation.Tiers.First();
             Assert.Equal(new Uri("http://csrTierIconImageUrl"), csrTier.IconImageUrl);
             Assert.Equal(11, csrTier.Id);
         }
@@ -136,8 +136,8 @@ namespace HaloApp.Tests
             Assert.True(gameBaseVariant.IconUrl.Equals(new Uri("http://gameBaseVariantIconUrl")));
             Assert.True(gameBaseVariant.Id.Equals(GameBaseVariantGuid));
             Assert.Equal("gameBaseVariantName", gameBaseVariant.Name);
-            Assert.Equal(1, gameBaseVariant.SupportedGameModes.Count);
-            Assert.Equal(GameMode.Arena, gameBaseVariant.SupportedGameModes[0]);
+            Assert.Equal(1, gameBaseVariant.SupportedGameModes.Count());
+            Assert.Equal(GameMode.Arena, gameBaseVariant.SupportedGameModes.First());
         }
 
         [Fact]
@@ -170,8 +170,8 @@ namespace HaloApp.Tests
             Assert.True(map.ImageUrl.Equals(new Uri("http://mapImageUrl")));
             Assert.True(map.Id.Equals(MapGuid));
             Assert.Equal("mapName", map.Name);
-            Assert.Equal(1, map.SupportedGameModes.Count);
-            Assert.Equal(GameMode.Arena, map.SupportedGameModes[0]);
+            Assert.Equal(1, map.SupportedGameModes.Count());
+            Assert.Equal(GameMode.Arena, map.SupportedGameModes.First());
         }
 
         [Fact]
@@ -626,8 +626,8 @@ namespace HaloApp.Tests
             Assert.Equal(35, previousCsr.Value);
 
             var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count);
-            var weaponStats = weaponsStats[0];
+            Assert.Equal(1, weaponsStats.Count());
+            var weaponStats = weaponsStats.First();
             Assert.Equal(40, weaponStats.DamageDealt);
             Assert.Equal(41, weaponStats.Headshots);
             Assert.Equal(42, weaponStats.Kills);
@@ -674,7 +674,7 @@ namespace HaloApp.Tests
         {
             var match = Mapper.Map<DomainModels.MatchDto>(MatchReportData()[0]);
 
-            var player = match.Players[0];
+            var player = match.Players.First();
             Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
             Assert.True(player.Dnf);
             Assert.Equal("playerName", player.Name);
@@ -701,12 +701,12 @@ namespace HaloApp.Tests
             Assert.Equal(119, player.ShoulderBashKills);
             Assert.Equal(120, player.WeaponDamage);
 
-            var team1 = match.Teams[0];
+            var team1 = match.Teams.First();
             Assert.Equal(2, team1.Rank);
             Assert.Equal(40, team1.Score);
             Assert.Equal(1, team1.TeamId);
 
-            var team2 = match.Teams[1];
+            var team2 = match.Teams.ElementAt(1);
             Assert.Equal(1, team2.Rank);
             Assert.Equal(50, team2.Score);
             Assert.Equal(2, team2.TeamId);
@@ -726,8 +726,8 @@ namespace HaloApp.Tests
             Assert.Equal(35, previousCsr.Value);
 
             var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count);
-            var weaponStats = weaponsStats[0];
+            Assert.Equal(1, weaponsStats.Count());
+            var weaponStats = weaponsStats.First();
             Assert.Equal(40, weaponStats.DamageDealt);
             Assert.Equal(41, weaponStats.Headshots);
             Assert.Equal(42, weaponStats.Kills);
@@ -755,7 +755,7 @@ namespace HaloApp.Tests
             Assert.True(match.SeasonId.Equals(SeasonGuid));
             Assert.True(match.TeamGame);
 
-            var player = match.Players[0];
+            var player = match.Players.First();
             Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
             Assert.True(player.Dnf);
             Assert.Equal("playerName", player.Name);
@@ -797,8 +797,8 @@ namespace HaloApp.Tests
             Assert.Equal(35, previousCsr.Value);
 
             var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count);
-            var weaponStats = weaponsStats[0];
+            Assert.Equal(1, weaponsStats.Count());
+            var weaponStats = weaponsStats.First();
             Assert.Equal(40, weaponStats.DamageDealt);
             Assert.Equal(41, weaponStats.Headshots);
             Assert.Equal(42, weaponStats.Kills);

@@ -32,6 +32,6 @@ namespace HaloApp.Domain.Models.Dto
         public int PowerWeaponGrabs { get; set; }
         public TimeSpan PowerWeaponPossessionTime { get; set; }
         public int GrenadeKills { get; set; }
-        public IList<WeaponStatsDto> WeaponsStats { get; set; }
+        public IEnumerable<WeaponStatsDto> WeaponsStats { get; set; }
     }
 }

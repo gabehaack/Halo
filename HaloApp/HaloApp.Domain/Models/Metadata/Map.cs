@@ -10,6 +10,6 @@ namespace HaloApp.Domain.Models.Metadata
         public Guid Id { get; set; }
         public Uri ImageUrl { get; set; }
         public string Name { get; set; }
-        public IList<GameMode> SupportedGameModes { get; set; }
+        public IEnumerable<GameMode> SupportedGameModes { get; set; }
     }
 }

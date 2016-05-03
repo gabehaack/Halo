@@ -26,7 +26,7 @@ namespace HaloApp.Data
             _haloDb = _mongoClient.GetDatabase("Halo");
         }
 
-        public async Task ReplaceMetadataAsync<TMetadata>(IList<TMetadata> metadata)
+        public async Task ReplaceMetadataAsync<TMetadata>(IEnumerable<TMetadata> metadata)
         {
             string metadataCollectionName = typeof(TMetadata).Name + 's';
             await _haloDb.DropCollectionAsync(metadataCollectionName);
@@ -34,7 +34,7 @@ namespace HaloApp.Data
             await metadataCollection.InsertManyAsync(metadata);
         }
 
-        public async Task<IList<TMetadata>> GetMetadataAsync<TMetadata>()
+        public async Task<IEnumerable<TMetadata>> GetMetadataAsync<TMetadata>()
         {
             string metadataCollectionName = typeof(TMetadata).Name + 's';
             var metadataCollection = _haloDb.GetCollection<TMetadata>(metadataCollectionName);
@@ -43,13 +43,13 @@ namespace HaloApp.Data
                 .ToListAsync();
         }
 
-        public async Task AddMatchesAsync(IList<MatchDto> matches)
+        public async Task AddMatchesAsync(IEnumerable<MatchDto> matches)
         {
             var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
             await matchCollection.InsertManyAsync(matches);
         }
 
-        public async Task<IList<MatchDto>> GetMatchesAsync(string player)
+        public async Task<IEnumerable<MatchDto>> GetMatchesAsync(string player)
         {
             var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
             return await matchCollection

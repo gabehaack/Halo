@@ -6,9 +6,9 @@ namespace HaloApp.Domain.Services
 {
     public interface IHaloRepository
     {
-        Task ReplaceMetadataAsync<TMetadata>(IList<TMetadata> metadata);
-        Task<IList<TMetadata>> GetMetadataAsync<TMetadata>();
-        Task AddMatchesAsync(IList<MatchDto> matches);
-        Task<IList<MatchDto>> GetMatchesAsync(string player);
+        Task ReplaceMetadataAsync<TMetadata>(IEnumerable<TMetadata> metadata);
+        Task<IEnumerable<TMetadata>> GetMetadataAsync<TMetadata>();
+        Task AddMatchesAsync(IEnumerable<MatchDto> matches);
+        Task<IEnumerable<MatchDto>> GetMatchesAsync(string player);
     }
 }

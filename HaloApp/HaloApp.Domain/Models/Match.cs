@@ -17,10 +17,10 @@ namespace HaloApp.Domain.Models
         public GameBaseVariant GameBaseVariant { get; set; }
         public GameVariant GameVariant { get; set; }
         public Playlist Playlist { get; set; }
-        public IList<Player> Players { get; set; }
+        public IEnumerable<Player> Players { get; set; }
         public Season Season { get; set; }
         public bool TeamGame { get; set; }
-        public IList<Team> Teams { get; set; }
+        public IEnumerable<Team> Teams { get; set; }
 
         public Player GetPlayer(string player)
         {

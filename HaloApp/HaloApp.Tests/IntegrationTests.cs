@@ -80,6 +80,7 @@ namespace HaloApp.Tests
             var haloDataManager = HaloDataManager();
 
             var matches = await haloDataManager.RetrieveStoredMatchesAsync("shockRocket");
+            var match = matches.Take(1);
             var playerStats = haloDataManager.GetPlayerStats(matches, "shockRocket");
 
             var player = matches.First().GetPlayer("shockRocket");

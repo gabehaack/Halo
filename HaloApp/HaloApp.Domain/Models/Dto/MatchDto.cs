@@ -15,9 +15,9 @@ namespace HaloApp.Domain.Models.Dto
         public Guid GameBaseVariantId { get; set; }
         public Guid GameVariantId { get; set; }
         public Guid PlaylistId { get; set; }
-        public IList<PlayerDto> Players { get; set; }
+        public IEnumerable<PlayerDto> Players { get; set; }
         public Guid SeasonId { get; set; }
         public bool TeamGame { get; set; }
-        public IList<TeamDto> Teams { get; set; }
+        public IEnumerable<TeamDto> Teams { get; set; }
     }
 }

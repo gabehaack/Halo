@@ -8,7 +8,7 @@ namespace HaloApp.Domain.Models.Metadata
         public Uri BannerImageUrl { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-        public IList<CsrTier> Tiers { get; set; }
+        public IEnumerable<CsrTier> Tiers { get; set; }
     }
 
     public class CsrTier
