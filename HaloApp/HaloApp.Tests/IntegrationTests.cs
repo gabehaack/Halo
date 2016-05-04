@@ -6,6 +6,7 @@ using AutoMapper;
 using HaloApp.ApiClient;
 using HaloApp.Data;
 using HaloApp.Domain;
+using HaloApp.Domain.Models;
 using HaloApp.Domain.Services;
 using MongoDB.Driver;
 using Xunit;
@@ -63,7 +64,7 @@ namespace HaloApp.Tests
         {
             var haloDataManager = HaloDataManager();
 
-            await haloDataManager.ReplaceImpulseMetadataAsync();
+            await haloDataManager.ReplaceAllMetadataAsync();
         }
 
         [Fact]
@@ -81,13 +82,33 @@ namespace HaloApp.Tests
 
             var matches = await haloDataManager.RetrieveStoredMatchesAsync("shockRocket");
             var match = matches.Take(1);
-            var playerStats = haloDataManager.GetPlayerStats(matches, "shockRocket");
 
-            var player = matches.First().GetPlayer("shockRocket");
+            var playerStats = haloDataManager.GetPlayerStats(match, "shockRocket");
+            var player = match.First().GetPlayer("shockRocket");
             double totalWeaponDamage = player.WeaponDamage;
             double othertotal = player.WeaponsStats
                 .Sum(w => w.DamageDealt);
             double diff = totalWeaponDamage - othertotal;
+        }
+
+        [Fact]
+        public async Task MatchesAsync()
+        {
+            var haloRepository = HaloRepository();
+            var haloApi = HaloApi();
+            var haloDataManager = new HaloDataManager(haloApi, haloRepository);
+
+            var matchDtos = await haloRepository.GetMatchesAsync("shockRocket");
+            var matches = matchDtos.Take(1)
+                .Select(Mapper.Map<Match>);
+            var preMatch = matches.First();
+
+            var postMatches =  await haloDataManager.MatchesAsync(matches);
+            var match = postMatches.First();
+            var player = match.Players.First(p => p.Name == "shockRocket");
+            var weaponStats = player.WeaponsStats
+                .Select(w => new { w.Weapon.Name, w.Kills, w.Accuracy });
+            { }
         }
     }
 }

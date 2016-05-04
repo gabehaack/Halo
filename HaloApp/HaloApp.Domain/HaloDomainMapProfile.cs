@@ -15,6 +15,13 @@ namespace HaloApp.Domain
                 .ForMember(dest => dest.Tier, opt => opt.MapFrom(
                     src => new CsrTier { Id = src.CsrDesignationTierId }));
 
+            CreateMap<WeaponStatsDto, WeaponStats>()
+                .ForMember(dest => dest.Weapon, opt => opt.MapFrom(
+                    src => new Weapon { Id = src.WeaponId }));
+
+            CreateMap<PlayerDto, Player>();
+            CreateMap<TeamDto, Team>();
+
             CreateMap<MatchDto, Match>()
                 .ForMember(dest => dest.GameBaseVariant, opt => opt.MapFrom(
                     src => new GameBaseVariant { Id = src.GameBaseVariantId }))
@@ -28,13 +35,6 @@ namespace HaloApp.Domain
                     src => new Playlist { Id = src.PlaylistId }))
                 .ForMember(dest => dest.Season, opt => opt.MapFrom(
                     src => new Season { Id = src.SeasonId }));
-
-            CreateMap<PlayerDto, Player>();
-            CreateMap<TeamDto, Team>();
-
-            CreateMap<WeaponStatsDto, WeaponStats>()
-                .ForMember(dest => dest.Weapon, opt => opt.MapFrom(
-                    src => new Weapon { Id = src.WeaponId }));
         }
     }
 }

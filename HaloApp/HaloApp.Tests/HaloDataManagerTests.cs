@@ -87,6 +87,28 @@ namespace HaloApp.Tests
         public async Task MatchesAsync()
         {
             var haloDataManager = HaloDataManager(WeaponData());
+
+            var matches = await haloDataManager.MatchesAsync(MatchData());
+
+            var player1weapon1stats = matches.First().Players.First()
+                .WeaponsStats.First(w => w.Weapon.Id == 1);
+            Assert.Equal("weaponName1", player1weapon1stats.Weapon.Name);
+            Assert.Equal("weaponDescription1", player1weapon1stats.Weapon.Description);
+
+            var player1weapon2stats = matches.First().Players.First()
+                .WeaponsStats.First(w => w.Weapon.Id == 2);
+            Assert.Equal("weaponName2", player1weapon2stats.Weapon.Name);
+            Assert.Equal("weaponDescription2", player1weapon2stats.Weapon.Description);
+
+            var player2weapon1stats = matches.First().Players.First()
+                .WeaponsStats.First(w => w.Weapon.Id == 1);
+            Assert.Equal("weaponName1", player2weapon1stats.Weapon.Name);
+            Assert.Equal("weaponDescription1", player2weapon1stats.Weapon.Description);
+
+            var player2weapon2stats = matches.First().Players.First()
+                .WeaponsStats.First(w => w.Weapon.Id == 2);
+            Assert.Equal("weaponName2", player2weapon2stats.Weapon.Name);
+            Assert.Equal("weaponDescription2", player2weapon2stats.Weapon.Description);
         }
 
         #endregion
@@ -101,20 +123,20 @@ namespace HaloApp.Tests
                 {
                     Duration = TimeSpan.FromMinutes(6),
                     GameMode = GameMode.Arena,
-                    Players = MatchPlayerData1(),
+                    Players = PlayerData1(),
                     TeamGame = true,
                 },
                 new Match
                 {
                     Duration = TimeSpan.FromMinutes(4),
                     GameMode = GameMode.Arena,
-                    Players = MatchPlayerData2(),
+                    Players = PlayerData2(),
                     TeamGame = true,
                 },
             };
         }
 
-        private static IList<Player> MatchPlayerData1()
+        private static IList<Player> PlayerData1()
         {
             return new List<Player>
             {
@@ -138,7 +160,7 @@ namespace HaloApp.Tests
             };
         }
 
-        private static IList<Player> MatchPlayerData2()
+        private static IList<Player> PlayerData2()
         {
             return new List<Player>
             {
@@ -224,17 +246,6 @@ namespace HaloApp.Tests
                     {
                         Id = 2,
                     },
-                },
-            };
-        }
-
-        private static IList<MatchDto> MatchDtoData()
-        {
-            return new List<MatchDto>
-            {
-                new MatchDto
-                {
-                    
                 },
             };
         }

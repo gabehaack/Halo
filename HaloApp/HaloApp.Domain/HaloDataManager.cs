@@ -82,7 +82,7 @@ namespace HaloApp.Domain
             var impulseMetadata = await _haloApi.GetImpulseMetadataAsync();
             var cleanImpulseMetadata = impulseMetadata
                 .Where(i => i.Name != "Spawn Impulse");
-            await _haloRepository.ReplaceMetadataAsync(impulseMetadata);
+            await _haloRepository.ReplaceMetadataAsync(cleanImpulseMetadata);
         }
 
         public async Task ReplaceMapMetadataAsync()
@@ -184,14 +184,16 @@ namespace HaloApp.Domain
         public async Task<IEnumerable<Match>> RetrieveStoredMatchesAsync(string player)
         {
             var matchDtos = await _haloRepository.GetMatchesAsync(player);
-            return await MatchesAsync(matchDtos);
+            var matches = matchDtos
+                .Select(Mapper.Map<Match>);
+            return await MatchesAsync(matches);
         }
 
         #endregion
 
         #region Mapping
 
-        public async Task<IEnumerable<Match>> MatchesAsync(IEnumerable<MatchDto> matchDtos)
+        public async Task<IEnumerable<Match>> MatchesAsync(IEnumerable<Match> matches)
         {
             // Get all needed metadata
             var csrDesignations = await _haloRepository.GetMetadataAsync<CsrDesignation>();
@@ -203,25 +205,28 @@ namespace HaloApp.Domain
             var seasons = await _haloRepository.GetMetadataAsync<Season>();
             var weapons = await _haloRepository.GetMetadataAsync<Weapon>();
 
-            // Non-metadata mappings
-            var matches = matchDtos
-                .Select(Mapper.Map<Match>);
-
             // Metadata mappings
-            foreach (var match in matches)
+            var updatedMatches = matches.ToList();
+            foreach (var match in updatedMatches)
             {
-                match.GameBaseVariant = gameBaseVariants
+                var gameBaseVariant = gameBaseVariants
                     .FirstOrDefault(g => g.Id == match.GameBaseVariant.Id);
-                match.GameVariant = gameVariants
+                match.GameBaseVariant = gameBaseVariant;
+                var gameVariant = gameVariants
                     .FirstOrDefault(g => g.Id == match.GameVariant.Id);
-                match.Map = maps
+                match.GameVariant = gameVariant;
+                var map = maps
                     .FirstOrDefault(m => m.Id == match.Map.Id);
-                match.MapVariant = mapVariants
+                match.Map = map;
+                var mapVariant = mapVariants
                     .FirstOrDefault(m => m.Id == match.MapVariant.Id);
-                match.Playlist = playlists
+                match.MapVariant = mapVariant;
+                var playlist = playlists
                     .FirstOrDefault(p => p.Id == match.Playlist.Id);
-                match.Season = seasons
+                match.Playlist = playlist;
+                var season = seasons
                     .FirstOrDefault(s => s.Id == match.Season.Id);
+                match.Season = season;
 
                 foreach (var player in match.Players)
                 {
@@ -237,13 +242,17 @@ namespace HaloApp.Domain
 
                     foreach (var weaponStats in player.WeaponsStats)
                     {
-                        weaponStats.Weapon = weapons
+                        var weapon = weapons
                             .FirstOrDefault(w => w.Id == weaponStats.Weapon.Id);
+                        if (weapon != null)
+                            weaponStats.Weapon = weapon;
+                        else
+                            weaponStats.Weapon.Name = "Unknown Weapon";
                     }
                 }
             }
 
-            return matches;
+            return updatedMatches;
         }
 
         #endregion
