@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHaack.Halo.Web", "GHaack.Halo.Web\GHaack.Halo.Web.csproj", "{6DE03612-4436-40D3-8B58-1CD3F53B2A51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHaack.Halo.Api", "GHaack.Halo.Api\GHaack.Halo.Api.csproj", "{14E1D733-A902-48DF-9DE5-4A204D47EA5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHaack.Halo.Data", "GHaack.Halo.Data\GHaack.Halo.Data.csproj", "{817B5F5D-6CDE-4B77-86ED-879EE46E1852}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHaack.Halo.Domain", "GHaack.Halo.Domain\GHaack.Halo.Domain.csproj", "{2F7AE9CB-B752-45DB-8174-3BB8581415D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHaack.Halo.Tests", "GHaack.Halo.Tests\GHaack.Halo.Tests.csproj", "{1CDC9307-2DEE-43FD-BF21-EA3EFDB38E7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DE03612-4436-40D3-8B58-1CD3F53B2A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE03612-4436-40D3-8B58-1CD3F53B2A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE03612-4436-40D3-8B58-1CD3F53B2A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE03612-4436-40D3-8B58-1CD3F53B2A51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E1D733-A902-48DF-9DE5-4A204D47EA5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E1D733-A902-48DF-9DE5-4A204D47EA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E1D733-A902-48DF-9DE5-4A204D47EA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E1D733-A902-48DF-9DE5-4A204D47EA5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{817B5F5D-6CDE-4B77-86ED-879EE46E1852}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{817B5F5D-6CDE-4B77-86ED-879EE46E1852}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{817B5F5D-6CDE-4B77-86ED-879EE46E1852}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{817B5F5D-6CDE-4B77-86ED-879EE46E1852}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F7AE9CB-B752-45DB-8174-3BB8581415D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F7AE9CB-B752-45DB-8174-3BB8581415D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F7AE9CB-B752-45DB-8174-3BB8581415D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F7AE9CB-B752-45DB-8174-3BB8581415D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CDC9307-2DEE-43FD-BF21-EA3EFDB38E7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CDC9307-2DEE-43FD-BF21-EA3EFDB38E7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CDC9307-2DEE-43FD-BF21-EA3EFDB38E7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CDC9307-2DEE-43FD-BF21-EA3EFDB38E7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
