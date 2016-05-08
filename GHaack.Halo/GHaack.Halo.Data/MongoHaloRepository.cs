@@ -58,48 +58,36 @@ namespace GHaack.Halo.Data
                 .ToListAsync();
         }
 
-        public static void RegisterClasses()
+        private static void RegisterClasses()
         {
             // Metadata
-            if (!BsonClassMap.IsClassMapRegistered(typeof(CsrDesignation)))
-                BsonClassMap.RegisterClassMap<CsrDesignation>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(CsrTier)))
-                BsonClassMap.RegisterClassMap<CsrTier>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(FlexibleStat)))
-                BsonClassMap.RegisterClassMap<FlexibleStat>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GameBaseVariant)))
-                BsonClassMap.RegisterClassMap<GameBaseVariant>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(GameVariant)))
-                BsonClassMap.RegisterClassMap<GameVariant>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Impulse)))
-                BsonClassMap.RegisterClassMap<Impulse>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Map)))
-                BsonClassMap.RegisterClassMap<Map>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MapVariant)))
-                BsonClassMap.RegisterClassMap<MapVariant>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Medal)))
-                BsonClassMap.RegisterClassMap<Medal>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MedalSpriteLocation)))
-                BsonClassMap.RegisterClassMap<MedalSpriteLocation>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Playlist)))
-                BsonClassMap.RegisterClassMap<Playlist>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Season)))
-                BsonClassMap.RegisterClassMap<Season>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(SpartanRank)))
-                BsonClassMap.RegisterClassMap<SpartanRank>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(TeamColor)))
-                BsonClassMap.RegisterClassMap<TeamColor>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Vehicle)))
-                BsonClassMap.RegisterClassMap<Vehicle>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Weapon)))
-                BsonClassMap.RegisterClassMap<Weapon>();
+            RegisterClassMap<CsrDesignation>();
+            RegisterClassMap<CsrTier>();
+            RegisterClassMap<FlexibleStat>();
+            RegisterClassMap<GameBaseVariant>();
+            RegisterClassMap<GameVariant>();
+            RegisterClassMap<Impulse>();
+            RegisterClassMap<Map>();
+            RegisterClassMap<MapVariant>();
+            RegisterClassMap<Medal>();
+            RegisterClassMap<MedalSpriteLocation>();
+            RegisterClassMap<Playlist>();
+            RegisterClassMap<Season>();
+            RegisterClassMap<SpartanRank>();
+            RegisterClassMap<TeamColor>();
+            RegisterClassMap<Vehicle>();
+            RegisterClassMap<Weapon>();
 
-            if (!BsonClassMap.IsClassMapRegistered(typeof(CsrDto)))
-                BsonClassMap.RegisterClassMap<CsrDto>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MatchDto)))
-                BsonClassMap.RegisterClassMap<MatchDto>();
-            if (!BsonClassMap.IsClassMapRegistered(typeof(PlayerDto)))
-                BsonClassMap.RegisterClassMap<PlayerDto>();
+            // Domain DTOs
+            RegisterClassMap<CsrDto>();
+            RegisterClassMap<MatchDto>();
+            RegisterClassMap<PlayerDto>();
+        }
+
+        private static void RegisterClassMap<T>()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(T)))
+                BsonClassMap.RegisterClassMap<T>();
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Autofac;
+using Autofac.Features.Metadata;
 using Autofac.Features.ResolveAnything;
 using Autofac.Integration.Mvc;
 using GHaack.Halo.Api;
@@ -69,7 +70,7 @@ namespace GHaack.Halo.Web
                 .As<IHaloApi>()
                 .WithParameter(new TypedParameter(typeof(Uri), HaloApiUri))
                 .WithParameter(new TypedParameter(typeof(string), SubscriptionKey));
-            builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+            builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(t => !(t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Meta<>))));
 
             // Set the dependency resolver to be Autofac.
             var container = builder.Build();

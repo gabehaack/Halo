@@ -17,7 +17,7 @@ using DomainModels = GHaack.Halo.Domain.Models.Dto;
 
 namespace GHaack.Halo.Api
 {
-    public class HaloApi : IHaloApi
+    public class HaloApi : IHaloApi, IDisposable
     {
         private readonly HttpClient _httpClient;
 
@@ -208,6 +208,33 @@ namespace GHaack.Halo.Api
         {
             string content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
+        }
+
+        #endregion
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (_httpClient != null)
+                    {
+                        _httpClient.Dispose();
+                    }
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
 
         #endregion

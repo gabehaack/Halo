@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using GHaack.Halo.Domain;
+using GHaack.Halo.Web.Infrastructure;
 
 namespace GHaack.Halo.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : HaloController 
     {
         private readonly IHaloDataManager _haloDataManager;
 
@@ -20,7 +21,7 @@ namespace GHaack.Halo.Web.Controllers
 
         public ActionResult Index()
         {
-            return RedirectToAction("Index", "PlayerStats");
+            return View();
         }
 
         public ActionResult About()
