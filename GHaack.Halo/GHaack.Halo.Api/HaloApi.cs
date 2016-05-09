@@ -137,6 +137,20 @@ namespace GHaack.Halo.Api
 
         #endregion
 
+        #region Player Profile Data
+
+        public async Task<Uri> GetEmblemImageUriAsync(string player)
+        {
+            return await GetPlayerImageUriAsync(player, "emblem");
+        }
+
+        public async Task<Uri> GetSpartanImageUriAsync(string player)
+        {
+            return await GetPlayerImageUriAsync(player, "spartan");
+        }
+
+        #endregion
+
         #region Match Data
 
         public async Task<IEnumerable<DomainModels.MatchDto>> GetMatchesAsync(string player, int start = 0, int quantity = 25)
@@ -167,24 +181,38 @@ namespace GHaack.Halo.Api
 
         #endregion
 
-        #region Generic Helpers
+        #region Request Helpers
 
         private async Task<T> GetStatsAsync<T>(string endpoint)
         {
             var response = await GetAsync("/stats/h5" + endpoint);
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return default(T);
+            response.EnsureSuccessStatusCode();
             return await DeserializeContentAsync<T>(response);
         }
 
         private async Task<IEnumerable<T>> GetMetadataAsync<T>(string entity)
         {
             var response = await GetAsync("/metadata/h5/metadata/" + entity);
+            response.EnsureSuccessStatusCode();
             return await DeserializeContentAsync<List<T>>(response);
         }
 
         private async Task<T> GetMetadatumAsync<T>(string entity, Guid metadatumId)
         {
             var response = await GetAsync($"/metadata/h5/metadata/{entity}/{metadatumId}");
+            response.EnsureSuccessStatusCode();
             return await DeserializeContentAsync<T>(response);
+        }
+
+        private async Task<Uri> GetPlayerImageUriAsync(string player, string imageName)
+        {
+            var response = await GetAsync($"/profile/h5/profiles/{player}/{imageName}");
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return null;
+            response.EnsureSuccessStatusCode();
+            return response.RequestMessage.RequestUri;
         }
 
         private async Task<HttpResponseMessage> GetAsync(string endpoint)
@@ -200,7 +228,6 @@ namespace GHaack.Halo.Api
                     response = await _httpClient.GetAsync(endpoint);
                 }
             }
-            response.EnsureSuccessStatusCode();
             return response;
         }
 

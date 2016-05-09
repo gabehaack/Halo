@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using GHaack.Halo.Web.Utilities;
 
 namespace GHaack.Halo.Web.ActionResults
 {
@@ -65,16 +63,8 @@ namespace GHaack.Halo.Web.ActionResults
                 response.StatusCode = 400;
             }
 
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new JsonConverter[]
-                {
-                    new StringEnumConverter(),
-                },
-            };
-
-            response.Write(JsonConvert.SerializeObject(Data, settings));
+            if (Data == null) return;
+            response.Write(Data.ToJson());
         }
     }
 

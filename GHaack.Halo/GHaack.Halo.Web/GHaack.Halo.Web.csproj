@@ -178,10 +178,19 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\HaloController.cs" />
+    <Compile Include="Helpers\BootstrapHelpers.cs" />
+    <Compile Include="Helpers\JsonHtmlHelpers.cs" />
+    <Compile Include="Models\Alert.cs" />
+    <Compile Include="ActionResults\AlertDecoratorResult.cs" />
+    <Compile Include="Models\HomeViewModel.cs" />
+    <Compile Include="Models\PlayerViewModel.cs" />
+    <Compile Include="Utilities\AlertExtensions.cs" />
+    <Compile Include="Controllers\HaloControllerBase.cs" />
+    <Compile Include="Utilities\JsonExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +216,10 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
+    <Content Include="Scripts\app\controllers\playerController.js" />
+    <Content Include="Scripts\app\ghaack.haloApp.js" />
+    <Content Include="Scripts\app\services\exceptionOverride.js" />
+    <Content Include="Scripts\app\utilities\bootstrapAlerts.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
@@ -236,12 +249,14 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\PlayerStats\Index.cshtml" />
+    <Content Include="Views\Shared\_Alerts.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\String.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\GameMode.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Object.cshtml" />
+    <Content Include="Views\Player\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
-    <Folder Include="Scripts\app\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

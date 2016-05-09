@@ -54,7 +54,10 @@ namespace GHaack.Halo.Data
             var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
             return await matchCollection
                 .AsQueryable()
-                .Where(m => m.Players.Any(p => p.Name == player))
+                .Where(m => 
+                    m.Players.Any(p => 
+                        String.Equals(p.Name, player, 
+                            StringComparison.OrdinalIgnoreCase)))
                 .ToListAsync();
         }
 

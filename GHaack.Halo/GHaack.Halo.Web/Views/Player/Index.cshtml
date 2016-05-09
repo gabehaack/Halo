@@ -1,0 +1,12 @@
+﻿@model GHaack.Halo.Web.Models.PlayerViewModel
+
+@{
+    ViewBag.Title = $"Stats for {Model.Player}";
+}
+
+<h2>Stats for @Model.Player</h2>
+<hr />
+<div ng-controller="playerController as vm"
+     ng-init="vm.init(@Html.JsonFor(Model))">
+    
+</div>

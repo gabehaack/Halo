@@ -110,5 +110,13 @@ namespace GHaack.Halo.Tests
                 .Select(w => new { w.Weapon.Name, w.Kills, w.Accuracy });
             { }
         }
+
+        [Fact]
+        public async Task ProfileImages()
+        {
+            var haloApi = HaloApi();
+            var emblem = await haloApi.GetEmblemImageUriAsync("asldkfjatlasjf");
+            { }
+        }
     }
 }

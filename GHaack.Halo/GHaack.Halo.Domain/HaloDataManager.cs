@@ -135,6 +135,20 @@ namespace GHaack.Halo.Domain
 
         #endregion
 
+        #region Player Data
+
+        public async Task<Uri> GetEmblemImageUriAsync(string player)
+        {
+            return await _haloApi.GetEmblemImageUriAsync(player);
+        }
+
+        public async Task<Uri> GetSpartanImageUriAsync(string player)
+        {
+            return await _haloApi.GetSpartanImageUriAsync(player);
+        }
+
+        #endregion
+
         #region Match Data
 
         public async Task StoreMatchesAsync(string player, int start = 0, int quantity = 25)

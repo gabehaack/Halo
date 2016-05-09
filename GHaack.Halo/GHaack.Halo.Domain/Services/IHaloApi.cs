@@ -24,6 +24,9 @@ namespace GHaack.Halo.Domain.Services
         Task<IEnumerable<Vehicle>> GetVehicleMetadataAsync();
         Task<IEnumerable<Weapon>> GetWeaponMetadataAsync();
 
+        Task<Uri> GetEmblemImageUriAsync(string player);
+        Task<Uri> GetSpartanImageUriAsync(string player);
+
         Task<IEnumerable<MatchDto>> GetMatchesAsync(string player, int start = 0, int quantity = 25);
         Task<IEnumerable<PlayerDto>> GetMatchStatsAsync(Guid matchId);
     }
