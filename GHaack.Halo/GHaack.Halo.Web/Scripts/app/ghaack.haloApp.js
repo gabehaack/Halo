@@ -13,7 +13,7 @@
     var haloApp = angular.module(id, []);
     haloApp.run([
         function () {
-
+            // Startup code goes here
         }
     ]);
 })();

@@ -1,0 +1,17 @@
+@using GHaack.Halo.Domain.Enums
+@model GameMode
+@{ 
+    var options = Enum.GetValues(typeof(GameMode))
+        .Cast<GameMode>()
+        .Select(g => new SelectListItem
+        {
+            Text = g.ToString(),
+            Value = g.ToString(),
+        })
+        .ToArray();
+}
+@Html.DropDownList("", options, new
+{
+    @class = "form-control",
+    ng_model = Html.AngularBindingForModel()
+})

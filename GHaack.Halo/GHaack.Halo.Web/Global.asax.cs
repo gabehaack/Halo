@@ -15,6 +15,7 @@ using GHaack.Halo.Api;
 using GHaack.Halo.Data;
 using GHaack.Halo.Domain;
 using GHaack.Halo.Domain.Services;
+using GHaack.Halo.Web.ModelMetadata;
 using MongoDB.Driver;
 
 namespace GHaack.Halo.Web
@@ -70,6 +71,10 @@ namespace GHaack.Halo.Web
                 .As<IHaloApi>()
                 .WithParameter(new TypedParameter(typeof(Uri), HaloApiUri))
                 .WithParameter(new TypedParameter(typeof(string), SubscriptionKey));
+
+            // Module registration
+            builder.RegisterModule<ModelMetadataRegistrationModule>();
+
             builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(t => !(t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Meta<>))));
 
             // Set the dependency resolver to be Autofac.

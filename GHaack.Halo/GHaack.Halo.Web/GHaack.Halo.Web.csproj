@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -26,6 +27,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -182,11 +184,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AngularTemplateHelper.cs" />
     <Compile Include="Helpers\BootstrapHelpers.cs" />
     <Compile Include="Helpers\JsonHtmlHelpers.cs" />
+    <Compile Include="ModelMetadata\ExtensibleModelMetadataProvider.cs" />
+    <Compile Include="ModelMetadata\Filters\GameModeDropDownByNameFilter.cs" />
+    <Compile Include="ModelMetadata\Filters\LabelConventionFilter.cs" />
+    <Compile Include="ModelMetadata\Filters\ReadOnlyTemplateSelectorFilter.cs" />
+    <Compile Include="ModelMetadata\Filters\TextAreaByNameFilter.cs" />
+    <Compile Include="ModelMetadata\Filters\WatermarkConventionFilter.cs" />
+    <Compile Include="ModelMetadata\ModelMetadataRegistrationModule.cs" />
     <Compile Include="Models\Alert.cs" />
     <Compile Include="ActionResults\AlertDecoratorResult.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
+    <Compile Include="ModelMetadata\IModelMetadataFilter.cs" />
     <Compile Include="Models\PlayerViewModel.cs" />
     <Compile Include="Utilities\AlertExtensions.cs" />
     <Compile Include="Controllers\HaloControllerBase.cs" />
@@ -216,7 +227,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="Scripts\app\controllers\playerController.js" />
+    <Content Include="Scripts\app\controllers\PlayerController.js" />
     <Content Include="Scripts\app\ghaack.haloApp.js" />
     <Content Include="Scripts\app\services\exceptionOverride.js" />
     <Content Include="Scripts\app\utilities\bootstrapAlerts.js" />
@@ -254,6 +265,13 @@
     <Content Include="Views\Shared\EditorTemplates\GameMode.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Object.cshtml" />
     <Content Include="Views\Player\Index.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Angular\Object.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Angular\GameMode.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Angular\String.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\MultilineText.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Angular\MultilineText.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ReadOnly.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Angular\ReadOnly.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -277,11 +295,18 @@
       <Name>GHaack.Halo.Domain</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\ts\grammar.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">

@@ -1,11 +1,22 @@
 ﻿(function () {
-    var app = angular.module("ghaack.haloApp", []);
+    'use strict';
 
-    var playerController = function ($scope, $http, alerts) {
+    function PlayerController($http) {
+        var vm = this;
 
+        vm.stats = {};
+        vm.init = init;
 
+        function init(stats) {
+            vm.stats = stats;
+        }
 
-    };
+        // exports
 
-    app.controller("playerController", playerController);
+    }
+
+    angular
+        .module('app')
+        .controller('PlayerController', PlayerController)
+    PlayerController.$inject = ['$http'];
 }());
