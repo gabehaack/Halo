@@ -2,32 +2,30 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml;
 using AutoMapper;
 using GHaack.Halo.Api;
 using GHaack.Halo.Domain.Enums;
+using GHaack.Halo.Domain.Models.Dto;
+using GHaack.Halo.Domain.Models.Metadata;
+using GHaack.Utilities;
 using Xunit;
 using ApiMetadata = GHaack.Halo.Api.Models.Metadata;
 using ApiModels = GHaack.Halo.Api.Models;
-using DomainMetadata = GHaack.Halo.Domain.Models.Metadata;
-using DomainModels = GHaack.Halo.Domain.Models.Dto;
 
 namespace GHaack.Halo.Tests
 {
     [ExcludeFromCodeCoverage]
     public class HaloApiMapProfileTests
     {
-        public HaloApiMapProfileTests()
+        private static IMapper Mapper()
         {
-            Mapper.Initialize(cfg =>
+            var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<HaloApiMapProfile>();
             });
-        }
-
-        [Fact]
-        public void ValidConfiguration()
-        {
-            Mapper.AssertConfigurationIsValid();
+            config.AssertConfigurationIsValid();
+            return config.CreateMapper();
         }
 
         #region Type Conversion
@@ -35,61 +33,66 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void UriTypeConversion()
         {
-            string source = "http://uri";
-            var uri = Mapper.Map<Uri>(source);
+            var mapper = Mapper();
+            string data = "http://uri";
+            var expected = new Uri(data);
 
-            Assert.NotNull(uri);
-            Assert.IsType<Uri>(uri);
-            Assert.True(uri.Equals(new Uri(source)));
+            var actual = mapper.Map<Uri>(data);
+            Assert.True(expected.Equals(actual));
         }
 
         [Fact]
         public void UriTypeConversion_Null()
         {
-            string source = null;
-            var uri = Mapper.Map<Uri>(source);
+            var mapper = Mapper();
+            string data = null;
 
-            Assert.Null(uri);
+            var actual = mapper.Map<Uri>(data);
+            Assert.Null(actual);
         }
 
         [Fact]
         public void GuidTypeConversion()
         {
-            var source = Guid.NewGuid();
-            var guid = Mapper.Map<Guid>(source.ToString());
+            var mapper = Mapper();
+            var expected = Guid.NewGuid();
+            var data = expected.ToString();
 
-            Assert.NotNull(guid);
-            Assert.IsType<Guid>(guid);
-            Assert.Equal(source, guid);
+            var actual = mapper.Map<Guid>(data);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void GuidTypeConversion_Null()
         {
-            string source = null;
-            var guid = Mapper.Map<Guid>(source);
+            var mapper = Mapper();
+            string data = null;
+            var expected = Guid.Empty;
 
-            Assert.Equal(Guid.Empty, guid);
+            var actual = mapper.Map<Guid>(data);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void TimeSpanTypeConversion()
         {
-            string source = "PT1M30S";
-            var timeSpan = Mapper.Map<TimeSpan>(source);
+            var mapper = Mapper();
+            string data = "PT1M30S";
+            var expected = TimeSpan.FromSeconds(90);
 
-            Assert.NotNull(timeSpan);
-            Assert.IsType<TimeSpan>(timeSpan);
-            Assert.Equal(TimeSpan.FromSeconds(90), timeSpan);
+            var actual = mapper.Map<TimeSpan>(data);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void TimeSpanTypeConversion_Null()
         {
-            string source = null;
-            var timeSpan = Mapper.Map<TimeSpan>(source);
+            var mapper = Mapper();
+            string data = null;
+            var expected = TimeSpan.Zero;
 
-            Assert.Equal(TimeSpan.Zero, timeSpan);
+            var actual = mapper.Map<TimeSpan>(data);
+            Assert.Equal(expected, actual);
         }
 
         #endregion
@@ -99,203 +102,451 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void CsrTier()
         {
-            var csrTier = Mapper.Map<DomainMetadata.CsrTier>(CsrTierData()[0]);
+            var mapper = Mapper();
+            var data = CsrTierData()[0];
+            var expected = new CsrTier
+            {
+                IconImageUrl = new Uri(data.iconImageUrl),
+                Id = data.id,
+            };
 
-            Assert.Equal(new Uri("http://csrTierIconImageUrl"), csrTier.IconImageUrl);
-            Assert.Equal(11, csrTier.Id);
+            var actual = mapper.Map<CsrTier>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(CsrTier expected, CsrTier actual)
+        {
+            Assert.True(expected.IconImageUrl.Equals(actual.IconImageUrl));
+            Assert.Equal(expected.Id, actual.Id);
         }
 
         [Fact]
         public void CsrDesignation()
         {
-            var csrDesignation = Mapper.Map<DomainMetadata.CsrDesignation>(CsrDesignationData()[0]);
+            var mapper = Mapper();
+            var data = CsrDesignationData()[0];
+            var expected = new CsrDesignation
+            {
+                BannerImageUrl = new Uri(data.bannerImageUrl),
+                Id = data.id,
+                Name = data.name,
+                Tiers = new List<CsrTier>
+                {
+                    new CsrTier
+                    {
+                        IconImageUrl = new Uri(data.tiers.First().iconImageUrl),
+                        Id = data.tiers.First().id,
+                    },
+                },
+            };
 
-            Assert.Equal(new Uri("http://csrDesignationBannerImageUrl"), csrDesignation.BannerImageUrl);
-            Assert.Equal(1, csrDesignation.Id);
-            Assert.Equal("csrDesignationName", csrDesignation.Name);
-            var csrTier = csrDesignation.Tiers.First();
-            Assert.Equal(new Uri("http://csrTierIconImageUrl"), csrTier.IconImageUrl);
-            Assert.Equal(11, csrTier.Id);
+            var actual = mapper.Map<CsrDesignation>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(CsrDesignation expected, CsrDesignation actual)
+        {
+            Assert.True(expected.BannerImageUrl.Equals(actual.BannerImageUrl));
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Equal(expected.Tiers.First(), actual.Tiers.First());
         }
 
         [Fact]
         public void FlexibleStat()
         {
-            var flexibleStat = Mapper.Map<DomainMetadata.FlexibleStat>(FlexibleStatData()[0]);
+            var mapper = Mapper();
+            var data = FlexibleStatData()[0];
+            var expected = new FlexibleStat
+            {
+                Id = Guid.Parse(data.id),
+                Name = data.name,
+                Type = EnumUtility.Parse<FlexibleStatType>(data.type),
+            };
 
-            Assert.True(flexibleStat.Id.Equals(FlexibleStatGuid));
-            Assert.Equal("flexibleStatName", flexibleStat.Name);
-            Assert.Equal(FlexibleStatType.Count, flexibleStat.Type);
+            var actual = mapper.Map<FlexibleStat>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(FlexibleStat expected, FlexibleStat actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.Type, actual.Type);
         }
 
         [Fact]
         public void GameBaseVariant()
         {
-            var gameBaseVariant = Mapper.Map<DomainMetadata.GameBaseVariant>(GameBaseVariantData()[0]);
+            var mapper = Mapper();
+            var data = GameBaseVariantData()[0];
+            var expected = new GameBaseVariant
+            {
+                Id = Guid.Parse(data.id),
+                IconUrl = new Uri(data.iconUrl),
+                Name = data.name,
+                SupportedGameModes = new List<GameMode>
+                {
+                    EnumUtility.Parse<GameMode>(data.supportedGameModes.First())
+                },
+            };
 
-            Assert.True(gameBaseVariant.IconUrl.Equals(new Uri("http://gameBaseVariantIconUrl")));
-            Assert.True(gameBaseVariant.Id.Equals(GameBaseVariantGuid));
-            Assert.Equal("gameBaseVariantName", gameBaseVariant.Name);
-            Assert.Equal(1, gameBaseVariant.SupportedGameModes.Count());
-            Assert.Equal(GameMode.Arena, gameBaseVariant.SupportedGameModes.First());
+            var actual = mapper.Map<GameBaseVariant>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(GameBaseVariant expected, GameBaseVariant actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.True(expected.IconUrl.Equals(actual.IconUrl));
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.SupportedGameModes.First(), actual.SupportedGameModes.First());
         }
 
         [Fact]
         public void GameVariant()
         {
-            var gameVariant = Mapper.Map<DomainMetadata.GameVariant>(GameVariantData()[0]);
+            var mapper = Mapper();
+            var data = GameVariantData()[0];
+            var expected = new GameVariant
+            {
+                Description = data.description,
+                GameBaseVariantId = Guid.Parse(data.gameBaseVariantId),
+                IconUrl = new Uri(data.iconUrl),
+                Id = Guid.Parse(data.id),
+                Name = data.name,
+            };
 
-            Assert.Equal("gameVariantDescription", gameVariant.Description);
-            Assert.True(gameVariant.IconUrl.Equals(new Uri("http://gameVariantIconUrl")));
-            Assert.True(gameVariant.GameBaseVariantId.Equals(GameBaseVariantGuid));
-            Assert.True(gameVariant.Id.Equals(GameVariantGuid));
-            Assert.Equal("gameVariantName", gameVariant.Name);
+            var actual = mapper.Map<GameVariant>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(GameVariant expected, GameVariant actual)
+        {
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.GameBaseVariantId, actual.GameBaseVariantId);
+            Assert.True(expected.IconUrl.Equals(actual.IconUrl));
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
         }
 
         [Fact]
         public void Impulse()
         {
-            var impulse = Mapper.Map<DomainMetadata.Impulse>(ImpulseData()[0]);
+            var mapper = Mapper();
+            var data = ImpulseData()[0];
+            var expected = new Impulse
+            {
+                Id = data.id,
+                Name = data.internalName,
+            };
 
-            Assert.Equal(21, impulse.Id);
-            Assert.Equal("impulseName", impulse.Name);
+            var actual = mapper.Map<Impulse>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(Impulse expected, Impulse actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
         }
 
         [Fact]
         public void Map()
         {
-            var map = Mapper.Map<DomainMetadata.Map>(MapData()[0]);
+            var mapper = Mapper();
+            var data = MapData()[0];
+            var expected = new Map
+            {
+                Description = data.description,
+                ImageUrl = new Uri(data.imageUrl),
+                Id = Guid.Parse(data.id),
+                Name = data.name,
+                SupportedGameModes = new List<GameMode>
+                {
+                    EnumUtility.Parse<GameMode>(data.supportedGameModes.First())
+                },
+            };
 
-            Assert.Equal("mapDescription", map.Description);
-            Assert.True(map.ImageUrl.Equals(new Uri("http://mapImageUrl")));
-            Assert.True(map.Id.Equals(MapGuid));
-            Assert.Equal("mapName", map.Name);
-            Assert.Equal(1, map.SupportedGameModes.Count());
-            Assert.Equal(GameMode.Arena, map.SupportedGameModes.First());
+            var actual = mapper.Map<Map>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(Map expected, Map actual)
+        {
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.True(expected.ImageUrl.Equals(actual.ImageUrl));
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.SupportedGameModes.First(), actual.SupportedGameModes.First());
         }
 
         [Fact]
         public void MapVariant()
         {
-            var mapVariant = Mapper.Map<DomainMetadata.MapVariant>(MapVariantData()[0]);
+            var mapper = Mapper();
+            var data = MapVariantData()[0];
+            var expected = new MapVariant
+            {
+                Description = data.description,
+                Id = Guid.Parse(data.id),
+                Name = data.name,
+                MapId = Guid.Parse(data.mapId),
+                MapImageUrl = new Uri(data.mapImageUrl),
+            };
 
-            Assert.Equal("mapVariantDescription", mapVariant.Description);
-            Assert.True(mapVariant.Id.Equals(MapVariantGuid));
-            Assert.True(mapVariant.MapId.Equals(MapGuid));
-            Assert.True(mapVariant.MapImageUrl.Equals(new Uri("http://mapVariantImageUrl")));
-            Assert.Equal("mapVariantName", mapVariant.Name);
+            var actual = mapper.Map<MapVariant>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(MapVariant expected, MapVariant actual)
+        {
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.MapId, actual.MapId);
+            Assert.True(expected.MapImageUrl.Equals(actual.MapImageUrl));
         }
 
         [Fact]
         public void MedalSpriteLocation()
         {
-            var medalSpriteLocation = Mapper.Map<DomainMetadata.MedalSpriteLocation>(MedalSpriteLocationData()[0]);
+            var mapper = Mapper();
+            var data = MedalSpriteLocationData()[0];
+            var expected = new MedalSpriteLocation
+            {
+                Height = data.height,
+                Left = data.left,
+                SpriteHeight = data.spriteHeight,
+                SpriteSheetUri = new Uri(data.spriteSheetUri),
+                SpriteWidth = data.spriteWidth,
+                Top = data.top,
+                Width = data.width,
+            };
 
-            Assert.Equal(31, medalSpriteLocation.Left);
-            Assert.Equal(32, medalSpriteLocation.Height);
-            Assert.Equal(33, medalSpriteLocation.SpriteHeight);
-            Assert.True(medalSpriteLocation.SpriteSheetUri.Equals(new Uri("http://spriteSheetUri")));
-            Assert.Equal(34, medalSpriteLocation.SpriteWidth);
-            Assert.Equal(35, medalSpriteLocation.Top);
-            Assert.Equal(36, medalSpriteLocation.Width);
+            var actual = mapper.Map<MedalSpriteLocation>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(MedalSpriteLocation expected, MedalSpriteLocation actual)
+        {
+            Assert.Equal(expected.Height, actual.Height);
+            Assert.Equal(expected.Left, actual.Left);
+            Assert.Equal(expected.SpriteHeight, actual.SpriteHeight);
+            Assert.True(expected.SpriteSheetUri.Equals(actual.SpriteSheetUri));
+            Assert.Equal(expected.SpriteWidth, actual.SpriteWidth);
+            Assert.Equal(expected.Top, actual.Top);
+            Assert.Equal(expected.Width, actual.Width);
         }
 
         [Fact]
         public void Medal()
         {
-            var medal = Mapper.Map<DomainMetadata.Medal>(MedalData()[0]);
+            var mapper = Mapper();
+            var data = MedalData()[0];
+            var expected = new Medal
+            {
+                Classification = EnumUtility.Parse<MedalClassification>(data.classification),
+                Description = data.description,
+                Difficulty = data.difficulty,
+                Id = data.id,
+                Name = data.name,
+                SpriteLocation = new MedalSpriteLocation
+                {
+                    Height = data.spriteLocation.height,
+                    Left = data.spriteLocation.left,
+                    SpriteHeight = data.spriteLocation.spriteHeight,
+                    SpriteSheetUri = new Uri(data.spriteLocation.spriteSheetUri),
+                    SpriteWidth = data.spriteLocation.spriteWidth,
+                    Top = data.spriteLocation.top,
+                    Width = data.spriteLocation.width,
+                }
+            };
 
-            Assert.Equal(MedalClassification.Spree, medal.Classification);
-            Assert.Equal("medalDescription", medal.Description);
-            Assert.Equal(41, medal.Difficulty);
-            Assert.Equal(42, medal.Id);
-            Assert.Equal("medalName", medal.Name);
+            var actual = mapper.Map<Medal>(data);
+            Equal(expected, actual);
+        }
 
-            var medalSpriteLocation = medal.SpriteLocation;
-            Assert.Equal(31, medalSpriteLocation.Left);
-            Assert.Equal(32, medalSpriteLocation.Height);
-            Assert.Equal(33, medalSpriteLocation.SpriteHeight);
-            Assert.True(medalSpriteLocation.SpriteSheetUri.Equals(new Uri("http://spriteSheetUri")));
-            Assert.Equal(34, medalSpriteLocation.SpriteWidth);
-            Assert.Equal(35, medalSpriteLocation.Top);
-            Assert.Equal(36, medalSpriteLocation.Width);
+        private static void Equal(Medal expected, Medal actual)
+        {
+            Assert.Equal(expected.Classification, actual.Classification);
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.Difficulty, actual.Difficulty);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Equal(expected.SpriteLocation, actual.SpriteLocation);
         }
 
         [Fact]
         public void Playlist()
         {
-            var playlist = Mapper.Map<DomainMetadata.Playlist>(PlaylistData()[0]);
+            var mapper = Mapper();
+            var data = PlaylistData()[0];
+            var expected = new Playlist
+            {
+                Active = data.isActive,
+                Description = data.description,
+                GameMode = EnumUtility.Parse<GameMode>(data.gameMode),
+                Id = Guid.Parse(data.id),
+                ImageUrl = new Uri(data.imageUrl),
+                Name = data.name,
+                Ranked = data.isRanked,
+            };
 
-            Assert.Equal("playlistDescription", playlist.Description);
-            Assert.Equal(GameMode.Arena, playlist.GameMode);
-            Assert.True(playlist.Id.Equals(PlaylistGuid));
-            Assert.True(playlist.ImageUrl.Equals(new Uri("http://playlistImageUrl")));
-            Assert.True(playlist.Active);
-            Assert.True(playlist.Ranked);
-            Assert.Equal("playlistName", playlist.Name);
+            var actual = mapper.Map<Playlist>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(Playlist expected, Playlist actual)
+        {
+            Assert.Equal(expected.Active, actual.Active);
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.GameMode, actual.GameMode);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.True(expected.ImageUrl.Equals(actual.ImageUrl));
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.Ranked, actual.Ranked);
         }
 
         [Fact]
         public void Season()
         {
-            var season = Mapper.Map<DomainMetadata.Season>(SeasonData()[0]);
+            var mapper = Mapper();
+            var data = SeasonData()[0];
+            var expected = new Season
+            {
+                Active = data.isActive,
+                EndDate = data.endDate,
+                IconUrl = new Uri(data.iconUrl),
+                Id = Guid.Parse(data.id),
+                Name = data.name,
+                PlaylistIds = new List<Guid>
+                {
+                    Guid.Parse(data.playlists.First().id)
+                },
+                StartDate = data.startDate,
+            };
 
-            Assert.True(season.EndDate.Equals(new DateTime(2016, 2, 2)));
-            Assert.True(season.IconUrl.Equals(new Uri("http://seasonIconUrl")));
-            Assert.True(season.Id.Equals(SeasonGuid));
-            Assert.True(season.Active);
-            Assert.Equal("seasonName", season.Name);
-            Assert.True(season.StartDate.Equals(new DateTime(2016, 1, 1)));
+            var actual = mapper.Map<Season>(data);
+            Equal(expected, actual);
+        }
 
-            var playlist = season.PlaylistIds[0];
-            Assert.True(playlist.Equals(PlaylistGuid));
+        private static void Equal(Season expected, Season actual)
+        {
+            Assert.Equal(expected.Active, actual.Active);
+            Assert.Equal(expected.EndDate, actual.EndDate);
+            Assert.True(expected.IconUrl.Equals(actual.IconUrl));
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.PlaylistIds.First(), actual.PlaylistIds.First());
         }
 
         [Fact]
         public void SpartanRank()
         {
-            var spartanRank = Mapper.Map<DomainMetadata.SpartanRank>(SpartanRankData()[0]);
+            var mapper = Mapper();
+            var data = SpartanRankData()[0];
+            var expected = new SpartanRank
+            {
+                Id = data.id,
+                StartXp = data.startXp,
+            };
 
-            Assert.Equal(51, spartanRank.Id);
-            Assert.Equal(52, spartanRank.StartXp);
+            var actual = mapper.Map<SpartanRank>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(SpartanRank expected, SpartanRank actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.StartXp, actual.StartXp);
         }
 
         [Fact]
         public void TeamColor()
         {
-            var teamColor = Mapper.Map<DomainMetadata.TeamColor>(TeamColorData()[0]);
+            var mapper = Mapper();
+            var data = TeamColorData()[0];
+            var expected = new TeamColor
+            {
+                Color = data.color,
+                Description = data.description,
+                IconUrl = new Uri(data.iconUrl),
+                Id = data.id,
+                Name = data.name,
+            };
 
-            Assert.Equal("teamColor", teamColor.Color);
-            Assert.Equal("teamColorDescription", teamColor.Description);
-            Assert.True(teamColor.IconUrl.Equals(new Uri("http://teamColorIconUrl")));
-            Assert.Equal(61, teamColor.Id);
-            Assert.Equal("teamColorName", teamColor.Name);
+            var actual = mapper.Map<TeamColor>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(TeamColor expected, TeamColor actual)
+        {
+            Assert.Equal(expected.Color, actual.Color);
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.True(expected.IconUrl.Equals(actual.IconUrl));
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
         }
 
         [Fact]
         public void Vehicle()
         {
-            var vehicle = Mapper.Map<DomainMetadata.Vehicle>(VehicleData()[0]);
+            var mapper = Mapper();
+            var data = VehicleData()[0];
+            var expected = new Vehicle
+            {
+                Description = data.description,
+                Id = data.id,
+                LargeIconImageUrl = new Uri(data.largeIconImageUrl),
+                Name = data.name,
+                SmallIconImageUrl = new Uri(data.smallIconImageUrl),
+                UsableByPlayer = data.isUsableByPlayer,
+            };
 
-            Assert.Equal("vehicleDescription", vehicle.Description);
-            Assert.Equal(71, vehicle.Id);
-            Assert.True(vehicle.LargeIconImageUrl.Equals(new Uri("http://vehicleLargeIconImageUrl")));
-            Assert.Equal("vehicleName", vehicle.Name);
-            Assert.True(vehicle.SmallIconImageUrl.Equals(new Uri("http://vehicleSmallIconImageUrl")));
-            Assert.True(vehicle.UsableByPlayer);
+            var actual = mapper.Map<Vehicle>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(Vehicle expected, Vehicle actual)
+        {
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.True(expected.LargeIconImageUrl.Equals(actual.LargeIconImageUrl));
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.True(expected.SmallIconImageUrl.Equals(actual.SmallIconImageUrl));
+            Assert.Equal(expected.UsableByPlayer, actual.UsableByPlayer);
         }
 
         [Fact]
         public void Weapon()
         {
-            var weapon = Mapper.Map<DomainMetadata.Weapon>(WeaponData()[0]);
+            var mapper = Mapper();
+            var data = WeaponData()[0];
+            var expected = new Weapon
+            {
+                Description = data.description,
+                Id = data.id,
+                LargeIconImageUrl = new Uri(data.largeIconImageUrl),
+                Name = data.name,
+                SmallIconImageUrl = new Uri(data.smallIconImageUrl),
+                Type = EnumUtility.Parse<WeaponType>(data.type),
+                UsableByPlayer = data.isUsableByPlayer,
+            };
 
-            Assert.Equal("weaponDescription", weapon.Description);
-            Assert.Equal(81, weapon.Id);
-            Assert.True(weapon.LargeIconImageUrl.Equals(new Uri("http://weaponLargeIconImageUrl")));
-            Assert.Equal("weaponName", weapon.Name);
-            Assert.True(weapon.SmallIconImageUrl.Equals(new Uri("http://weaponSmallIconImageUrl")));
-            Assert.True(weapon.UsableByPlayer);
+            var actual = mapper.Map<Weapon>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(Weapon expected, Weapon actual)
+        {
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.True(expected.LargeIconImageUrl.Equals(actual.LargeIconImageUrl));
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.True(expected.SmallIconImageUrl.Equals(actual.SmallIconImageUrl));
+            Assert.Equal(expected.Type, actual.Type);
+            Assert.Equal(expected.UsableByPlayer, actual.UsableByPlayer);
         }
 
         #endregion
@@ -557,255 +808,442 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Csr()
         {
-            var csr = Mapper.Map<DomainModels.CsrDto>(MatchCsrData()[0]);
+            var mapper = Mapper();
+            var data = MatchCsrData()[0];
+            var expected = new CsrDto
+            {
+                CsrDesignationId = data.DesignationId,
+                CsrDesignationTierId = data.Tier,
+                PercentToNextTier = data.PercentToNextTier,
+                Rank = data.Rank,
+                Value = data.Csr,
+            };
 
-            Assert.Equal(31, csr.CsrDesignationId);
-            Assert.Equal(34, csr.CsrDesignationTierId);
-            Assert.Equal(32, csr.PercentToNextTier);
-            Assert.Equal(33, csr.Rank);
-            Assert.Equal(30, csr.Value);
+            var actual = mapper.Map<CsrDto>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(CsrDto expected, CsrDto actual)
+        {
+            Assert.Equal(expected.CsrDesignationId, actual.CsrDesignationId);
+            Assert.Equal(expected.CsrDesignationTierId, actual.CsrDesignationTierId);
+            Assert.Equal(expected.PercentToNextTier, actual.PercentToNextTier);
+            Assert.Equal(expected.Rank, actual.Rank);
+            Assert.Equal(expected.Value, actual.Value);
         }
 
         [Fact]
         public void WeaponStats()
         {
-            var weaponStats = Mapper.Map<DomainModels.WeaponStatsDto>(MatchWeaponData()[0]);
+            var mapper = Mapper();
+            var data = MatchWeaponData()[0];
+            var expected = new WeaponStatsDto
+            {
+                DamageDealt = data.TotalDamageDealt,
+                Headshots = data.TotalHeadshots,
+                Kills = data.TotalKills,
+                PossessionTime = XmlConvert.ToTimeSpan(data.TotalPossessionTime),
+                ShotsFired = data.TotalShotsFired,
+                ShotsLanded = data.TotalShotsLanded,
+                WeaponId = data.WeaponId.StockId,
+            };
 
-            Assert.Equal(40, weaponStats.DamageDealt);
-            Assert.Equal(41, weaponStats.Headshots);
-            Assert.Equal(42, weaponStats.Kills);
-            Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
-            Assert.Equal(44, weaponStats.ShotsFired);
-            Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.WeaponId);
+            var actual = mapper.Map<WeaponStatsDto>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(WeaponStatsDto expected, WeaponStatsDto actual)
+        {
+            Assert.Equal(expected.DamageDealt, actual.DamageDealt);
+            Assert.Equal(expected.Headshots, actual.Headshots);
+            Assert.Equal(expected.Kills, actual.Kills);
+            Assert.Equal(expected.PossessionTime, actual.PossessionTime);
+            Assert.Equal(expected.ShotsFired, actual.ShotsFired);
+            Assert.Equal(expected.ShotsLanded, actual.ShotsLanded);
+            Assert.Equal(expected.WeaponId, actual.WeaponId);
         }
 
         [Fact]
         public void Player()
         {
-            var player = Mapper.Map<DomainModels.PlayerDto>(MatchPlayerStatsData()[0]);
+            var mapper = Mapper();
+            var data = MatchPlayerStatsData()[0];
+            var expected = new PlayerDto
+            {
+                Assassinations = data.TotalAssassinations,
+                Assists = data.TotalAssists,
+                AvgLifeTime = XmlConvert.ToTimeSpan(data.AvgLifeTimeOfPlayer),
+                CurrentCsr = new CsrDto
+                {
+                    CsrDesignationId = data.CurrentCsr.DesignationId,
+                    CsrDesignationTierId = data.CurrentCsr.Tier,
+                    PercentToNextTier = data.CurrentCsr.PercentToNextTier,
+                    Rank = data.CurrentCsr.Rank,
+                    Value = data.CurrentCsr.Csr,
+                },
+                Deaths = data.TotalDeaths,
+                Dnf = data.DNF,
+                GrenadeDamage = data.TotalGrenadeDamage,
+                GrenadeKills = data.TotalGrenadeKills,
+                GroundPoundDamage = data.TotalGroundPoundDamage,
+                GroundPoundKills = data.TotalGroundPoundKills,
+                Headshots = data.TotalHeadshots,
+                Kills = data.TotalKills,
+                MeleeDamage = data.TotalMeleeDamage,
+                MeleeKills = data.TotalMeleeKills,
+                Name = data.Player.Gamertag,
+                PowerWeaponDamage = data.TotalPowerWeaponDamage,
+                PowerWeaponGrabs = data.TotalPowerWeaponGrabs,
+                PowerWeaponKills = data.TotalPowerWeaponKills,
+                PowerWeaponPossessionTime = XmlConvert.ToTimeSpan(data.TotalPowerWeaponPossessionTime),
+                PreviousCsr = new CsrDto
+                {
+                    CsrDesignationId = data.PreviousCsr.DesignationId,
+                    CsrDesignationTierId = data.PreviousCsr.Tier,
+                    PercentToNextTier = data.PreviousCsr.PercentToNextTier,
+                    Rank = data.PreviousCsr.Rank,
+                    Value = data.PreviousCsr.Csr,
+                },
+                Rank = data.Rank,
+                ShotsFired = data.TotalShotsFired,
+                ShotsLanded = data.TotalShotsLanded,
+                ShoulderBashDamage = data.TotalShoulderBashDamage,
+                ShoulderBashKills = data.TotalShoulderBashKills,
+                Team = data.TeamId,
+                WeaponDamage = data.TotalWeaponDamage,
+                WeaponsStats = new List<WeaponStatsDto>
+                {
+                    new WeaponStatsDto
+                    {
+                        DamageDealt = data.WeaponStats.First().TotalDamageDealt,
+                        Headshots = data.WeaponStats.First().TotalHeadshots,
+                        Kills = data.WeaponStats.First().TotalKills,
+                        PossessionTime = XmlConvert.ToTimeSpan(data.WeaponStats.First().TotalPossessionTime),
+                        ShotsFired = data.WeaponStats.First().TotalShotsFired,
+                        ShotsLanded = data.WeaponStats.First().TotalShotsLanded,
+                        WeaponId = data.WeaponStats.First().WeaponId.StockId,
+                    }
+                }
+            };
 
-            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
-            Assert.True(player.Dnf);
-            Assert.Equal("playerName", player.Name);
-            Assert.Equal(1000, player.Rank);
-            Assert.Equal(100, player.Team);
-            Assert.Equal(101, player.Assassinations);
-            Assert.Equal(102, player.Assists);
-            Assert.Equal(103, player.Deaths);
-            Assert.Equal(104, player.GrenadeDamage);
-            Assert.Equal(105, player.GrenadeKills);
-            Assert.Equal(106, player.GroundPoundDamage);
-            Assert.Equal(107, player.GroundPoundKills);
-            Assert.Equal(108, player.Headshots);
-            Assert.Equal(109, player.Kills);
-            Assert.Equal(110, player.MeleeDamage);
-            Assert.Equal(111, player.MeleeKills);
-            Assert.Equal(112, player.PowerWeaponDamage);
-            Assert.Equal(113, player.PowerWeaponGrabs);
-            Assert.Equal(114, player.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
-            Assert.Equal(116, player.ShotsFired);
-            Assert.Equal(117, player.ShotsLanded);
-            Assert.Equal(118, player.ShoulderBashDamage);
-            Assert.Equal(119, player.ShoulderBashKills);
-            Assert.Equal(120, player.WeaponDamage);
+            var actual = mapper.Map<PlayerDto>(data);
+            Equal(expected, actual);
+        }
 
-            var currentCsr = player.CurrentCsr;
-            Assert.Equal(31, currentCsr.CsrDesignationId);
-            Assert.Equal(34, currentCsr.CsrDesignationTierId);
-            Assert.Equal(32, currentCsr.PercentToNextTier);
-            Assert.Equal(33, currentCsr.Rank);
-            Assert.Equal(30, currentCsr.Value);
-
-            var previousCsr = player.PreviousCsr;
-            Assert.Equal(36, previousCsr.CsrDesignationId);
-            Assert.Equal(39, previousCsr.CsrDesignationTierId);
-            Assert.Equal(37, previousCsr.PercentToNextTier);
-            Assert.Equal(38, previousCsr.Rank);
-            Assert.Equal(35, previousCsr.Value);
-
-            var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count());
-            var weaponStats = weaponsStats.First();
-            Assert.Equal(40, weaponStats.DamageDealt);
-            Assert.Equal(41, weaponStats.Headshots);
-            Assert.Equal(42, weaponStats.Kills);
-            Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
-            Assert.Equal(44, weaponStats.ShotsFired);
-            Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.WeaponId);
+        private static void Equal(PlayerDto expected, PlayerDto actual)
+        {
+            Assert.Equal(expected.Assassinations, actual.Assassinations);
+            Assert.Equal(expected.Assists, actual.Assists);
+            Assert.Equal(expected.AvgLifeTime, actual.AvgLifeTime);
+            Equal(expected.CurrentCsr, actual.CurrentCsr);
+            Assert.Equal(expected.Deaths, actual.Deaths);
+            Assert.Equal(expected.Dnf, actual.Dnf);
+            Assert.Equal(expected.GrenadeDamage, actual.GrenadeDamage);
+            Assert.Equal(expected.GrenadeKills, actual.GrenadeKills);
+            Assert.Equal(expected.GroundPoundDamage, actual.GroundPoundDamage);
+            Assert.Equal(expected.GroundPoundKills, actual.GroundPoundKills);
+            Assert.Equal(expected.Headshots, actual.Headshots);
+            Assert.Equal(expected.Kills, actual.Kills);
+            Assert.Equal(expected.MeleeDamage, actual.MeleeDamage);
+            Assert.Equal(expected.MeleeKills, actual.MeleeKills);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.PowerWeaponDamage, actual.PowerWeaponDamage);
+            Assert.Equal(expected.PowerWeaponGrabs, actual.PowerWeaponGrabs);
+            Assert.Equal(expected.PowerWeaponKills, actual.PowerWeaponKills);
+            Assert.Equal(expected.PowerWeaponPossessionTime, actual.PowerWeaponPossessionTime);
+            Equal(expected.PreviousCsr, actual.PreviousCsr);
+            Assert.Equal(expected.Rank, actual.Rank);
+            Assert.Equal(expected.ShotsFired, actual.ShotsFired);
+            Assert.Equal(expected.ShotsLanded, actual.ShotsLanded);
+            Assert.Equal(expected.ShoulderBashDamage, actual.ShoulderBashDamage);
+            Assert.Equal(expected.ShoulderBashKills, actual.ShoulderBashKills);
+            Assert.Equal(expected.Team, actual.Team);
+            Assert.Equal(expected.WeaponDamage, actual.WeaponDamage);
+            Equal(expected.WeaponsStats.First(), actual.WeaponsStats.First());
         }
 
         [Fact]
-        public void Team()
+        public void Team1()
         {
-            var team1 = Mapper.Map<DomainModels.TeamDto>(MatchTeamStatsData()[0]);
-            Assert.Equal(2, team1.Rank);
-            Assert.Equal(40, team1.Score);
-            Assert.Equal(1, team1.TeamId);
+            var mapper = Mapper();
+            var data = MatchTeamStatsData()[0];
+            var expected = new TeamDto
+            {
+                Rank = data.Rank,
+                Score = data.Score,
+                TeamId = data.TeamId,
+            };
 
-            var team2 = Mapper.Map<DomainModels.TeamDto>(MatchTeamStatsData()[1]);
-            Assert.Equal(1, team2.Rank);
-            Assert.Equal(50, team2.Score);
-            Assert.Equal(2, team2.TeamId);
+            var actual = mapper.Map<TeamDto>(data);
+            Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Team2()
+        {
+            var mapper = Mapper();
+            var data = MatchTeamStatsData()[1];
+            var expected = new TeamDto
+            {
+                Rank = data.Rank,
+                Score = data.Score,
+                TeamId = data.TeamId,
+            };
+
+            var actual = mapper.Map<TeamDto>(data);
+            Equal(expected, actual);
+        }
+
+        private static void Equal(TeamDto expected, TeamDto actual)
+        {
+            Assert.Equal(expected.Rank, actual.Rank);
+            Assert.Equal(expected.Score, actual.Score);
+            Assert.Equal(expected.TeamId, actual.TeamId);
         }
 
         [Fact]
         public void MatchFromPlayerMatch()
         {
-            var match = Mapper.Map<DomainModels.MatchDto>(PlayerMatchData()[0]);
+            var mapper = Mapper();
+            var data = PlayerMatchData()[0];
+            var expected = new MatchDto
+            {
+                Completed = data.MatchCompletedDate.ISO8601Date,
+                Duration = XmlConvert.ToTimeSpan(data.MatchDuration),
+                GameBaseVariantId = Guid.Parse(data.GameBaseVariantId),
+                GameMode = EnumUtility.Parse<GameMode>(data.Id.GameMode),
+                GameVariantId = Guid.Parse(data.GameVariant.ResourceId),
+                Id = Guid.Parse(data.Id.MatchId),
+                MapId = Guid.Parse(data.MapId),
+                MapVariantId = Guid.Parse(data.MapVariant.ResourceId),
+                PlaylistId = Guid.Parse(data.HopperId),
+                SeasonId = Guid.Parse(data.SeasonId),
+                TeamGame = data.IsTeamGame,
+            };
 
-            Assert.True(match.Completed.Equals(new DateTime(2016, 3, 3)));
-            Assert.True(TimeSpan.FromSeconds(100).Equals(match.Duration));
-            Assert.True(match.GameBaseVariantId.Equals(GameBaseVariantGuid));
-            Assert.Equal(GameMode.Arena, match.GameMode);
-            Assert.True(match.GameVariantId.Equals(GameVariantGuid));
-            Assert.True(match.Id.Equals(MatchGuid));
-            Assert.True(match.MapId.Equals(MapGuid));
-            Assert.True(match.MapVariantId.Equals(MapVariantGuid));
-            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
-            Assert.True(match.SeasonId.Equals(SeasonGuid));
-            Assert.True(match.TeamGame);
+            var actual = mapper.Map<MatchDto>(data);
+            Assert.Equal(expected.Completed, actual.Completed);
+            Assert.Equal(expected.Duration, actual.Duration);
+            Assert.Equal(expected.GameBaseVariantId, actual.GameBaseVariantId);
+            Assert.Equal(expected.GameMode, actual.GameMode);
+            Assert.Equal(expected.GameVariantId, actual.GameVariantId);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.MapId, actual.MapId);
+            Assert.Equal(expected.MapVariantId, actual.MapVariantId);
+            Assert.Equal(expected.PlaylistId, actual.PlaylistId);
+            Assert.Equal(expected.SeasonId, actual.SeasonId);
+            Assert.Equal(expected.TeamGame, actual.TeamGame);
         }
 
         [Fact]
         public void MatchFromMatchReport()
         {
-            var match = Mapper.Map<DomainModels.MatchDto>(MatchReportData()[0]);
+            var mapper = Mapper();
+            var data = MatchReportData()[0];
+            var expected = new MatchDto
+            {
+                Players = new List<PlayerDto>
+                {
+                    new PlayerDto
+                    {
+                        Assassinations = data.PlayerStats.First().TotalAssassinations,
+                        Assists = data.PlayerStats.First().TotalAssists,
+                        AvgLifeTime = XmlConvert.ToTimeSpan(data.PlayerStats.First().AvgLifeTimeOfPlayer),
+                        CurrentCsr = new CsrDto
+                        {
+                            CsrDesignationId = data.PlayerStats.First().CurrentCsr.DesignationId,
+                            CsrDesignationTierId = data.PlayerStats.First().CurrentCsr.Tier,
+                            PercentToNextTier = data.PlayerStats.First().CurrentCsr.PercentToNextTier,
+                            Rank = data.PlayerStats.First().CurrentCsr.Rank,
+                            Value = data.PlayerStats.First().CurrentCsr.Csr,
+                        },
+                        Deaths = data.PlayerStats.First().TotalDeaths,
+                        Dnf = data.PlayerStats.First().DNF,
+                        GrenadeDamage = data.PlayerStats.First().TotalGrenadeDamage,
+                        GrenadeKills = data.PlayerStats.First().TotalGrenadeKills,
+                        GroundPoundDamage = data.PlayerStats.First().TotalGroundPoundDamage,
+                        GroundPoundKills = data.PlayerStats.First().TotalGroundPoundKills,
+                        Headshots = data.PlayerStats.First().TotalHeadshots,
+                        Kills = data.PlayerStats.First().TotalKills,
+                        MeleeDamage = data.PlayerStats.First().TotalMeleeDamage,
+                        MeleeKills = data.PlayerStats.First().TotalMeleeKills,
+                        Name = data.PlayerStats.First().Player.Gamertag,
+                        PowerWeaponDamage = data.PlayerStats.First().TotalPowerWeaponDamage,
+                        PowerWeaponGrabs = data.PlayerStats.First().TotalPowerWeaponGrabs,
+                        PowerWeaponKills = data.PlayerStats.First().TotalPowerWeaponKills,
+                        PowerWeaponPossessionTime = XmlConvert.ToTimeSpan(data.PlayerStats.First().TotalPowerWeaponPossessionTime),
+                        PreviousCsr = new CsrDto
+                        {
+                            CsrDesignationId = data.PlayerStats.First().PreviousCsr.DesignationId,
+                            CsrDesignationTierId = data.PlayerStats.First().PreviousCsr.Tier,
+                            PercentToNextTier = data.PlayerStats.First().PreviousCsr.PercentToNextTier,
+                            Rank = data.PlayerStats.First().PreviousCsr.Rank,
+                            Value = data.PlayerStats.First().PreviousCsr.Csr,
+                        },
+                        Rank = data.PlayerStats.First().Rank,
+                        ShotsFired = data.PlayerStats.First().TotalShotsFired,
+                        ShotsLanded = data.PlayerStats.First().TotalShotsLanded,
+                        ShoulderBashDamage = data.PlayerStats.First().TotalShoulderBashDamage,
+                        ShoulderBashKills = data.PlayerStats.First().TotalShoulderBashKills,
+                        Team = data.PlayerStats.First().TeamId,
+                        WeaponDamage = data.PlayerStats.First().TotalWeaponDamage,
+                        WeaponsStats = new List<WeaponStatsDto>
+                        {
+                            new WeaponStatsDto
+                            {
+                                DamageDealt = data.PlayerStats.First().WeaponStats.First().TotalDamageDealt,
+                                Headshots = data.PlayerStats.First().WeaponStats.First().TotalHeadshots,
+                                Kills = data.PlayerStats.First().WeaponStats.First().TotalKills,
+                                PossessionTime = XmlConvert.ToTimeSpan(data.PlayerStats.First().WeaponStats.First().TotalPossessionTime),
+                                ShotsFired = data.PlayerStats.First().WeaponStats.First().TotalShotsFired,
+                                ShotsLanded = data.PlayerStats.First().WeaponStats.First().TotalShotsLanded,
+                                WeaponId = data.PlayerStats.First().WeaponStats.First().WeaponId.StockId,
+                            }
+                        }
+                    }
+                },
+                Teams = new List<TeamDto>
+                {
+                    new TeamDto
+                    {
+                        Rank = data.TeamStats[0].Rank,
+                        Score = data.TeamStats[0].Score,
+                        TeamId = data.TeamStats[0].TeamId,
+                    },
+                    new TeamDto
+                    {
+                        Rank = data.TeamStats[1].Rank,
+                        Score = data.TeamStats[1].Score,
+                        TeamId = data.TeamStats[1].TeamId,
+                    },
+                },
+            };
 
-            var player = match.Players.First();
-            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
-            Assert.True(player.Dnf);
-            Assert.Equal("playerName", player.Name);
-            Assert.Equal(1000, player.Rank);
-            Assert.Equal(100, player.Team);
-            Assert.Equal(101, player.Assassinations);
-            Assert.Equal(102, player.Assists);
-            Assert.Equal(103, player.Deaths);
-            Assert.Equal(104, player.GrenadeDamage);
-            Assert.Equal(105, player.GrenadeKills);
-            Assert.Equal(106, player.GroundPoundDamage);
-            Assert.Equal(107, player.GroundPoundKills);
-            Assert.Equal(108, player.Headshots);
-            Assert.Equal(109, player.Kills);
-            Assert.Equal(110, player.MeleeDamage);
-            Assert.Equal(111, player.MeleeKills);
-            Assert.Equal(112, player.PowerWeaponDamage);
-            Assert.Equal(113, player.PowerWeaponGrabs);
-            Assert.Equal(114, player.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
-            Assert.Equal(116, player.ShotsFired);
-            Assert.Equal(117, player.ShotsLanded);
-            Assert.Equal(118, player.ShoulderBashDamage);
-            Assert.Equal(119, player.ShoulderBashKills);
-            Assert.Equal(120, player.WeaponDamage);
-
-            var team1 = match.Teams.First();
-            Assert.Equal(2, team1.Rank);
-            Assert.Equal(40, team1.Score);
-            Assert.Equal(1, team1.TeamId);
-
-            var team2 = match.Teams.ElementAt(1);
-            Assert.Equal(1, team2.Rank);
-            Assert.Equal(50, team2.Score);
-            Assert.Equal(2, team2.TeamId);
-
-            var currentCsr = player.CurrentCsr;
-            Assert.Equal(31, currentCsr.CsrDesignationId);
-            Assert.Equal(34, currentCsr.CsrDesignationTierId);
-            Assert.Equal(32, currentCsr.PercentToNextTier);
-            Assert.Equal(33, currentCsr.Rank);
-            Assert.Equal(30, currentCsr.Value);
-
-            var previousCsr = player.PreviousCsr;
-            Assert.Equal(36, previousCsr.CsrDesignationId);
-            Assert.Equal(39, previousCsr.CsrDesignationTierId);
-            Assert.Equal(37, previousCsr.PercentToNextTier);
-            Assert.Equal(38, previousCsr.Rank);
-            Assert.Equal(35, previousCsr.Value);
-
-            var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count());
-            var weaponStats = weaponsStats.First();
-            Assert.Equal(40, weaponStats.DamageDealt);
-            Assert.Equal(41, weaponStats.Headshots);
-            Assert.Equal(42, weaponStats.Kills);
-            Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
-            Assert.Equal(44, weaponStats.ShotsFired);
-            Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.WeaponId);
+            var actual = mapper.Map<MatchDto>(data);
+            Equal(expected.Players.First(), actual.Players.First());
+            Equal(expected.Teams.First(), actual.Teams.First());
+            Equal(expected.Teams.ElementAt(1), actual.Teams.ElementAt(1));
         }
 
         [Fact]
         public void Match()
         {
-            var match = Mapper.Map<DomainModels.MatchDto>(PlayerMatchData()[0])
-                              .Map(MatchReportData()[0]);
+            var mapper = Mapper();
+            var data1 = PlayerMatchData()[0];
+            var data2 = MatchReportData()[0];
+            var expected = new MatchDto
+            {
+                Completed = data1.MatchCompletedDate.ISO8601Date,
+                Duration = XmlConvert.ToTimeSpan(data1.MatchDuration),
+                GameBaseVariantId = Guid.Parse(data1.GameBaseVariantId),
+                GameMode = EnumUtility.Parse<GameMode>(data1.Id.GameMode),
+                GameVariantId = Guid.Parse(data1.GameVariant.ResourceId),
+                Id = Guid.Parse(data1.Id.MatchId),
+                MapId = Guid.Parse(data1.MapId),
+                MapVariantId = Guid.Parse(data1.MapVariant.ResourceId),
+                PlaylistId = Guid.Parse(data1.HopperId),
+                SeasonId = Guid.Parse(data1.SeasonId),
+                TeamGame = data1.IsTeamGame,
 
-            Assert.True(match.Completed.Equals(new DateTime(2016, 3, 3)));
-            Assert.True(TimeSpan.FromSeconds(100).Equals(match.Duration));
-            Assert.True(match.GameBaseVariantId.Equals(GameBaseVariantGuid));
-            Assert.Equal(GameMode.Arena, match.GameMode);
-            Assert.True(match.GameVariantId.Equals(GameVariantGuid));
-            Assert.True(match.Id.Equals(MatchGuid));
-            Assert.True(match.MapId.Equals(MapGuid));
-            Assert.True(match.MapVariantId.Equals(MapVariantGuid));
-            Assert.True(match.PlaylistId.Equals(PlaylistGuid));
-            Assert.True(match.SeasonId.Equals(SeasonGuid));
-            Assert.True(match.TeamGame);
+                Players = new List<PlayerDto>
+                {
+                    new PlayerDto
+                    {
+                        Assassinations = data2.PlayerStats.First().TotalAssassinations,
+                        Assists = data2.PlayerStats.First().TotalAssists,
+                        AvgLifeTime = XmlConvert.ToTimeSpan(data2.PlayerStats.First().AvgLifeTimeOfPlayer),
+                        CurrentCsr = new CsrDto
+                        {
+                            CsrDesignationId = data2.PlayerStats.First().CurrentCsr.DesignationId,
+                            CsrDesignationTierId = data2.PlayerStats.First().CurrentCsr.Tier,
+                            PercentToNextTier = data2.PlayerStats.First().CurrentCsr.PercentToNextTier,
+                            Rank = data2.PlayerStats.First().CurrentCsr.Rank,
+                            Value = data2.PlayerStats.First().CurrentCsr.Csr,
+                        },
+                        Deaths = data2.PlayerStats.First().TotalDeaths,
+                        Dnf = data2.PlayerStats.First().DNF,
+                        GrenadeDamage = data2.PlayerStats.First().TotalGrenadeDamage,
+                        GrenadeKills = data2.PlayerStats.First().TotalGrenadeKills,
+                        GroundPoundDamage = data2.PlayerStats.First().TotalGroundPoundDamage,
+                        GroundPoundKills = data2.PlayerStats.First().TotalGroundPoundKills,
+                        Headshots = data2.PlayerStats.First().TotalHeadshots,
+                        Kills = data2.PlayerStats.First().TotalKills,
+                        MeleeDamage = data2.PlayerStats.First().TotalMeleeDamage,
+                        MeleeKills = data2.PlayerStats.First().TotalMeleeKills,
+                        Name = data2.PlayerStats.First().Player.Gamertag,
+                        PowerWeaponDamage = data2.PlayerStats.First().TotalPowerWeaponDamage,
+                        PowerWeaponGrabs = data2.PlayerStats.First().TotalPowerWeaponGrabs,
+                        PowerWeaponKills = data2.PlayerStats.First().TotalPowerWeaponKills,
+                        PowerWeaponPossessionTime = XmlConvert.ToTimeSpan(data2.PlayerStats.First().TotalPowerWeaponPossessionTime),
+                        PreviousCsr = new CsrDto
+                        {
+                            CsrDesignationId = data2.PlayerStats.First().PreviousCsr.DesignationId,
+                            CsrDesignationTierId = data2.PlayerStats.First().PreviousCsr.Tier,
+                            PercentToNextTier = data2.PlayerStats.First().PreviousCsr.PercentToNextTier,
+                            Rank = data2.PlayerStats.First().PreviousCsr.Rank,
+                            Value = data2.PlayerStats.First().PreviousCsr.Csr,
+                        },
+                        Rank = data2.PlayerStats.First().Rank,
+                        ShotsFired = data2.PlayerStats.First().TotalShotsFired,
+                        ShotsLanded = data2.PlayerStats.First().TotalShotsLanded,
+                        ShoulderBashDamage = data2.PlayerStats.First().TotalShoulderBashDamage,
+                        ShoulderBashKills = data2.PlayerStats.First().TotalShoulderBashKills,
+                        Team = data2.PlayerStats.First().TeamId,
+                        WeaponDamage = data2.PlayerStats.First().TotalWeaponDamage,
+                        WeaponsStats = new List<WeaponStatsDto>
+                        {
+                            new WeaponStatsDto
+                            {
+                                DamageDealt = data2.PlayerStats.First().WeaponStats.First().TotalDamageDealt,
+                                Headshots = data2.PlayerStats.First().WeaponStats.First().TotalHeadshots,
+                                Kills = data2.PlayerStats.First().WeaponStats.First().TotalKills,
+                                PossessionTime = XmlConvert.ToTimeSpan(data2.PlayerStats.First().WeaponStats.First().TotalPossessionTime),
+                                ShotsFired = data2.PlayerStats.First().WeaponStats.First().TotalShotsFired,
+                                ShotsLanded = data2.PlayerStats.First().WeaponStats.First().TotalShotsLanded,
+                                WeaponId = data2.PlayerStats.First().WeaponStats.First().WeaponId.StockId,
+                            }
+                        }
+                    },
+                },
+                Teams = new List<TeamDto>
+                {
+                    new TeamDto
+                    {
+                        Rank = data2.TeamStats[0].Rank,
+                        Score = data2.TeamStats[0].Score,
+                        TeamId = data2.TeamStats[0].TeamId,
+                    },
+                    new TeamDto
+                    {
+                        Rank = data2.TeamStats[1].Rank,
+                        Score = data2.TeamStats[1].Score,
+                        TeamId = data2.TeamStats[1].TeamId,
+                    },
+                },
+            };
 
-            var player = match.Players.First();
-            Assert.True(TimeSpan.FromSeconds(70).Equals(player.AvgLifeTime));
-            Assert.True(player.Dnf);
-            Assert.Equal("playerName", player.Name);
-            Assert.Equal(1000, player.Rank);
-            Assert.Equal(100, player.Team);
-            Assert.Equal(101, player.Assassinations);
-            Assert.Equal(102, player.Assists);
-            Assert.Equal(103, player.Deaths);
-            Assert.Equal(104, player.GrenadeDamage);
-            Assert.Equal(105, player.GrenadeKills);
-            Assert.Equal(106, player.GroundPoundDamage);
-            Assert.Equal(107, player.GroundPoundKills);
-            Assert.Equal(108, player.Headshots);
-            Assert.Equal(109, player.Kills);
-            Assert.Equal(110, player.MeleeDamage);
-            Assert.Equal(111, player.MeleeKills);
-            Assert.Equal(112, player.PowerWeaponDamage);
-            Assert.Equal(113, player.PowerWeaponGrabs);
-            Assert.Equal(114, player.PowerWeaponKills);
-            Assert.True(TimeSpan.FromSeconds(115).Equals(player.PowerWeaponPossessionTime));
-            Assert.Equal(116, player.ShotsFired);
-            Assert.Equal(117, player.ShotsLanded);
-            Assert.Equal(118, player.ShoulderBashDamage);
-            Assert.Equal(119, player.ShoulderBashKills);
-            Assert.Equal(120, player.WeaponDamage);
+            var actual = mapper.Map<MatchDto>(data1)
+                               .Map(data2);
+            Equal(expected, actual);
+        }
 
-            var currentCsr = player.CurrentCsr;
-            Assert.Equal(31, currentCsr.CsrDesignationId);
-            Assert.Equal(34, currentCsr.CsrDesignationTierId);
-            Assert.Equal(32, currentCsr.PercentToNextTier);
-            Assert.Equal(33, currentCsr.Rank);
-            Assert.Equal(30, currentCsr.Value);
+        private static void Equal(MatchDto expected, MatchDto actual)
+        {
+            Assert.Equal(expected.Completed, actual.Completed);
+            Assert.Equal(expected.Duration, actual.Duration);
+            Assert.Equal(expected.GameBaseVariantId, actual.GameBaseVariantId);
+            Assert.Equal(expected.GameMode, actual.GameMode);
+            Assert.Equal(expected.GameVariantId, actual.GameVariantId);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.MapId, actual.MapId);
+            Assert.Equal(expected.MapVariantId, actual.MapVariantId);
+            Assert.Equal(expected.PlaylistId, actual.PlaylistId);
+            Assert.Equal(expected.SeasonId, actual.SeasonId);
+            Assert.Equal(expected.TeamGame, actual.TeamGame);
 
-            var previousCsr = player.PreviousCsr;
-            Assert.Equal(36, previousCsr.CsrDesignationId);
-            Assert.Equal(39, previousCsr.CsrDesignationTierId);
-            Assert.Equal(37, previousCsr.PercentToNextTier);
-            Assert.Equal(38, previousCsr.Rank);
-            Assert.Equal(35, previousCsr.Value);
-
-            var weaponsStats = player.WeaponsStats;
-            Assert.Equal(1, weaponsStats.Count());
-            var weaponStats = weaponsStats.First();
-            Assert.Equal(40, weaponStats.DamageDealt);
-            Assert.Equal(41, weaponStats.Headshots);
-            Assert.Equal(42, weaponStats.Kills);
-            Assert.True(TimeSpan.FromSeconds(43).Equals(weaponStats.PossessionTime));
-            Assert.Equal(44, weaponStats.ShotsFired);
-            Assert.Equal(45, weaponStats.ShotsLanded);
-            Assert.Equal(46, weaponStats.WeaponId);
+            Equal(expected.Players.First(), actual.Players.First());
+            Equal(expected.Teams.First(), actual.Teams.First());
+            Equal(expected.Teams.ElementAt(1), actual.Teams.ElementAt(1));
         }
 
         #endregion

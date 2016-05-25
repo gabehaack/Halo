@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using GHaack.Halo.Api;
 using GHaack.Halo.Data;
 using GHaack.Halo.Domain;
@@ -24,7 +25,8 @@ namespace GHaack.Halo.Tests
         {
             var haloApi = Substitute.For<IHaloApi>();
             var haloRepository = Substitute.For<IHaloRepository>();
-            return new HaloDataManager(haloApi, haloRepository);
+            var mapper = Substitute.For<IMapper>();
+            return new HaloDataManager(haloApi, haloRepository, mapper);
         }
 
         private static HaloDataManager HaloDataManager(IEnumerable<Weapon> weapons)

@@ -24,7 +24,7 @@ namespace GHaack.Halo.Tests
 
         private static HaloDataManager HaloDataManager()
         {
-            return new HaloDataManager(HaloApi(), HaloRepository());
+            return new HaloDataManager(HaloApi(), HaloRepository(), Mapper());
         }
 
         private static IHaloApi HaloApi()
@@ -38,13 +38,15 @@ namespace GHaack.Halo.Tests
             return new MongoHaloRepository(mongoClient);
         }
 
-        public IntegrationTests()
+        private static IMapper Mapper()
         {
-            Mapper.Initialize(cfg =>
+            var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<HaloApiMapProfile>();
                 cfg.AddProfile<HaloDomainMapProfile>();
             });
+            config.AssertConfigurationIsValid();
+            return config.CreateMapper();
         }
 
         [Fact]

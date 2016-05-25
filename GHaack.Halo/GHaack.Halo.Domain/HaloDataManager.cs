@@ -14,16 +14,20 @@ namespace GHaack.Halo.Domain
     {
         private readonly IHaloApi _haloApi;
         private readonly IHaloRepository _haloRepository;
+        private readonly IMapper _mapper;
 
-        public HaloDataManager(IHaloApi haloApi, IHaloRepository haloRepository)
+        public HaloDataManager(IHaloApi haloApi, IHaloRepository haloRepository, IMapper mapper)
         {
             if (haloApi == null)
                 throw new ArgumentNullException(nameof(haloApi));
-            _haloApi = haloApi;
-
             if (haloRepository == null)
                 throw new ArgumentNullException(nameof(haloRepository));
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+
+            _haloApi = haloApi;
             _haloRepository = haloRepository;
+            _mapper = mapper;
         }
 
         #region Metadata
@@ -199,7 +203,7 @@ namespace GHaack.Halo.Domain
         {
             var matchDtos = await _haloRepository.GetMatchesAsync(player);
             var matches = matchDtos
-                .Select(Mapper.Map<Match>);
+                .Select(_mapper.Map<Match>);
             return await MatchesAsync(matches);
         }
 
