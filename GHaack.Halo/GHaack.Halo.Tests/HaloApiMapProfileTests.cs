@@ -33,65 +33,59 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void UriTypeConversion()
         {
-            var mapper = Mapper();
             string data = "http://uri";
             var expected = new Uri(data);
 
-            var actual = mapper.Map<Uri>(data);
+            var actual = Mapper().Map<Uri>(data);
             Assert.True(expected.Equals(actual));
         }
 
         [Fact]
         public void UriTypeConversion_Null()
         {
-            var mapper = Mapper();
             string data = null;
 
-            var actual = mapper.Map<Uri>(data);
+            var actual = Mapper().Map<Uri>(data);
             Assert.Null(actual);
         }
 
         [Fact]
         public void GuidTypeConversion()
         {
-            var mapper = Mapper();
             var expected = Guid.NewGuid();
             var data = expected.ToString();
 
-            var actual = mapper.Map<Guid>(data);
+            var actual = Mapper().Map<Guid>(data);
             Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void GuidTypeConversion_Null()
         {
-            var mapper = Mapper();
             string data = null;
             var expected = Guid.Empty;
 
-            var actual = mapper.Map<Guid>(data);
+            var actual = Mapper().Map<Guid>(data);
             Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void TimeSpanTypeConversion()
         {
-            var mapper = Mapper();
             string data = "PT1M30S";
             var expected = TimeSpan.FromSeconds(90);
 
-            var actual = mapper.Map<TimeSpan>(data);
+            var actual = Mapper().Map<TimeSpan>(data);
             Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void TimeSpanTypeConversion_Null()
         {
-            var mapper = Mapper();
             string data = null;
             var expected = TimeSpan.Zero;
 
-            var actual = mapper.Map<TimeSpan>(data);
+            var actual = Mapper().Map<TimeSpan>(data);
             Assert.Equal(expected, actual);
         }
 
@@ -102,7 +96,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void CsrTier()
         {
-            var mapper = Mapper();
             var data = CsrTierData()[0];
             var expected = new CsrTier
             {
@@ -110,7 +103,7 @@ namespace GHaack.Halo.Tests
                 Id = data.id,
             };
 
-            var actual = mapper.Map<CsrTier>(data);
+            var actual = Mapper().Map<CsrTier>(data);
             Equal(expected, actual);
         }
 
@@ -123,7 +116,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void CsrDesignation()
         {
-            var mapper = Mapper();
             var data = CsrDesignationData()[0];
             var expected = new CsrDesignation
             {
@@ -140,7 +132,7 @@ namespace GHaack.Halo.Tests
                 },
             };
 
-            var actual = mapper.Map<CsrDesignation>(data);
+            var actual = Mapper().Map<CsrDesignation>(data);
             Equal(expected, actual);
         }
 
@@ -155,7 +147,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void FlexibleStat()
         {
-            var mapper = Mapper();
             var data = FlexibleStatData()[0];
             var expected = new FlexibleStat
             {
@@ -164,7 +155,7 @@ namespace GHaack.Halo.Tests
                 Type = EnumUtility.Parse<FlexibleStatType>(data.type),
             };
 
-            var actual = mapper.Map<FlexibleStat>(data);
+            var actual = Mapper().Map<FlexibleStat>(data);
             Equal(expected, actual);
         }
 
@@ -178,7 +169,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void GameBaseVariant()
         {
-            var mapper = Mapper();
             var data = GameBaseVariantData()[0];
             var expected = new GameBaseVariant
             {
@@ -191,7 +181,7 @@ namespace GHaack.Halo.Tests
                 },
             };
 
-            var actual = mapper.Map<GameBaseVariant>(data);
+            var actual = Mapper().Map<GameBaseVariant>(data);
             Equal(expected, actual);
         }
 
@@ -206,7 +196,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void GameVariant()
         {
-            var mapper = Mapper();
             var data = GameVariantData()[0];
             var expected = new GameVariant
             {
@@ -217,7 +206,7 @@ namespace GHaack.Halo.Tests
                 Name = data.name,
             };
 
-            var actual = mapper.Map<GameVariant>(data);
+            var actual = Mapper().Map<GameVariant>(data);
             Equal(expected, actual);
         }
 
@@ -233,7 +222,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Impulse()
         {
-            var mapper = Mapper();
             var data = ImpulseData()[0];
             var expected = new Impulse
             {
@@ -241,7 +229,7 @@ namespace GHaack.Halo.Tests
                 Name = data.internalName,
             };
 
-            var actual = mapper.Map<Impulse>(data);
+            var actual = Mapper().Map<Impulse>(data);
             Equal(expected, actual);
         }
 
@@ -254,7 +242,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Map()
         {
-            var mapper = Mapper();
             var data = MapData()[0];
             var expected = new Map
             {
@@ -268,7 +255,7 @@ namespace GHaack.Halo.Tests
                 },
             };
 
-            var actual = mapper.Map<Map>(data);
+            var actual = Mapper().Map<Map>(data);
             Equal(expected, actual);
         }
 
@@ -284,7 +271,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void MapVariant()
         {
-            var mapper = Mapper();
             var data = MapVariantData()[0];
             var expected = new MapVariant
             {
@@ -295,7 +281,7 @@ namespace GHaack.Halo.Tests
                 MapImageUrl = new Uri(data.mapImageUrl),
             };
 
-            var actual = mapper.Map<MapVariant>(data);
+            var actual = Mapper().Map<MapVariant>(data);
             Equal(expected, actual);
         }
 
@@ -311,7 +297,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void MedalSpriteLocation()
         {
-            var mapper = Mapper();
             var data = MedalSpriteLocationData()[0];
             var expected = new MedalSpriteLocation
             {
@@ -324,7 +309,7 @@ namespace GHaack.Halo.Tests
                 Width = data.width,
             };
 
-            var actual = mapper.Map<MedalSpriteLocation>(data);
+            var actual = Mapper().Map<MedalSpriteLocation>(data);
             Equal(expected, actual);
         }
 
@@ -342,7 +327,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Medal()
         {
-            var mapper = Mapper();
             var data = MedalData()[0];
             var expected = new Medal
             {
@@ -363,7 +347,7 @@ namespace GHaack.Halo.Tests
                 }
             };
 
-            var actual = mapper.Map<Medal>(data);
+            var actual = Mapper().Map<Medal>(data);
             Equal(expected, actual);
         }
 
@@ -380,7 +364,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Playlist()
         {
-            var mapper = Mapper();
             var data = PlaylistData()[0];
             var expected = new Playlist
             {
@@ -393,7 +376,7 @@ namespace GHaack.Halo.Tests
                 Ranked = data.isRanked,
             };
 
-            var actual = mapper.Map<Playlist>(data);
+            var actual = Mapper().Map<Playlist>(data);
             Equal(expected, actual);
         }
 
@@ -411,7 +394,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Season()
         {
-            var mapper = Mapper();
             var data = SeasonData()[0];
             var expected = new Season
             {
@@ -427,7 +409,7 @@ namespace GHaack.Halo.Tests
                 StartDate = data.startDate,
             };
 
-            var actual = mapper.Map<Season>(data);
+            var actual = Mapper().Map<Season>(data);
             Equal(expected, actual);
         }
 
@@ -444,7 +426,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void SpartanRank()
         {
-            var mapper = Mapper();
             var data = SpartanRankData()[0];
             var expected = new SpartanRank
             {
@@ -452,7 +433,7 @@ namespace GHaack.Halo.Tests
                 StartXp = data.startXp,
             };
 
-            var actual = mapper.Map<SpartanRank>(data);
+            var actual = Mapper().Map<SpartanRank>(data);
             Equal(expected, actual);
         }
 
@@ -465,7 +446,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void TeamColor()
         {
-            var mapper = Mapper();
             var data = TeamColorData()[0];
             var expected = new TeamColor
             {
@@ -476,7 +456,7 @@ namespace GHaack.Halo.Tests
                 Name = data.name,
             };
 
-            var actual = mapper.Map<TeamColor>(data);
+            var actual = Mapper().Map<TeamColor>(data);
             Equal(expected, actual);
         }
 
@@ -492,7 +472,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Vehicle()
         {
-            var mapper = Mapper();
             var data = VehicleData()[0];
             var expected = new Vehicle
             {
@@ -504,7 +483,7 @@ namespace GHaack.Halo.Tests
                 UsableByPlayer = data.isUsableByPlayer,
             };
 
-            var actual = mapper.Map<Vehicle>(data);
+            var actual = Mapper().Map<Vehicle>(data);
             Equal(expected, actual);
         }
 
@@ -521,7 +500,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Weapon()
         {
-            var mapper = Mapper();
             var data = WeaponData()[0];
             var expected = new Weapon
             {
@@ -534,7 +512,7 @@ namespace GHaack.Halo.Tests
                 UsableByPlayer = data.isUsableByPlayer,
             };
 
-            var actual = mapper.Map<Weapon>(data);
+            var actual = Mapper().Map<Weapon>(data);
             Equal(expected, actual);
         }
 
@@ -579,21 +557,19 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid FlexibleStatGuid = Guid.NewGuid();
         private static IList<ApiMetadata.FlexibleStat> FlexibleStatData()
         {
             return new List<ApiMetadata.FlexibleStat>
             {
                 new ApiMetadata.FlexibleStat
                 {
-                    id = FlexibleStatGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     name = "flexibleStatName",
                     type = FlexibleStatType.Count.ToString(),
                 },
             };
         }
 
-        private static readonly Guid GameBaseVariantGuid = Guid.NewGuid();
         private static IList<ApiMetadata.GameBaseVariant> GameBaseVariantData()
         {
             return new List<ApiMetadata.GameBaseVariant>
@@ -601,7 +577,7 @@ namespace GHaack.Halo.Tests
                 new ApiMetadata.GameBaseVariant
                 {
                     iconUrl = "http://gameBaseVariantIconUrl",
-                    id = GameBaseVariantGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     name = "gameBaseVariantName",
                     supportedGameModes = new List<string>
                     {
@@ -611,7 +587,6 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid GameVariantGuid = Guid.NewGuid();
         private static IList<ApiMetadata.GameVariant> GameVariantData()
         {
             return new List<ApiMetadata.GameVariant>
@@ -619,9 +594,9 @@ namespace GHaack.Halo.Tests
                 new ApiMetadata.GameVariant
                 {
                     description = "gameVariantDescription",
-                    gameBaseVariantId = GameBaseVariantGuid.ToString(),
+                    gameBaseVariantId = Guid.NewGuid().ToString(),
                     iconUrl = "http://gameVariantIconUrl",
-                    id = GameVariantGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     name = "gameVariantName",
                 },
             };
@@ -638,7 +613,6 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid MapGuid = Guid.NewGuid();
         private static IList<ApiMetadata.Map> MapData()
         {
             return new List<ApiMetadata.Map>
@@ -646,7 +620,7 @@ namespace GHaack.Halo.Tests
                 new ApiMetadata.Map
                 {
                     description = "mapDescription",
-                    id = MapGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     imageUrl = "http://mapImageUrl",
                     name = "mapName",
                     supportedGameModes = new List<string>
@@ -657,7 +631,6 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid MapVariantGuid = Guid.NewGuid();
         private static IList<ApiMetadata.MapVariant> MapVariantData()
         {
             return new List<ApiMetadata.MapVariant>
@@ -665,8 +638,8 @@ namespace GHaack.Halo.Tests
                 new ApiMetadata.MapVariant
                 {
                     description = "mapVariantDescription",
-                    id = MapVariantGuid.ToString(),
-                    mapId = MapGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
+                    mapId = Guid.NewGuid().ToString(),
                     mapImageUrl = "http://mapVariantImageUrl",
                     name = "mapVariantName",
                 },
@@ -706,7 +679,6 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid PlaylistGuid = Guid.NewGuid();
         private static IList<ApiMetadata.Playlist> PlaylistData()
         {
             return new List<ApiMetadata.Playlist>
@@ -715,7 +687,7 @@ namespace GHaack.Halo.Tests
                 {
                     description = "playlistDescription",
                     gameMode = GameMode.Arena.ToString(),
-                    id = PlaylistGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     imageUrl = "http://playlistImageUrl",
                     isActive = true,
                     isRanked = true,
@@ -724,7 +696,6 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid SeasonGuid = Guid.NewGuid();
         private static IList<ApiMetadata.Season> SeasonData()
         {
             return new List<ApiMetadata.Season>
@@ -733,7 +704,7 @@ namespace GHaack.Halo.Tests
                 {
                     endDate = new DateTime(2016, 2, 2),
                     iconUrl = "http://seasonIconUrl",
-                    id = SeasonGuid.ToString(),
+                    id = Guid.NewGuid().ToString(),
                     isActive = true,
                     name = "seasonName",
                     playlists = PlaylistData().ToList(),
@@ -808,7 +779,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Csr()
         {
-            var mapper = Mapper();
             var data = MatchCsrData()[0];
             var expected = new CsrDto
             {
@@ -819,7 +789,7 @@ namespace GHaack.Halo.Tests
                 Value = data.Csr,
             };
 
-            var actual = mapper.Map<CsrDto>(data);
+            var actual = Mapper().Map<CsrDto>(data);
             Equal(expected, actual);
         }
 
@@ -835,7 +805,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void WeaponStats()
         {
-            var mapper = Mapper();
             var data = MatchWeaponData()[0];
             var expected = new WeaponStatsDto
             {
@@ -848,7 +817,7 @@ namespace GHaack.Halo.Tests
                 WeaponId = data.WeaponId.StockId,
             };
 
-            var actual = mapper.Map<WeaponStatsDto>(data);
+            var actual = Mapper().Map<WeaponStatsDto>(data);
             Equal(expected, actual);
         }
 
@@ -866,7 +835,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Player()
         {
-            var mapper = Mapper();
             var data = MatchPlayerStatsData()[0];
             var expected = new PlayerDto
             {
@@ -926,7 +894,7 @@ namespace GHaack.Halo.Tests
                 }
             };
 
-            var actual = mapper.Map<PlayerDto>(data);
+            var actual = Mapper().Map<PlayerDto>(data);
             Equal(expected, actual);
         }
 
@@ -965,7 +933,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Team1()
         {
-            var mapper = Mapper();
             var data = MatchTeamStatsData()[0];
             var expected = new TeamDto
             {
@@ -974,14 +941,13 @@ namespace GHaack.Halo.Tests
                 TeamId = data.TeamId,
             };
 
-            var actual = mapper.Map<TeamDto>(data);
+            var actual = Mapper().Map<TeamDto>(data);
             Equal(expected, actual);
         }
 
         [Fact]
         public void Team2()
         {
-            var mapper = Mapper();
             var data = MatchTeamStatsData()[1];
             var expected = new TeamDto
             {
@@ -990,7 +956,7 @@ namespace GHaack.Halo.Tests
                 TeamId = data.TeamId,
             };
 
-            var actual = mapper.Map<TeamDto>(data);
+            var actual = Mapper().Map<TeamDto>(data);
             Equal(expected, actual);
         }
 
@@ -1004,7 +970,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void MatchFromPlayerMatch()
         {
-            var mapper = Mapper();
             var data = PlayerMatchData()[0];
             var expected = new MatchDto
             {
@@ -1021,7 +986,7 @@ namespace GHaack.Halo.Tests
                 TeamGame = data.IsTeamGame,
             };
 
-            var actual = mapper.Map<MatchDto>(data);
+            var actual = Mapper().Map<MatchDto>(data);
             Assert.Equal(expected.Completed, actual.Completed);
             Assert.Equal(expected.Duration, actual.Duration);
             Assert.Equal(expected.GameBaseVariantId, actual.GameBaseVariantId);
@@ -1038,7 +1003,6 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void MatchFromMatchReport()
         {
-            var mapper = Mapper();
             var data = MatchReportData()[0];
             var expected = new MatchDto
             {
@@ -1119,7 +1083,7 @@ namespace GHaack.Halo.Tests
                 },
             };
 
-            var actual = mapper.Map<MatchDto>(data);
+            var actual = Mapper().Map<MatchDto>(data);
             Equal(expected.Players.First(), actual.Players.First());
             Equal(expected.Teams.First(), actual.Teams.First());
             Equal(expected.Teams.ElementAt(1), actual.Teams.ElementAt(1));
@@ -1223,7 +1187,7 @@ namespace GHaack.Halo.Tests
             };
 
             var actual = mapper.Map<MatchDto>(data1)
-                               .Map(data2);
+                               .Map(data2, mapper);
             Equal(expected, actual);
         }
 
@@ -1353,36 +1317,35 @@ namespace GHaack.Halo.Tests
             };
         }
 
-        private static readonly Guid MatchGuid = Guid.NewGuid();
         private static IList<ApiModels.PlayerMatch> PlayerMatchData()
         {
             return new List<ApiModels.PlayerMatch>
             {
                 new ApiModels.PlayerMatch
                 {
-                    GameBaseVariantId = GameBaseVariantGuid.ToString(),
+                    GameBaseVariantId = Guid.NewGuid().ToString(),
                     GameVariant = new ApiModels.GameVariantId
                     {
-                        ResourceId = GameVariantGuid.ToString(),
+                        ResourceId = Guid.NewGuid().ToString(),
                     },
-                    HopperId = PlaylistGuid.ToString(),
+                    HopperId = Guid.NewGuid().ToString(),
                     Id = new ApiModels.MatchIdClass
                     {
                         GameMode = (int) GameMode.Arena,
-                        MatchId = MatchGuid.ToString(),
+                        MatchId = Guid.NewGuid().ToString(),
                     },
                     IsTeamGame = true,
-                    MapId = MapGuid.ToString(),
+                    MapId = Guid.NewGuid().ToString(),
                     MapVariant = new ApiModels.MapVariantId
                     {
-                        ResourceId = MapVariantGuid.ToString(),
+                        ResourceId = Guid.NewGuid().ToString(),
                     },
                     MatchCompletedDate = new ApiModels.Iso8601Date
                     {
                         ISO8601Date = new DateTime(2016, 3, 3),
                     },
                     MatchDuration = "PT1M40S",
-                    SeasonId = SeasonGuid.ToString(),
+                    SeasonId = Guid.NewGuid().ToString(),
                 },
             };
         }

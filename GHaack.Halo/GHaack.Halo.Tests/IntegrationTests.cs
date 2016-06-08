@@ -29,7 +29,7 @@ namespace GHaack.Halo.Tests
 
         private static IHaloApi HaloApi()
         {
-            return new HaloApi(HaloApiUri, SubscriptionKey);
+            return new HaloApi(HaloApiUri, SubscriptionKey, Mapper());
         }
 
         private static IHaloRepository HaloRepository()
@@ -98,11 +98,11 @@ namespace GHaack.Halo.Tests
         {
             var haloRepository = HaloRepository();
             var haloApi = HaloApi();
-            var haloDataManager = new HaloDataManager(haloApi, haloRepository);
+            var haloDataManager = new HaloDataManager(haloApi, haloRepository, Mapper());
 
             var matchDtos = await haloRepository.GetMatchesAsync("shockRocket");
             var matches = matchDtos.Take(1)
-                .Select(Mapper.Map<Match>);
+                .Select(Mapper().Map<Match>);
             var preMatch = matches.First();
 
             var postMatches =  await haloDataManager.MatchesAsync(matches);

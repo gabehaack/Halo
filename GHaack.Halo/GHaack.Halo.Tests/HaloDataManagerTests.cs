@@ -29,12 +29,18 @@ namespace GHaack.Halo.Tests
             return new HaloDataManager(haloApi, haloRepository, mapper);
         }
 
-        private static HaloDataManager HaloDataManager(IEnumerable<Weapon> weapons)
+        private static HaloDataManager HaloDataManager(IHaloRepository haloRepository)
         {
             var haloApi = Substitute.For<IHaloApi>();
+            var mapper = Substitute.For<IMapper>();
+            return new HaloDataManager(haloApi, haloRepository, mapper);
+        }
+
+        private static HaloDataManager HaloDataManager(IEnumerable<Weapon> weapons)
+        {
             var haloRepository = Substitute.For<IHaloRepository>();
             haloRepository.GetMetadataAsync<Weapon>().Returns(weapons);
-            return new HaloDataManager(haloApi, haloRepository);
+            return HaloDataManager(haloRepository);
         }
 
         #region Tests
@@ -42,11 +48,12 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Ctor()
         {
-            IHaloApi haloApi = new HaloApi(new Uri("http://fakeUri"), "key");
-            IMongoClient mongoClient = new MongoClient();
-            IHaloRepository haloRepository = new MongoHaloRepository(mongoClient);
-            Assert.Throws<ArgumentNullException>(() => new HaloDataManager(haloApi, null));
-            Assert.Throws<ArgumentNullException>(() => new HaloDataManager(null, haloRepository));
+            var haloApi = Substitute.For<IHaloApi>();
+            var haloRepository = Substitute.For<IHaloRepository>();
+            var mapper = Substitute.For<IMapper>();
+            Assert.Throws<ArgumentNullException>(() => new HaloDataManager(null, haloRepository, mapper));
+            Assert.Throws<ArgumentNullException>(() => new HaloDataManager(haloApi, null, mapper));
+            Assert.Throws<ArgumentNullException>(() => new HaloDataManager(haloApi, haloRepository, null));
         }
 
         [Fact]

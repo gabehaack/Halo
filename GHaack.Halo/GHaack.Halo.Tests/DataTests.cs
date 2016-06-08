@@ -6,7 +6,7 @@ namespace GHaack.Halo.Tests
     [ExcludeFromCodeCoverage]
     public class DataTests
     {
-        [Fact]
+        //[Fact]
         public void SomeTest()
         {
         }

@@ -3,9 +3,9 @@
 
     window.onerror = function (msg) {
         if (window.alerts) {
-            window.alerts.error("Something went wrong.");
+            window.alerts.error('Something went wrong.');
         } else {
-            alert("Something went really wrong.")
+            alert('Something went really wrong.');
         }
     };
 

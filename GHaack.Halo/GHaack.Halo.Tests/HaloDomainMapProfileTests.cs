@@ -29,21 +29,21 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Csr()
         {
-            var csr = mapper.Map<Csr>(CsrDtoData()[0]);
+            var csr = Mapper().Map<Csr>(CsrDtoData()[0]);
             ValidateCsrMapping(csr, CsrDtoData()[0]);
         }
 
         [Fact]
         public void WeaponStats()
         {
-            var weaponStats = mapper.Map<WeaponStats>(WeaponStatsDtoData()[0]);
+            var weaponStats = Mapper().Map<WeaponStats>(WeaponStatsDtoData()[0]);
             ValidateWeaponStatsMapping(weaponStats, WeaponStatsDtoData()[0]);
         }
 
         [Fact]
         public void Player()
         {
-            var player = mapper.Map<Player>(PlayerDtoData()[0]);
+            var player = Mapper().Map<Player>(PlayerDtoData()[0]);
             ValidatePlayerMapping(player, PlayerDtoData()[0]);
             ValidateCsrMapping(player.CurrentCsr, CsrDtoData()[0]);
             ValidateCsrMapping(player.PreviousCsr, CsrDtoData()[1]);
@@ -54,14 +54,14 @@ namespace GHaack.Halo.Tests
         [Fact]
         public void Team()
         {
-            var team = mapper.Map<Team>(TeamDtoData()[0]);
+            var team = Mapper().Map<Team>(TeamDtoData()[0]);
             ValidateTeamMapping(team, TeamDtoData()[0]);
         }
 
         [Fact]
         public void Match()
         {
-            var match = mapper.Map<Match>(MatchDtoData()[0]);
+            var match = Mapper().Map<Match>(MatchDtoData()[0]);
 
             var player = match.Players.First();
             ValidatePlayerMapping(player, PlayerDtoData()[0]);

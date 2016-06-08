@@ -20,10 +20,11 @@ namespace GHaack.Halo.Api
     public class HaloApi : IHaloApi, IDisposable
     {
         private readonly HttpClient _httpClient;
+        private readonly IMapper _mapper;
 
-        public HaloApi(Uri baseUri, string subscriptionKey)
+        public HaloApi(Uri baseUri, string subscriptionKey, IMapper mapper)
         {
-            var handler = new HttpClientHandler()
+            var handler = new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
@@ -35,6 +36,10 @@ namespace GHaack.Halo.Api
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Add(
                 "Ocp-Apim-Subscription-Key", subscriptionKey);
+
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            _mapper = mapper;
         }
 
         #region Metadata
@@ -43,96 +48,96 @@ namespace GHaack.Halo.Api
         {
             var csrDesignationMetadata = await GetMetadataAsync<CsrDesignation>("csr-designations");
             return csrDesignationMetadata
-                .Select(Mapper.Map<DomainMetadata.CsrDesignation>);
+                .Select(_mapper.Map<DomainMetadata.CsrDesignation>);
         }
 
         public async Task<IEnumerable<DomainMetadata.FlexibleStat>> GetFlexibleStatMetadataAsync()
         {
             var flexibleStatMetadata = await GetMetadataAsync<FlexibleStat>("flexible-stats");
             return flexibleStatMetadata
-                .Select(Mapper.Map<DomainMetadata.FlexibleStat>);
+                .Select(_mapper.Map<DomainMetadata.FlexibleStat>);
         }
 
         public async Task<IEnumerable<DomainMetadata.GameBaseVariant>> GetGameBaseVariantMetadataAsync()
         {
             var gameBaseVariantMetadata = await GetMetadataAsync<GameBaseVariant>("game-base-variants");
             return gameBaseVariantMetadata
-                .Select(Mapper.Map<DomainMetadata.GameBaseVariant>);
+                .Select(_mapper.Map<DomainMetadata.GameBaseVariant>);
         }
 
         public async Task<DomainMetadata.GameVariant> GetGameVariantMetadatumAsync(Guid gameVariantId)
         {
             var gameVariantMetadatum = await GetMetadatumAsync<GameVariant>("game-variants/", gameVariantId);
-            return Mapper.Map<DomainMetadata.GameVariant>(gameVariantMetadatum);
+            return _mapper.Map<DomainMetadata.GameVariant>(gameVariantMetadatum);
         }
 
         public async Task<IEnumerable<DomainMetadata.Impulse>> GetImpulseMetadataAsync()
         {
             var impulseMetadata = await GetMetadataAsync<Impulse>("impulses");
             return impulseMetadata
-                .Select(Mapper.Map<DomainMetadata.Impulse>);
+                .Select(_mapper.Map<DomainMetadata.Impulse>);
         }
 
         public async Task<DomainMetadata.MapVariant> GetMapVariantMetadatumAsync(Guid mapVariantId)
         {
             var mapVariantMetadatum = await GetMetadatumAsync<MapVariant>("map-variants/", mapVariantId);
-            return Mapper.Map<DomainMetadata.MapVariant>(mapVariantMetadatum);
+            return _mapper.Map<DomainMetadata.MapVariant>(mapVariantMetadatum);
         }
 
         public async Task<IEnumerable<DomainMetadata.Map>> GetMapMetadataAsync()
         {
             var mapMetadata = await GetMetadataAsync<Map>("maps");
             return mapMetadata
-                .Select(Mapper.Map<DomainMetadata.Map>);
+                .Select(_mapper.Map<DomainMetadata.Map>);
         }
 
         public async Task<IEnumerable<DomainMetadata.Medal>> GetMedalMetadataAsync()
         {
             var medalMetadata = await GetMetadataAsync<Medal>("medals");
             return medalMetadata
-                .Select(Mapper.Map<DomainMetadata.Medal>);
+                .Select(_mapper.Map<DomainMetadata.Medal>);
         }
 
         public async Task<IEnumerable<DomainMetadata.Playlist>> GetPlaylistMetadataAsync()
         {
             var playlistMetadata = await GetMetadataAsync<Playlist>("playlists");
             return playlistMetadata
-                .Select(Mapper.Map<DomainMetadata.Playlist>);
+                .Select(_mapper.Map<DomainMetadata.Playlist>);
         }
 
         public async Task<IEnumerable<DomainMetadata.Season>> GetSeasonMetadataAsync()
         {
             var seasonMetadata = await GetMetadataAsync<Season>("seasons");
             return seasonMetadata
-                .Select(Mapper.Map<DomainMetadata.Season>);
+                .Select(_mapper.Map<DomainMetadata.Season>);
         }
 
         public async Task<IEnumerable<DomainMetadata.SpartanRank>> GetSpartanRankMetadataAsync()
         {
             var spartanRankMetadata = await GetMetadataAsync<SpartanRank>("spartan-ranks");
             return spartanRankMetadata
-                .Select(Mapper.Map<DomainMetadata.SpartanRank>);
+                .Select(_mapper.Map<DomainMetadata.SpartanRank>);
         }
 
         public async Task<IEnumerable<DomainMetadata.TeamColor>> GetTeamColorMetadataAsync()
         {
             var teamColorMetadata = await GetMetadataAsync<TeamColor>("team-colors");
             return teamColorMetadata
-                .Select(Mapper.Map<DomainMetadata.TeamColor>);
+                .Select(_mapper.Map<DomainMetadata.TeamColor>);
         }
 
         public async Task<IEnumerable<DomainMetadata.Vehicle>> GetVehicleMetadataAsync()
         {
             var vehicleMetadata = await GetMetadataAsync<Vehicle>("vehicles");
             return vehicleMetadata
-                .Select(Mapper.Map<DomainMetadata.Vehicle>);
+                .Select(_mapper.Map<DomainMetadata.Vehicle>);
         }
 
         public async Task<IEnumerable<DomainMetadata.Weapon>> GetWeaponMetadataAsync()
         {
             var weaponMetadata = await GetMetadataAsync<Weapon>("weapons");
             return weaponMetadata
-                .Select(Mapper.Map<DomainMetadata.Weapon>);
+                .Select(_mapper.Map<DomainMetadata.Weapon>);
         }
 
         #endregion
@@ -163,14 +168,14 @@ namespace GHaack.Halo.Api
 
             var playerMatches = await GetStatsAsync<PlayerMatches>(endpoint);
             return playerMatches.Results
-                .Select(Mapper.Map<DomainModels.MatchDto>);
+                .Select(_mapper.Map<DomainModels.MatchDto>);
         }
 
         public async Task<IEnumerable<DomainModels.PlayerDto>> GetMatchStatsAsync(Guid matchId)
         {
             var matchReport = await GetMatchReportAsync(matchId);
             return matchReport.PlayerStats
-                .Select(Mapper.Map<DomainModels.PlayerDto>);
+                .Select(_mapper.Map<DomainModels.PlayerDto>);
         }
 
         private async Task<MatchReport> GetMatchReportAsync(Guid matchId)
@@ -239,7 +244,7 @@ namespace GHaack.Halo.Api
 
         #endregion
 
-        #region IDisposable Support
+        #region IDisposable
 
         private bool disposedValue = false; // To detect redundant calls
 

@@ -6,7 +6,7 @@ namespace GHaack.Halo.Tests
     [ExcludeFromCodeCoverage]
     public class ApiClientTests
     {
-        [Fact]
+        //[Fact]
         public void SomeTest()
         {
         }
