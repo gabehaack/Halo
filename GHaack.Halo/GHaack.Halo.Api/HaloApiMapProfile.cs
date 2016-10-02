@@ -13,7 +13,7 @@ namespace GHaack.Halo.Api
 {
     public class HaloApiMapProfile : Profile
     {
-        protected override void Configure()
+        public HaloApiMapProfile()
         {
             RecognizePrefixes("Total", "Is", "is", "Match");
             RecognizePostfixes("Id");
@@ -58,59 +58,80 @@ namespace GHaack.Halo.Api
 
             // Match stats
             CreateMap<ApiModels.MatchCsr, DomainModels.CsrDto>()
-                .ForMember(dest => dest.CsrDesignationId, opt => opt.MapFrom(
-                   src => src.DesignationId))
-                .ForMember(dest => dest.CsrDesignationTierId, opt => opt.MapFrom(
-                   src => src.Tier))
-                .ForMember(dest => dest.Value, opt => opt.MapFrom(
-                   src => src.Csr));
+                .ForMember(dest => dest.CsrDesignationId,
+                    opt => opt.MapFrom(src => src.DesignationId))
+                .ForMember(dest => dest.CsrDesignationTierId,
+                    opt => opt.MapFrom(src => src.Tier))
+                .ForMember(dest => dest.Value,
+                    opt => opt.MapFrom(src => src.Csr));
 
             CreateMap<ApiModels.MatchWeapon, DomainModels.WeaponStatsDto>()
                 .ForMember(dest => dest.WeaponId, opt => opt.MapFrom(
                    src => src.WeaponId.StockId));
 
             CreateMap<ApiModels.MatchPlayerStats, DomainModels.PlayerDto>()
-                .ForMember(dest => dest.AvgLifeTime, opt => opt.MapFrom(
-                   src => src.AvgLifeTimeOfPlayer))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(
-                   src => src.Player.Gamertag))
-                .ForMember(dest => dest.WeaponsStats, opt => opt.MapFrom(
-                   src => src.WeaponStats));
+                .ForMember(dest => dest.AvgLifeTime,
+                    opt => opt.MapFrom(src => src.AvgLifeTimeOfPlayer))
+                .ForMember(dest => dest.Name, opt =>
+                    opt.MapFrom(src => src.Player.Gamertag))
+                .ForMember(dest => dest.WeaponsStats,
+                    opt => opt.MapFrom(src => src.WeaponStats));
 
             CreateMap<ApiModels.MatchTeamStats, DomainModels.TeamDto>();
 
             CreateMap<ApiModels.PlayerMatch, DomainModels.MatchDto>()
-                .ForMember(dest => dest.Completed, opt => opt.MapFrom(
-                   src => src.MatchCompletedDate.ISO8601Date))
-                .ForMember(dest => dest.GameMode, opt => opt.MapFrom(
-                   src => src.Id.GameMode))
-                .ForMember(dest => dest.GameVariantId, opt => opt.MapFrom(
-                   src => src.GameVariant.ResourceId))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(
-                   src => src.Id.MatchId))
-                .ForMember(dest => dest.MapVariantId, opt => opt.MapFrom(
-                   src => src.MapVariant.ResourceId))
-                .ForMember(dest => dest.PlaylistId, opt => opt.MapFrom(
-                   src => src.HopperId))
-                .ForMember(dest => dest.Players, opt => opt.Ignore())
-                .ForMember(dest => dest.Teams, opt => opt.Ignore());
+                .ForMember(dest => dest.Completed,
+                    opt => opt.MapFrom(src => src.MatchCompletedDate.ISO8601Date))
+                .ForMember(dest => dest.GameMode,
+                    opt => opt.MapFrom(src => src.Id.GameMode))
+                .ForMember(dest => dest.GameVariantId,
+                    opt => opt.MapFrom(src => src.GameVariant.ResourceId))
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id.MatchId))
+                .ForMember(dest => dest.MapVariantId,
+                    opt => opt.MapFrom(src => src.MapVariant.ResourceId))
+                .ForMember(dest => dest.PlaylistId,
+                    opt => opt.MapFrom(src => src.HopperId))
+                .ForMember(dest => dest.Players,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.Teams,
+                    opt => opt.Ignore());
 
             CreateMap<ApiModels.MatchReport, DomainModels.MatchDto>()
-                .ForAllMembers(opt => opt.Ignore());
-            CreateMap<ApiModels.MatchReport, DomainModels.MatchDto>()
-                .ForMember(dest => dest.Players, opt => opt.MapFrom(
-                   src => src.PlayerStats))
-                .ForMember(dest => dest.Teams, opt => opt.MapFrom(
-                   src => src.TeamStats));
+                .ForMember(dest => dest.Players,
+                    opt => opt.MapFrom(src => src.PlayerStats))
+                .ForMember(dest => dest.Teams,
+                    opt => opt.MapFrom(src => src.TeamStats))
+                .ForMember(dest => dest.Completed,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.GameMode,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.Duration,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.Id,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.MapId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.MapVariantId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.GameBaseVariantId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.GameVariantId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.PlaylistId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.SeasonId,
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.TeamGame,
+                    opt => opt.Ignore());
         }
 
         #region Type Conversions
 
         public class UriTypeConverter : ITypeConverter<string, Uri>
         {
-            public Uri Convert(ResolutionContext context)
+            public Uri Convert(string source, Uri destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 Uri uri;
                 return Uri.TryCreate(source, UriKind.Absolute, out uri)
                     ? uri
@@ -120,9 +141,8 @@ namespace GHaack.Halo.Api
 
         public class GuidTypeConverter : ITypeConverter<string, Guid>
         {
-            public Guid Convert(ResolutionContext context)
+            public Guid Convert(string source, Guid destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 Guid guid;
                 return Guid.TryParse(source, out guid)
                     ? guid
@@ -132,9 +152,8 @@ namespace GHaack.Halo.Api
 
         public class TimeSpanTypeConverter : ITypeConverter<string, TimeSpan>
         {
-            public TimeSpan Convert(ResolutionContext context)
+            public TimeSpan Convert(string source, TimeSpan destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 return !String.IsNullOrWhiteSpace(source)
                     ? XmlConvert.ToTimeSpan(source)
                     : TimeSpan.Zero;
@@ -143,36 +162,32 @@ namespace GHaack.Halo.Api
 
         public class GameModeTypeConverter : ITypeConverter<string, GameMode>
         {
-            public GameMode Convert(ResolutionContext context)
+            public GameMode Convert(string source, GameMode destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<GameMode>(source);
             }
         }
 
         public class FlexibleStatTypeTypeConverter : ITypeConverter<string, FlexibleStatType>
         {
-            public FlexibleStatType Convert(ResolutionContext context)
+            public FlexibleStatType Convert(string source, FlexibleStatType destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<FlexibleStatType>(source);
             }
         }
 
         public class MedalClassificationTypeConverter : ITypeConverter<string, MedalClassification>
         {
-            public MedalClassification Convert(ResolutionContext context)
+            public MedalClassification Convert(string source, MedalClassification destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<MedalClassification>(source);
             }
         }
 
         public class WeaponTypeTypeConverter : ITypeConverter<string, WeaponType>
         {
-            public WeaponType Convert(ResolutionContext context)
+            public WeaponType Convert(string source, WeaponType destination, ResolutionContext context)
             {
-                string source = (string) context.SourceValue;
                 return EnumUtility.Parse<WeaponType>(source);
             }
         }

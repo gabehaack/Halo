@@ -51,13 +51,11 @@ namespace GHaack.Halo.Data
 
         public async Task<IEnumerable<MatchDto>> GetMatchesAsync(string player)
         {
-            var matchCollection = _haloDb.GetCollection<MatchDto>("Matches");
+            var matchCollection = _haloDb.GetCollection<MatchDto>("Matches")
+                .AsQueryable();
             return await matchCollection
-                .AsQueryable()
                 .Where(m => 
-                    m.Players.Any(p => 
-                        String.Equals(p.Name, player, 
-                            StringComparison.OrdinalIgnoreCase)))
+                    m.Players.Any(p => p.Name == player))
                 .ToListAsync();
         }
 

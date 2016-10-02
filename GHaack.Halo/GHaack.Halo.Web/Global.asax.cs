@@ -11,6 +11,7 @@ using Autofac;
 using Autofac.Features.Metadata;
 using Autofac.Features.ResolveAnything;
 using Autofac.Integration.Mvc;
+using AutoMapper;
 using GHaack.Halo.Api;
 using GHaack.Halo.Data;
 using GHaack.Halo.Domain;
@@ -35,6 +36,7 @@ namespace GHaack.Halo.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            AutoMapperConfig.Configure();
             RegisterDependencies();
         }
 
@@ -57,6 +59,8 @@ namespace GHaack.Halo.Web
 
             // OPTIONAL: Enable property injection into action filters.
             builder.RegisterFilterProvider();
+
+            builder.RegisterInstance(Mapper.Instance).As<IMapper>();
 
             // Custom type registration
             builder.RegisterType<HaloDataManager>()

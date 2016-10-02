@@ -58,7 +58,7 @@ namespace GHaack.Halo.Tests
             var match = matches.First();
             var players = await haloApi.GetMatchStatsAsync(match.Id);
             match.Players = players;
-
+            var player = players.FirstOrDefault(p => p.Name == "shockRocket");
         }
 
         [Fact]

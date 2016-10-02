@@ -42,6 +42,7 @@ namespace GHaack.Halo.Web.Controllers
             var viewModel = new PlayerViewModel
             {
                 Player = player,
+                PlayerEmblemImageUri = emblemUri,
                 Stats = stats,
             };
             return View(viewModel);
